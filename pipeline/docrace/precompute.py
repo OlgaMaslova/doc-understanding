@@ -47,15 +47,33 @@ class DocAssets:
     doc_id: str
     domain: str
     text: str
-    naive_index: Index
-    contextual_index: Index
-    extraction: dict[str, Any]
+    # None when the arm that needs it was not selected for this run. Accessing one
+    # that was not built is a programming error, not a data condition, so the
+    # accessors below fail loudly rather than returning something empty.
+    naive_index: Index | None
+    contextual_index: Index | None
+    extraction: dict[str, Any] | None
     # Fixed costs paid before the first query. These are the y-intercepts on the
     # cost chart, and the reason arm 4 and arm 6 are not free.
     fixed_usage: dict[str, Usage]
 
     def fixed_cost(self, arm: str) -> Cost:
         return price(self.fixed_usage.get(arm, Usage()), ARM_MODEL)
+
+    def require_naive_index(self) -> Index:
+        if self.naive_index is None:
+            raise RuntimeError("naive index was not built for this run")
+        return self.naive_index
+
+    def require_contextual_index(self) -> Index:
+        if self.contextual_index is None:
+            raise RuntimeError("contextual index was not built for this run")
+        return self.contextual_index
+
+    def require_extraction(self) -> dict[str, Any]:
+        if self.extraction is None:
+            raise RuntimeError("extraction was not built for this run")
+        return self.extraction
 
 
 def _cache_path(doc_id: str, name: str):
@@ -84,48 +102,76 @@ def _progress(label: str):
     return report
 
 
-def build_assets(doc_id: str, *, force: bool = False) -> DocAssets:
+def build_assets(
+    doc_id: str, *, arms: list[str] | None = None, force: bool = False
+) -> DocAssets:
+    """Build only the assets the selected arms actually need.
+
+    This gating is what makes a scoped run cheap. Arms 1, 2, and 5 need nothing
+    but the document text, so `--arm full_context --arm cached_context_1h` should
+    not pay for the contextual-prefix pass — which on the 10-K is over $7, several
+    times the cost of the cells being run. Before this, `build_assets` ran in full
+    regardless of `--arm`, and every scoped run silently overpaid.
+    """
+    selected = set(arms or arms_pkg.ARM_ORDER)
     source = BY_ID[doc_id]
     text = load_text(doc_id)
     meta = load_meta(doc_id)
     print(f"\n{doc_id}: {meta['tokens']:,} tokens, {meta['chars']:,} chars")
 
-    chunks = chunk_document(text)
-    chunk_texts = [c.text for c in chunks]
-    print(f"  chunks: {len(chunk_texts)} at ~{CHUNK_TOKENS} tokens, {OVERLAP_TOKENS} overlap")
+    naive_index: Index | None = None
+    contextual_index: Index | None = None
+    extraction: dict[str, Any] | None = None
+    fixed_usage: dict[str, Usage] = {}
 
-    naive_index = _cached(
-        doc_id, "naive-index", lambda: Index.build(chunk_texts), force=force
-    )
-
-    def build_contextual() -> tuple[Index, Usage]:
-        prefixed, usage = build_contextual_chunks(
-            text, chunk_texts, progress=_progress("contextual prefixes")
+    needs_chunks = {naive_rag.ARM, hybrid_rag.ARM} & selected
+    chunk_texts: list[str] = []
+    if needs_chunks:
+        chunk_texts = [c.text for c in chunk_document(text)]
+        print(
+            f"  chunks: {len(chunk_texts)} at ~{CHUNK_TOKENS} tokens, "
+            f"{OVERLAP_TOKENS} overlap"
         )
-        return Index.build(prefixed), usage
 
-    contextual_index, contextual_usage = _cached(
-        doc_id, "contextual-index", build_contextual, force=force
-    )
-
-    extraction, extraction_usage = _cached(
-        doc_id,
-        "extraction",
-        lambda: extract.build_extraction(
-            text, source.domain, progress=_progress("extraction windows")
-        ),
-        force=force,
-    )
-
-    fixed_usage = {
+    if naive_rag.ARM in selected:
+        naive_index = _cached(
+            doc_id, "naive-index", lambda: Index.build(chunk_texts), force=force
+        )
         # Arm 3 pays only to embed the chunks.
-        naive_rag.ARM: naive_index.build_usage,
+        fixed_usage[naive_rag.ARM] = naive_index.build_usage
+
+    if hybrid_rag.ARM in selected:
+
+        def build_contextual() -> tuple[Index, Usage]:
+            prefixed, usage = build_contextual_chunks(
+                text, chunk_texts, progress=_progress("contextual prefixes")
+            )
+            return Index.build(prefixed), usage
+
+        contextual_index, contextual_usage = _cached(
+            doc_id, "contextual-index", build_contextual, force=force
+        )
         # Arm 4 pays for the contextual prefixes plus embedding the prefixed
         # chunks — the real indexing bill, and it scales with document size.
-        hybrid_rag.ARM: contextual_usage + contextual_index.build_usage,
+        fixed_usage[hybrid_rag.ARM] = contextual_usage + contextual_index.build_usage
+
+    if extract.ARM in selected:
+        extraction, extraction_usage = _cached(
+            doc_id,
+            "extraction",
+            lambda: extract.build_extraction(
+                text, source.domain, progress=_progress("extraction windows")
+            ),
+            force=force,
+        )
         # Arm 6 pays for one map-reduce pass over the whole document.
-        extract.ARM: extraction_usage,
-    }
+        fixed_usage[extract.ARM] = extraction_usage
+
+    skipped = sorted(
+        {naive_rag.ARM, hybrid_rag.ARM, extract.ARM} - selected
+    )
+    if skipped:
+        print(f"  skipped indexing for unselected arms: {', '.join(skipped)}")
     for arm, usage in fixed_usage.items():
         print(f"  fixed cost {arm}: ${price(usage, ARM_MODEL).total:.4f}")
 
@@ -159,14 +205,14 @@ def run_arm(arm: str, assets: DocAssets, q: Question) -> ArmResult:
     if arm == naive_rag.ARM:
         return naive_rag.run(
             doc_id=assets.doc_id,
-            index=assets.naive_index,
+            index=assets.require_naive_index(),
             question_id=q.id,
             question=q.question,
         )
     if arm == hybrid_rag.ARM:
         return hybrid_rag.run(
             doc_id=assets.doc_id,
-            index=assets.contextual_index,
+            index=assets.require_contextual_index(),
             question_id=q.id,
             question=q.question,
         )
@@ -180,7 +226,7 @@ def run_arm(arm: str, assets: DocAssets, q: Question) -> ArmResult:
     if arm == extract.ARM:
         return extract.run(
             doc_id=assets.doc_id,
-            extraction=assets.extraction,
+            extraction=assets.require_extraction(),
             question_id=q.id,
             question=q.question,
         )
@@ -291,18 +337,38 @@ def precompute_doc(
     *,
     only_arms: list[str] | None,
     only_questions: list[str] | None,
+    limit: int | None,
     force: bool,
     rebuild_index: bool,
 ) -> None:
-    assets = build_assets(doc_id, force=rebuild_index)
+    selected_arms = only_arms or list(arms_pkg.ARM_ORDER)
+    for arm in selected_arms:
+        if arm not in arms_pkg.ARM_ORDER:
+            raise SystemExit(
+                f"Unknown arm {arm!r}. Known: {', '.join(arms_pkg.ARM_ORDER)}"
+            )
+    assets = build_assets(doc_id, arms=selected_arms, force=rebuild_index)
     all_questions = load_questions(doc_id)
     questions = all_questions
     if only_questions:
         questions = [q for q in questions if q.id in only_questions]
-    selected_arms = only_arms or list(arms_pkg.ARM_ORDER)
+    if limit is not None:
+        # Applied after --question so the two compose predictably.
+        questions = questions[:limit]
+    if not questions:
+        raise SystemExit(f"{doc_id}: no questions selected")
 
     existing = load_existing(doc_id)
     cells: dict[str, Any] = existing.get("cells", {})
+
+    # A scoped run does not rebuild indexes for unselected arms, so their fixed
+    # usage is absent from `assets`. Carry forward whatever a previous run
+    # recorded, or the economics for arms whose cells are still on disk would be
+    # rewritten with an indexing cost of zero — silently turning arm 4 from the
+    # most expensive arm to index into a free one.
+    for arm, entry in (existing.get("fixed_costs") or {}).items():
+        if arm not in assets.fixed_usage and entry.get("usage"):
+            assets.fixed_usage[arm] = Usage(**entry["usage"])
     meta = load_meta(doc_id)
     source = BY_ID[doc_id]
 
@@ -436,6 +502,15 @@ def main() -> None:
         "--question", action="append", help="Question id; repeatable. Default: all."
     )
     ap.add_argument(
+        "--limit",
+        type=int,
+        help=(
+            "Run only the first N questions per document. The cheapest way to "
+            "verify a real run end to end; use at least 2 so the cached arms have "
+            "a second query to read the cache on."
+        ),
+    )
+    ap.add_argument(
         "--force", action="store_true", help="Re-run cells that already have results."
     )
     ap.add_argument(
@@ -460,6 +535,7 @@ def main() -> None:
             doc_id,
             only_arms=args.arm,
             only_questions=args.question,
+            limit=args.limit,
             force=args.force,
             rebuild_index=args.rebuild_index,
         )

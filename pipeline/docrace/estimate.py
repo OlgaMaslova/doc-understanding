@@ -216,12 +216,12 @@ def project(doc_id: str, questions: int) -> list[Projection]:
     return out
 
 
-def judge_cost(questions: int) -> float:
-    """One judge call per cell — every arm, every question."""
+def judge_cost(questions: int, *, arms: int | None = None) -> float:
+    """One judge call per cell — every selected arm, every selected question."""
     per_call = price(
         Usage(input_tokens=1_500, output_tokens=150), ARM_MODEL
     ).total
-    return per_call * questions * len(arms_pkg.ARM_ORDER)
+    return per_call * questions * (arms if arms is not None else len(arms_pkg.ARM_ORDER))
 
 
 def main() -> None:
@@ -233,7 +233,17 @@ def main() -> None:
         default=15,
         help="Questions per document (default 15: 5 types x 3).",
     )
+    # Mirrors precompute's --arm so any scope can be priced with the same flags
+    # that will run it. Indexing is skipped for unselected arms, exactly as the
+    # real run skips it.
+    ap.add_argument("--arm", action="append", help="Arm id; repeatable. Default: all.")
     args = ap.parse_args()
+
+    for arm in args.arm or []:
+        if arm not in arms_pkg.ARM_ORDER:
+            raise SystemExit(
+                f"Unknown arm {arm!r}. Known: {', '.join(arms_pkg.ARM_ORDER)}"
+            )
 
     doc_ids = args.doc or [
         s.doc_id for s in BY_ID.values() if (DOCS / f"{s.doc_id}.txt").exists()
@@ -246,6 +256,8 @@ def main() -> None:
     grand = 0.0
     for doc_id in doc_ids:
         projections = project(doc_id, args.questions)
+        if args.arm:
+            projections = [p for p in projections if p.arm in set(args.arm)]
         tokens = doc_tokens(doc_id)
         print(f"\n{doc_id}  ~{tokens:,} tokens  x {args.questions} questions")
         print(f"  {'arm':16} {'indexing':>10} {'per query':>11} {'run total':>11}")
@@ -255,7 +267,7 @@ def main() -> None:
                 f"{p.total_usd:>11.4f}"
             )
         subtotal = sum(p.total_usd for p in projections)
-        judge = judge_cost(args.questions)
+        judge = judge_cost(args.questions, arms=len(projections))
         print(f"  {'arms subtotal':16} {'':>10} {'':>11} {subtotal:>11.4f}")
         print(f"  {'grading':16} {'':>10} {'':>11} {judge:>11.4f}")
         print(f"  {'document total':16} {'':>10} {'':>11} {subtotal + judge:>11.4f}")

@@ -193,7 +193,21 @@ def load_text(doc_id: str) -> str:
 
 
 def load_meta(doc_id: str) -> dict:
-    return json.loads(BY_ID[doc_id].meta_path.read_text())
+    path = BY_ID[doc_id].meta_path
+    if not path.exists():
+        # The text is committed but the metadata is not: it carries an API-counted
+        # token count, which is the x-axis of the whole argument, so it cannot be
+        # produced without a key. A bare FileNotFoundError three frames into a paid
+        # run is a bad way to learn that.
+        raise SystemExit(
+            f"No metadata for {doc_id} at {path}.\n"
+            f"The document text is committed; its token count is not, because "
+            f"counting needs an API key.\n"
+            f"Run:  python -m docrace.documents --meta-only\n"
+            f"That counts tokens on the committed text without re-fetching, and "
+            f"token counting is free."
+        )
+    return json.loads(path.read_text())
 
 
 def all_doc_ids() -> Iterable[str]:
@@ -237,17 +251,58 @@ def fetch_and_normalize(source: SourceDoc, *, sec: bool) -> dict:
     return meta
 
 
+def write_meta(source: SourceDoc) -> dict:
+    """Count tokens on the already-committed text and write the metadata.
+
+    Separate from fetching so metadata can be rebuilt without re-downloading —
+    which matters because a re-fetch could normalize differently than the text the
+    question set's quotes were verified against, silently invalidating the answer
+    key. Token counting is free.
+    """
+    from .client import count_tokens
+
+    if not source.text_path.exists():
+        raise SystemExit(
+            f"{source.doc_id}: no text at {source.text_path}. "
+            f"Fetch it first with `python -m docrace.documents`."
+        )
+    text = source.text_path.read_text()
+    meta = {
+        "doc_id": source.doc_id,
+        "domain": source.domain,
+        "title": source.title,
+        "url": source.url,
+        "provenance": source.provenance,
+        "license": source.license,
+        "tokens": count_tokens(text),
+        "chars": len(text),
+        "lines": text.count("\n") + 1,
+    }
+    source.meta_path.write_text(json.dumps(meta, indent=2) + "\n")
+    return meta
+
+
 def main() -> None:
     import argparse
 
     ap = argparse.ArgumentParser(description="Fetch and normalize the source documents.")
     ap.add_argument("--doc", action="append", help="Doc id; repeatable. Default: all.")
+    ap.add_argument(
+        "--meta-only",
+        action="store_true",
+        help=(
+            "Skip fetching; count tokens on the committed text and write metadata. "
+            "Use this when the text is present but the token counts are missing."
+        ),
+    )
     args = ap.parse_args()
 
     for doc_id in args.doc or list(BY_ID):
         source = BY_ID[doc_id]
-        sec = "sec.gov" in source.url
-        meta = fetch_and_normalize(source, sec=sec)
+        if args.meta_only:
+            meta = write_meta(source)
+        else:
+            meta = fetch_and_normalize(source, sec="sec.gov" in source.url)
         print(
             f"{doc_id}: {meta['tokens']:,} tokens, {meta['chars']:,} chars, "
             f"{meta['lines']:,} lines"
