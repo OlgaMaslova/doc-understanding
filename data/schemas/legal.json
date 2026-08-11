@@ -1,0 +1,143 @@
+{
+  "type": "object",
+  "description": "Structured extraction of a material contract, written to cover the questions a contracts reviewer typically asks before seeing any specific question.",
+  "properties": {
+    "agreement_title": { "type": "string" },
+    "agreement_type": { "type": "string" },
+    "parties": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "role": { "type": "string", "description": "e.g. borrower, lender, licensor, supplier" },
+          "jurisdiction_of_organization": { "type": "string" }
+        },
+        "required": ["name", "role"],
+        "additionalProperties": false
+      }
+    },
+    "effective_date": { "type": "string" },
+    "governing_law": { "type": "string" },
+    "dispute_resolution": {
+      "type": "string",
+      "description": "Forum, arbitration provisions, jury-trial waivers, venue."
+    },
+    "term": {
+      "type": "object",
+      "properties": {
+        "initial_term": { "type": "string" },
+        "renewal": { "type": "string" },
+        "expiration_or_maturity_date": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "termination_rights": {
+      "type": "array",
+      "description": "Every distinct right of either party to terminate, cancel, or accelerate. One entry per right.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "holder": { "type": "string", "description": "Which party may exercise it" },
+          "trigger": { "type": "string" },
+          "notice_or_cure_period": { "type": "string" },
+          "section_reference": { "type": "string" }
+        },
+        "required": ["holder", "trigger"],
+        "additionalProperties": false
+      }
+    },
+    "payment_terms": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "description": { "type": "string" },
+          "amount_or_rate": { "type": "string" },
+          "timing": { "type": "string" },
+          "section_reference": { "type": "string" }
+        },
+        "required": ["description"],
+        "additionalProperties": false
+      }
+    },
+    "financial_covenants": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "requirement": { "type": "string" },
+          "test_period": { "type": "string" }
+        },
+        "required": ["name", "requirement"],
+        "additionalProperties": false
+      }
+    },
+    "obligations": {
+      "type": "array",
+      "description": "Affirmative and negative covenants and other material obligations.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "obligor": { "type": "string" },
+          "obligation": { "type": "string" },
+          "section_reference": { "type": "string" }
+        },
+        "required": ["obligation"],
+        "additionalProperties": false
+      }
+    },
+    "representations_and_warranties": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "liability_and_indemnity": {
+      "type": "object",
+      "properties": {
+        "liability_caps": { "type": "string" },
+        "excluded_damages": { "type": "string" },
+        "indemnities": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": false
+    },
+    "assignment_and_change_of_control": { "type": "string" },
+    "confidentiality": { "type": "string" },
+    "amendment_and_waiver": { "type": "string" },
+    "notices": { "type": "string" },
+    "defined_terms": {
+      "type": "array",
+      "description": "Defined terms whose definitions carry operative weight.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "term": { "type": "string" },
+          "definition": { "type": "string" }
+        },
+        "required": ["term", "definition"],
+        "additionalProperties": false
+      }
+    },
+    "monetary_amounts": {
+      "type": "array",
+      "description": "Every distinct dollar figure, cap, threshold, or basket in the agreement, with what it governs.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "amount": { "type": "string" },
+          "what_it_governs": { "type": "string" },
+          "section_reference": { "type": "string" }
+        },
+        "required": ["amount", "what_it_governs"],
+        "additionalProperties": false
+      }
+    },
+    "section_index": {
+      "type": "array",
+      "description": "Article and section headings in order, so structural questions can be answered.",
+      "items": { "type": "string" }
+    }
+  },
+  "required": ["agreement_title", "parties", "governing_law", "termination_rights"],
+  "additionalProperties": false
+}

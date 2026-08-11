@@ -1,0 +1,46 @@
+# Python
+pipeline/.venv/
+pipeline/**/__pycache__/
+pipeline/*.egg-info/
+pipeline/build/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# Cached indexes, contextual prefixes, and extractions. Expensive to regenerate,
+# but derived data — rebuildable with --rebuild-index.
+pipeline/.index-cache/
+
+# Precomputed results.
+#
+# These are the deployed site's entire data source, so it is tempting to commit
+# them. They are ignored instead, because the only results that exist today are
+# synthetic fixtures and a repository whose first commit contains invented
+# measurements is worse than one that contains none. results/README.md explains
+# how to populate the directory.
+#
+# Revisit this once a real run exists: committed results are what make the
+# deployed site instant and free to visit, and at that point they should be
+# tracked deliberately, in a commit that says so.
+results/*.json
+
+# Node
+web/node_modules/
+web/.next/
+web/out/
+web/next-env.d.ts
+web/.vercel/
+web/tsconfig.tsbuildinfo
+
+# Local env. Both keys live here; nothing in the repo reads a key from anywhere
+# else, and no key should ever reach a committed file.
+.env
+.env.*
+!.env.example
+
+# OS and editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

@@ -1,0 +1,62 @@
+MIT License
+
+Copyright (c) 2026 Olga Maslova
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
+THIRD-PARTY CONTENT
+
+The MIT licence above covers the code, the question set, and the documentation
+in this repository. It does not and cannot cover the source documents under
+data/docs/, which are third-party works included for the comparison to run
+against. Those are governed by their own terms:
+
+1. data/docs/arxiv-paper.txt
+   "Mamba: Linear-Time Sequence Modeling with Selective State Spaces"
+   Albert Gu and Tri Dao, arXiv:2312.00752v2 (2023)
+   https://arxiv.org/abs/2312.00752
+   Licensed CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/).
+   Redistributed here under that licence, with attribution, as normalized
+   plain text extracted from the arXiv HTML rendering.
+
+2. data/docs/edgar-contract.txt
+   "License Agreement between Processa Pharmaceuticals and Ocuphire Pharma"
+   SEC EDGAR: Ocuphire Pharma, Inc. (CIK 0001228627), Form 8-K filed
+   2021-06-23, Exhibit 10.1
+   U.S. public filing, public record. Not a work of the U.S. government;
+   included as a public disclosure document.
+
+3. data/docs/form-10k.txt
+   "Ford Motor Company — Annual Report on Form 10-K, FY2025"
+   SEC EDGAR: Ford Motor Company (CIK 0000037996), Form 10-K for the fiscal
+   year ended 2025-12-31, filed 2026-02-11
+   U.S. public filing, public record.
+
+Each document is stored as normalized plain text rather than the original
+markup; see the Normalization section of README.md for exactly what that
+transformation does. Full provenance for each is recorded in
+pipeline/docrace/documents.py and stamped into every results file.
+
+Company and product names are the trademarks of their respective owners.
+Nothing here is endorsed by, affiliated with, or reviewed by Ford Motor
+Company, Ocuphire Pharma, Processa Pharmaceuticals, or the authors of the
+Mamba paper. The documents are used as inputs to a technical comparison; no
+claim is made about the companies or the research described in them.

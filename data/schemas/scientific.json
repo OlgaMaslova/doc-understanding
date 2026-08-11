@@ -1,0 +1,102 @@
+{
+  "type": "object",
+  "description": "Structured extraction of a research paper, written to cover the questions a reader typically asks before seeing any specific question.",
+  "properties": {
+    "title": { "type": "string" },
+    "authors": { "type": "array", "items": { "type": "string" } },
+    "problem_statement": { "type": "string" },
+    "contributions": {
+      "type": "array",
+      "description": "Every distinct claimed contribution. One entry per contribution.",
+      "items": { "type": "string" }
+    },
+    "method": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "summary": { "type": "string" },
+        "key_components": { "type": "array", "items": { "type": "string" } },
+        "complexity_claims": {
+          "type": "string",
+          "description": "Stated time/memory complexity or scaling behaviour."
+        }
+      },
+      "additionalProperties": false
+    },
+    "datasets_and_benchmarks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "task": { "type": "string" },
+          "scale": { "type": "string" }
+        },
+        "required": ["name"],
+        "additionalProperties": false
+      }
+    },
+    "results": {
+      "type": "array",
+      "description": "Every reported quantitative result. One entry per number, with what it measures and what it is compared against.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "benchmark": { "type": "string" },
+          "metric": { "type": "string" },
+          "value": { "type": "string" },
+          "baseline_name": { "type": "string" },
+          "baseline_value": { "type": "string" },
+          "model_scale": { "type": "string" },
+          "table_or_figure": { "type": "string" }
+        },
+        "required": ["benchmark", "metric", "value"],
+        "additionalProperties": false
+      }
+    },
+    "ablations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "component_varied": { "type": "string" },
+          "finding": { "type": "string" }
+        },
+        "required": ["component_varied", "finding"],
+        "additionalProperties": false
+      }
+    },
+    "baselines_compared": { "type": "array", "items": { "type": "string" } },
+    "experimental_setup": {
+      "type": "object",
+      "properties": {
+        "hardware": { "type": "string" },
+        "training_details": { "type": "string" },
+        "hyperparameters": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "limitations": {
+      "type": "array",
+      "description": "Limitations the authors state explicitly.",
+      "items": { "type": "string" }
+    },
+    "future_work": { "type": "array", "items": { "type": "string" } },
+    "related_work_positioning": {
+      "type": "string",
+      "description": "How the paper positions itself against prior work."
+    },
+    "overall_claim": {
+      "type": "string",
+      "description": "The paper's central thesis in its own terms."
+    },
+    "code_or_artifact_availability": { "type": "string" },
+    "section_index": {
+      "type": "array",
+      "description": "Section headings in order, so structural questions can be answered.",
+      "items": { "type": "string" }
+    }
+  },
+  "required": ["title", "problem_statement", "contributions", "results"],
+  "additionalProperties": false
+}

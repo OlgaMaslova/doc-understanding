@@ -1,0 +1,1529 @@
+# The preset question set — and the answer key every grade is measured against.
+#
+# Fifteen questions per document: three in each of the five taxonomy types. The
+# types are the second axis of the accuracy heatmap, and they are where the real
+# differentiation lives. Needle questions establish the floor; aggregation and
+# absence are where retrieval quietly breaks.
+#
+# `ground_truth` is authoritative. It was written by reading the documents, and
+# every non-absent question carries a `quote` that scripts/check_questions.py
+# greps against the source text. Absent questions instead carry `absent_terms`,
+# each of which the checker confirms is genuinely missing — a question claiming
+# absence that the document actually answers would invert the grade for all six
+# arms at once, so absence is verified rather than asserted.
+#
+# `quote` and `absent_terms` are provenance for the answer key. They are not
+# passed to the judge; only `ground_truth` and `grading_notes` are.
+
+questions:
+  # ---------------------------------------------------------------------------
+  # arxiv-paper — Mamba: Linear-Time Sequence Modeling with Selective State
+  # Spaces (Gu & Dao), arXiv:2312.00752v2, CC BY 4.0. ~17k tokens.
+  # ---------------------------------------------------------------------------
+
+  - id: arxiv-paper-needle-1
+    doc_id: arxiv-paper
+    type: needle
+    question: What inference throughput speedup over Transformers does the paper claim?
+    ground_truth: >-
+      5x higher generation/inference throughput than a Transformer of similar
+      size. The abstract says "5x higher throughput than Transformers" and the
+      introduction says "5x generation throughput compared to Transformers of
+      similar size". Section 4.5 gives the more precise range: "Mamba achieves
+      4-5x higher inference throughput than a Transformer of similar size, since
+      without the KV cache it can use much higher batch sizes." The reason given
+      is the absence of a KV cache, which permits much larger batch sizes.
+    grading_notes: >-
+      Correct: 5x (or 4-5x) higher inference/generation throughput against a
+      similarly sized Transformer. Partial: says only "faster inference" with no
+      number. Reject as the answer to this question, because they are different
+      claims: "3x faster on A100 GPUs" is the training-time claim for the
+      selective-scan implementation against prior SSM methods; "20-40x faster
+      than a standard PyTorch scan" and "40x faster scan" are training-time
+      kernel comparisons; "faster than FlashAttention-2 beyond sequence length
+      2K" is a different benchmark.
+    quote: >-
+      Mamba enjoys fast inference (5× higher throughput than Transformers) and
+      linear scaling in sequence length
+
+  - id: arxiv-paper-needle-2
+    doc_id: arxiv-paper
+    type: needle
+    question: Which dataset and how many tokens were used to pretrain the language models?
+    ground_truth: >-
+      The Pile, for 300B tokens. Section 4.2 says "We use the Pile dataset and
+      follow the training recipe described in [brown2020language]", with model
+      depth and width mirroring GPT-3 specifications. Section 4.2.2 establishes
+      the token count: Pythia and RWKV "were trained with the same tokenizer,
+      dataset, and training length (300B tokens) as our models". The models use
+      the GPT-NeoX-20B tokenizer at context length 2048 (RWKV used 1024).
+    grading_notes: >-
+      Correct: the Pile plus 300B tokens. Partial: names the Pile but omits the
+      token count, or gives the token count without the dataset. The NeoX
+      tokenizer, context length 2048, and the Chinchilla protocol are welcome
+      additions but not required. Wrong, because these belong to other
+      experiments: HG38 and ~4.5 billion tokens is the DNA pretraining data; 10B
+      tokens is DNA model-size scaling; ~330B tokens is DNA context-length
+      scaling; YouTubeMix is audio and SC09 is speech.
+    quote: We use the Pile dataset [pile], and follow the training recipe described in
+
+  - id: arxiv-paper-needle-3
+    doc_id: arxiv-paper
+    type: needle
+    question: What model sizes are reported in the zero-shot downstream evaluation?
+    ground_truth: >-
+      Five sizes: Mamba-130M, Mamba-370M, Mamba-790M, Mamba-1.4B and
+      Mamba-2.8B, in Table 1 (Zero-shot Evaluations). Their Pile validation
+      perplexities are 10.56, 8.28, 7.33, 6.80 and 6.22, and their average
+      accuracies across the six accuracy benchmarks are 44.7, 50.0, 57.1, 59.7
+      and 63.3. The abstract and introduction informally call the largest model
+      "Mamba-3B"; that is the same 2.8B model.
+    grading_notes: >-
+      Correct: 130M, 370M, 790M, 1.4B, 2.8B — or "five sizes from 130M to 2.8B".
+      Accept "Mamba-3B" as an alias for 2.8B if the other four are right.
+      Partial: gets the range but miscounts or omits sizes. Wrong: "125M to
+      1.3B", which is the scaling-law range in Section 4.2.1 and a different
+      experiment; also wrong are the DNA scaling sizes and the 6.1M/24.3M audio
+      models. No 7B Mamba is evaluated.
+    quote: Mamba-130M
+
+  - id: arxiv-paper-multi_hop-1
+    doc_id: arxiv-paper
+    type: multi_hop
+    question: >-
+      The paper says Mamba matches Transformers twice its size on common sense
+      reasoning — which specific baselines and numbers back that up?
+    ground_truth: >-
+      The introduction claims Mamba-3B is "4 points higher avg. on common sense
+      reasoning compared to Pythia-3B and even exceeding Pythia-7B". Joining
+      that to Table 1: Mamba-2.8B averages 63.3, against Pythia-2.8B at 59.1
+      (the 4.2-point gap) and Pythia-6.9B at 61.7, so Mamba-2.8B exceeds a model
+      roughly 2.5x its size by 1.6 points. Mamba-2.8B also beats Pythia-2.8B on
+      every column: Pile perplexity 6.22 vs 6.73, LAMBADA perplexity 4.23 vs
+      5.04, LAMBADA accuracy 69.2 vs 64.7, HellaSwag 66.1 vs 59.3, PIQA 75.2 vs
+      74.0, ARC-E 69.7 vs 64.1, ARC-C 36.3 vs 32.9, WinoGrande 63.5 vs 59.7.
+      Mamba-1.4B's 59.7 average likewise exceeds Pythia-2.8B's 59.1.
+    grading_notes: >-
+      Correct: identifies Pythia-2.8B and Pythia-6.9B as the baselines and gives
+      averages 63.3, 59.1 and 61.7 (0.1 of rounding is fine). Partial: names
+      Pythia and the roughly 4-point gap but gives no table numbers, or gives
+      63.3 without the baseline values. The answer must be tied to the 2.8B
+      scale: 59.7 is Mamba-1.4B's average, and 44.7 / 50.0 / 57.1 are the
+      smaller models'. The intro's "Pythia-3B" and "Pythia-7B" are Pythia-2.8B
+      and Pythia-6.9B in the table, so an answer using the intro's names with
+      correct table numbers is still correct.
+    quote: >-
+      4 points higher avg. on common sense reasoning compared to Pythia-3B and
+      even exceeding Pythia-7B
+
+  - id: arxiv-paper-multi_hop-2
+    doc_id: arxiv-paper
+    type: multi_hop
+    question: >-
+      Does the model use real or complex numbers in its state, and is there any
+      experiment where that choice changes?
+    ground_truth: >-
+      Real values are the default, and the one exception is the audio waveform
+      experiment. Section 3.6 says most prior SSMs use complex numbers in the
+      state but "We use real values as the default, which work well for all but
+      one of our tasks", hypothesising that complex numbers help continuous
+      modalities and not discrete ones. Section 4.4.1, long-context
+      autoregressive pretraining on YouTubeMix, states "this is the only
+      experiment in this paper in which we switched from the real
+      parameterization to complex". Section 5's "No Free Lunch:
+      Continuous-Discrete Spectrum" ties this together: selection overcomes
+      weakness on discrete modalities like text and DNA but "conversely can
+      impede their performance on data that LTI SSMs excel on". The language
+      ablations agree: S4D-Lin at 10.30 perplexity versus S4D-Real at 10.34 is
+      near-identical, and real initialization beats complex for language (8.71
+      versus 9.16).
+    grading_notes: >-
+      Correct: real by default, complex only in the audio experiment, ideally
+      connected to the continuous-versus-discrete tradeoff. Partial: says real
+      by default but does not identify the exception as audio, or identifies the
+      audio exception without the default. Wrong: claiming the model is complex
+      throughout, or naming the SC09 speech-generation experiment as the
+      exception — the paper pins the switch to the long-context pretraining in
+      4.4.1. Quoting the 9.16-versus-8.71 initialization ablation as the
+      exception is a near-miss: that is evidence real is better on language, not
+      the complex-valued experiment.
+    quote: >-
+      this is the only experiment in this paper in which we switched from the
+      real parameterization to complex
+
+  - id: arxiv-paper-multi_hop-3
+    doc_id: arxiv-paper
+    type: multi_hop
+    question: >-
+      How much does enlarging the SSM state dimension improve language modeling
+      perplexity in the ablations?
+    ground_truth: >-
+      More than 1.0 perplexity — but only when B and C are also selective. In
+      the state-dimension ablation at roughly 350M parameters, with constant
+      (non-selective) B and C, going from N=1 to N=16 moves perplexity only from
+      9.88 to 9.81. With selective B and C the same sweep goes 9.73, 9.40, 9.09,
+      8.84, 8.71 for N of 1, 2, 4, 8, 16 — a 1.02-point improvement — while
+      parameters rise only from 367.1M to 371.5M. The caption says increasing N
+      "can significantly improve performance for a negligible cost in
+      parameters/FLOPs, but only when B and C are also selective", and Section
+      4.6.2 concludes "over a 1.0 perplexity improvement for a cost of only 1%
+      additional parameters".
+    grading_notes: >-
+      Correct: states the greater-than-1.0 perplexity gain at about 1% extra
+      parameters AND the qualifier that it only holds when B and C are
+      selective, since the constant-B-and-C branch gains only about 0.07.
+      Partial: reports the 9.73-to-8.71 numbers or the "over 1.0 perplexity for
+      1% of parameters" line without the selectivity condition — that condition
+      is the discriminating half of the answer. Wrong: claiming the improvement
+      holds regardless of selectivity, or attributing 8.71 to N=1. Near-misses
+      from other ablations: 9.12-to-8.71 is the delta-projection sweep and
+      10.93-to-8.71 is the selective-parameters ablation. All of these are at
+      roughly 350M parameters, not 2.8B.
+    quote: over a 1.0 perplexity improvement for a cost of only 1% additional parameters
+
+  - id: arxiv-paper-aggregation-1
+    doc_id: arxiv-paper
+    type: aggregation
+    question: >-
+      How many distinct baseline model families does the paper compare against
+      in its zero-shot language evaluation?
+    ground_truth: >-
+      Six: Hybrid H3, Pythia, GPT-Neo, OPT, RWKV and GPT-J. Table 1 has 24 rows
+      — 5 Mamba rows and 19 baseline rows: Hybrid H3 at 130M/360M/1.3B/2.7B
+      (four), Pythia at 160M/410M/1B/1.4B/2.8B/6.9B (six), GPT-Neo at 1.3B/2.7B
+      (two), OPT at 1.3B/2.7B/6.7B (three), RWKV at 1.5B/3B/7.4B (three), and
+      GPT-J at 6B (one). Counting method: distinct named model families in Table
+      1 excluding Mamba, with all size variants of one family counted once.
+    grading_notes: >-
+      Correct: 6, with the family names. Also correct: 19, if the answer
+      explicitly counts rows or checkpoints instead of families and lists them
+      correctly. Partial: 5 (dropping GPT-J, the single-row family, or merging
+      it with GPT-Neo), 7 (double-counting GPT-Neo and GPT-J, or adding
+      Transformer/Transformer++, which are Section 4.2.1 scaling-law baselines
+      and not in Table 1), or 4 (dropping Hybrid H3 as a hybrid). Noting that
+      Section 4.2.1 additionally compares against Transformer, Transformer++,
+      RetNet and others is a correct observation about a different table and
+      should not change the count of 6.
+    quote: >-
+      We compare against open source LMs with various tokenizers, trained for up
+      to 300B tokens.
+
+  - id: arxiv-paper-aggregation-2
+    doc_id: arxiv-paper
+    type: aggregation
+    question: >-
+      How many separate ablation studies does the paper run on the model's
+      components at the language-modeling scale?
+    ground_truth: >-
+      Five. Section 4.6 sets the scene — "language modeling with size ~350M
+      models at Chinchilla token counts" — and presents five ablations: (1)
+      architecture and inner SSM layer, comparing Hyena, H3, S4-complex,
+      S4-real and S6 across the H3 and Mamba blocks, best being Mamba+S6 at 8.69
+      perplexity; (2) which of delta, B and C are selective, running from 10.93
+      with none to 8.71 with all three, delta alone the best single at 9.81; (3)
+      initialization and parameterization of A, with complex -1/2+ni at 9.16,
+      real -1/2 at 8.85, real -(n+1) at 8.71 and random at 8.71; (4) the
+      dimension of the delta projection, from 9.12 with none to 8.71 at 64; and
+      (5) SSM state dimension N with constant versus selective B and C.
+      Counting method: distinct ablation tables and figures in the Model
+      Ablations section, treating the architecture table's two halves as one
+      study since they share a caption and grid.
+    grading_notes: >-
+      Correct: 5, ideally naming the axes. Partial, and worth explaining rather
+      than simply marking wrong: 4 (merging the delta-projection and
+      state-dimension sweeps, both being dimension studies), 6 (splitting the
+      architecture table into halves, or adding the SC09 architecture ablation,
+      which is a 6M-parameter audio ablation outside this setting), or 7 (also
+      counting the Selective Copying architecture grid, a synthetic-task
+      experiment). The normalized text has garbled figure cross-references, so
+      judge an answer on the substance of the studies it lists rather than the
+      figure numbers it cites. A further MLP-interleaving ablation is deferred
+      to an appendix that is not present in this text and is not a reported
+      study.
+    quote: >-
+      focusing on the setting of language modeling with size ≈350 M models at
+      Chinchilla token counts
+
+  - id: arxiv-paper-aggregation-3
+    doc_id: arxiv-paper
+    type: aggregation
+    question: >-
+      How many distinct named real-world datasets does the paper use across all
+      of its experiments, and what are they?
+    ground_truth: >-
+      Four: the Pile, for language model pretraining and Pile-validation
+      perplexity; HG38, a single human genome with about 4.5 billion tokens in
+      the training split, for DNA pretraining; YouTubeMix, four hours of solo
+      piano at 16000 Hz, for audio waveform pretraining; and SC09, one-second
+      16 kHz clips of the spoken digits zero through nine, for autoregressive
+      speech generation. Counting method: distinct datasets given a proper name
+      and used for training or evaluation. Beyond those four the paper uses two
+      synthetic tasks (Selective Copying and Induction Heads) and one unnamed
+      downstream dataset — great-apes species classification built by sampling
+      DNA segments from human, chimpanzee, gorilla, orangutan and bonobo — plus
+      the six zero-shot benchmarks in Table 1, which are evaluation suites
+      rather than training datasets.
+    grading_notes: >-
+      Correct: 4, with the names Pile, HG38, YouTubeMix and SC09. Also
+      acceptable: 5, if the answer explicitly includes the great-apes
+      classification data as a separate unnamed dataset and says so. Partial:
+      names three of the four, or gives a count with no names. Near-misses worth
+      explaining: 6 (adding the two synthetic tasks), 10 (adding the six
+      zero-shot benchmarks), or 3 (folding the two audio datasets into one).
+      Wrong: naming datasets that do not appear at all, such as WikiText, C4,
+      OpenWebText, RedPajama or LibriSpeech.
+    quote: a single human genome with about 4.5 billion tokens
+
+  - id: arxiv-paper-global-1
+    doc_id: arxiv-paper
+    type: global
+    question: What is the central claim of this paper, in its own terms?
+    ground_truth: >-
+      That adding a selection mechanism to structured state space models closes
+      the quality gap with attention while keeping linear-time scaling, yielding
+      a general foundation-model backbone. The paper's framing: subquadratic
+      architectures had not matched attention on modalities such as language,
+      and the identified weakness is their "inability to perform content-based
+      reasoning". The fix is threefold: let the SSM parameters delta, B and C be
+      functions of the input so the model can "selectively propagate or forget
+      information along the sequence length dimension depending on the current
+      token"; since that breaks the efficient convolution, use a hardware-aware
+      parallel algorithm in recurrent mode (kernel fusion, parallel scan,
+      recomputation, state materialized only in SRAM), up to 3x faster on A100
+      GPUs; and fold the resulting selective SSM into a simplified architecture
+      with no attention and no MLP blocks. The claimed payoff is linear-time
+      training, constant-time-per-step inference with no KV cache, 5x
+      generation throughput, quality improving with context to 1M-length
+      sequences, and Mamba-3B outperforming same-size Transformers while
+      matching Transformers twice its size.
+    grading_notes: >-
+      Correct: input-dependent selective SSM parameters as the core idea, the
+      hardware-aware scan as the enabling implementation, the simplified
+      attention-free architecture, and Transformer-quality at linear time as the
+      result. Strong partial: selection plus linear-time quality, missing the
+      hardware-aware algorithm or the architectural simplification. Partial:
+      describes the model only as a fast Transformer alternative without
+      selection as the mechanism. Wrong: framing it as an efficient attention
+      variant, as a hybrid retaining attention or MLP blocks, or as primarily a
+      kernel contribution with selection as secondary.
+    quote: >-
+      We identify that a key weakness of such models is their inability to
+      perform content-based reasoning
+
+  - id: arxiv-paper-global-2
+    doc_id: arxiv-paper
+    type: global
+    question: How does the paper position its approach relative to prior state space model work?
+    ground_truth: >-
+      As the removal of a constraint every prior structured SSM was forced into.
+      S4 and its derivatives are linear time invariant — the parameters are
+      fixed for all timesteps — and they are LTI precisely for efficiency, since
+      only LTI models admit the dual recurrent and convolutional forms that
+      expand the effective state without materializing it: "Thus far, all
+      structured SSMs have been LTI (e.g. computed as convolutions) because of
+      fundamental efficiency constraints." The core insight is that "LTI models
+      have fundamental limitations in modeling certain types of data", and the
+      contribution is "removing the LTI constraint while overcoming the
+      efficiency bottlenecks". It names S5, QRNN and SRU as the closest prior
+      methods, and rejects the idea that architecture gating already confers
+      data-dependence: gating "does not interact along the sequence axis, and
+      cannot affect the spacing between tokens", so it "is not an instance of a
+      selection mechanism". Conversely it argues classical RNN gating is a
+      special case of selection. It also drops two conventions of prior SSMs:
+      complex-valued states and special initializations. The headline
+      positioning claim is being the first attention-free model to match a very
+      strong Transformer recipe.
+    grading_notes: >-
+      Correct: identifies linear time invariance as the shared limitation of
+      prior SSMs, that LTI was adopted for computational efficiency, and that
+      the contribution is breaking time-invariance while restoring efficiency
+      via the hardware-aware scan. Strong partial adds the
+      gating-as-special-case point, the architecture-gating-is-not-selection
+      point, or the first-attention-free-model claim. Partial: says only that it
+      improves on S4 without naming time-invariance or the efficiency tradeoff.
+      Wrong: claiming prior SSMs were already input-dependent, that this is the
+      first SSM applied to language, or that it abandons structured diagonal A
+      matrices.
+    quote: >-
+      our technical contributions involve removing the LTI constraint while
+      overcoming the efficiency bottlenecks
+
+  - id: arxiv-paper-global-3
+    doc_id: arxiv-paper
+    type: global
+    question: >-
+      What is the paper's overall argument for why selectivity matters, and what
+      does it concede that selectivity costs?
+    ground_truth: >-
+      The argument is a compression argument. Section 3.1 frames sequence
+      modeling as compressing context into a state: attention is effective but
+      inefficient because it does not compress context at all, while recurrent
+      models are efficient because their state is finite but are bounded by how
+      well that state has compressed the context. Hence "efficient models must
+      have a small state, while effective models must have a state that contains
+      all necessary information from the context", and the proposed principle is
+      "selectivity: or the context-aware ability to focus on or filter out
+      inputs into a sequential state". Two synthetic tasks isolate it —
+      Selective Copying, which needs content-awareness, and Induction Heads, a
+      proxy for in-context learning — and LTI models fail because constant
+      dynamics cannot select input-dependently. Section 3.5 gives the payoffs:
+      variable spacing, filtering context so performance improves monotonically
+      with length, and boundary resetting. Two costs are conceded. The
+      computational one: selection destroys the convolutional form, so the model
+      must be computed as a recurrence, which is why the fused hardware-aware
+      scan is necessary at all. The inductive-bias one: the "No Free Lunch"
+      discussion admits that overcoming weakness on discrete modalities
+      "conversely can impede their performance on data that LTI SSMs excel on",
+      meaning continuous signals such as audio and video. The paper also
+      concedes its evaluation is limited to small model sizes.
+    grading_notes: >-
+      Correct: the compression and efficiency-versus-effectiveness framing,
+      selectivity as content-aware filtering into a finite state, and at least
+      one of the two conceded costs. Strong partial: the compression argument
+      with supporting evidence but no concession. Partial: describes selectivity
+      only as input-dependent parameters without the compression rationale.
+      Wrong: claiming the paper argues selectivity is free of tradeoffs, that
+      selection improves efficiency (it costs the convolutional form), or that
+      the conceded weakness is on discrete data — it is the opposite. Any
+      perplexity figures cited belong to the roughly 350M ablations, not the
+      2.8B model.
+    quote: >-
+      selectivity: or the context-aware ability to focus on or filter out inputs
+      into a sequential state
+
+  - id: arxiv-paper-absent-1
+    doc_id: arxiv-paper
+    type: absent
+    question: What score does the largest model achieve on MMLU?
+    ground_truth: >-
+      The paper does not report MMLU at all; the benchmark is never mentioned,
+      and no multitask knowledge or exam-style benchmark appears. The closest
+      thing it contains is Table 1's zero-shot suite, which covers exactly six
+      accuracy benchmarks — LAMBADA, HellaSwag, PIQA, ARC-easy, ARC-challenge
+      and WinoGrande — plus Pile validation perplexity. For Mamba-2.8B those are
+      LAMBADA perplexity 4.23 and accuracy 69.2, HellaSwag 66.1, PIQA 75.2,
+      ARC-E 69.7, ARC-C 36.3, WinoGrande 63.5, average 63.3, Pile perplexity
+      6.22. A correct answer says no MMLU result appears.
+    grading_notes: >-
+      Correct: says the paper does not evaluate on MMLU, ideally naming the six
+      benchmarks it does report, or noting that all its downstream evaluations
+      are zero-shot commonsense and reading benchmarks rather than knowledge
+      benchmarks. Partial: says "not found" or "unclear" without naming what the
+      paper does report. Hallucinated: any numeric MMLU score, or presenting the
+      63.3 average as an MMLU score. That average is over the six benchmarks, so
+      an answer offering it as MMLU is a fabrication rather than a near-miss.
+    absent_terms:
+      - MMLU
+      - massive multitask
+      - multitask
+      - TruthfulQA
+      - BoolQ
+      - OpenBookQA
+      - HumanEval
+      - few-shot
+
+  - id: arxiv-paper-absent-2
+    doc_id: arxiv-paper
+    type: absent
+    question: How does the model perform on the Long Range Arena benchmark?
+    ground_truth: >-
+      The paper never evaluates on Long Range Arena. LRA is mentioned exactly
+      once, in the introduction, and only as background about prior SSMs: they
+      "have principled mechanisms for modeling long-range dependencies and have
+      dominated benchmarks such as the Long Range Arena". No LRA task —
+      ListOps, Text, Retrieval, Image, Pathfinder, Path-X — appears anywhere,
+      and no LRA numbers are given for this model or any baseline. The closest
+      things the paper contains are its own long-context experiments:
+      induction-heads extrapolation to 2^20 tokens, 4000x the training length of
+      256, while no other method exceeds 2x; DNA pretraining perplexity that
+      keeps improving to sequence length 1M while HyenaDNA degrades; and audio
+      pretraining from 8192 up to about a million samples.
+    grading_notes: >-
+      Correct: states that no LRA results are reported, ideally noting that LRA
+      appears only as a one-line remark about prior SSMs. Also correct:
+      substitutes the paper's actual long-context evidence while making clear it
+      is not LRA. Partial: "the paper doesn't say" with no mention of the
+      background reference or the actual long-context experiments.
+      Hallucinated: reporting any LRA accuracy or average, naming per-task LRA
+      scores, or claiming this model dominates LRA — the sentence in the
+      introduction is about prior SSMs and is a citation, so attributing it to
+      Mamba is a misreading rather than a partial answer.
+    absent_terms:
+      - LRA
+      - Path-X
+      - Pathfinder
+      - ListOps
+      - sCIFAR
+      - sequential CIFAR
+
+  - id: arxiv-paper-absent-3
+    doc_id: arxiv-paper
+    type: absent
+    question: >-
+      How much compute did it take to train the models — how many GPUs and how
+      many GPU-hours?
+    ground_truth: >-
+      The paper states no training compute cost: no GPU count, no GPU-hours, no
+      wall-clock training time, no device or cluster description, and no
+      training FLOP budget. The closest things it contains are a single hardware
+      mention used for a speed comparison rather than a training budget — the
+      selective-scan implementation is "up to 3x faster on A100 GPUs" — and
+      token and step budgets: 300B training tokens for the language models,
+      10K gradient steps and 10B tokens for DNA model-size scaling, and 20K
+      gradient steps and about 330B tokens for DNA context-length scaling. The
+      efficiency benchmarks are all relative multipliers with no absolute
+      timings, and all training hyperparameters are deferred to an appendix that
+      is not present in this text.
+    grading_notes: >-
+      Correct: says the paper does not report GPU counts, GPU-hours or training
+      wall-clock time, ideally distinguishing the A100 mention as a kernel-speed
+      comparison rather than a training-cost statement. Partial: says the
+      compute cost is not given but omits the closest substitutes. Hallucinated:
+      inventing any number of GPUs, GPU-hours, days or dollar cost; asserting
+      "trained on N A100s"; presenting the DNA gradient-step counts or the 300B
+      token count as the answer to a compute-hours question without flagging
+      that no time or device count is stated; or claiming absolute throughput or
+      latency figures appear.
+    absent_terms:
+      - GPU-hours
+      - GPU hours
+      - wall-clock
+      - training time
+      - compute budget
+      - petaflop
+      - AdamW
+      - tokens per second
+
+  # ---------------------------------------------------------------------------
+  # edgar-contract — License Agreement between Processa Pharmaceuticals and
+  # Ocuphire Pharma, Exhibit 10.1 to Ocuphire's Form 8-K filed 2021-06-23.
+  # U.S. public filing. ~41k tokens. Unredacted, which is why it can carry
+  # aggregation questions about payment terms at all.
+  # ---------------------------------------------------------------------------
+
+  - id: edgar-contract-needle-1
+    doc_id: edgar-contract
+    type: needle
+    question: What law governs this agreement and where must disputes be litigated?
+    ground_truth: >-
+      Section 12.1 provides that the Agreement is governed by and interpreted in
+      accordance with the laws of the State of Maryland, without regard to its
+      conflicts of laws rules. Each Party irrevocably submits to the exclusive
+      jurisdiction of the state court sitting in Maryland, waives objections to
+      venue and inconvenient forum, and agrees process may be served by notice
+      under the Agreement. Each Party retains the right to seek reformation,
+      specific performance or injunctive relief in any court of competent
+      jurisdiction. There is no arbitration clause; Section 12.2 first requires
+      referral to the Parties' Senior Executives for 20 days of good-faith
+      negotiation.
+    grading_notes: >-
+      Correct: Maryland law plus exclusive jurisdiction in Maryland state court.
+      Partial: names Maryland law only, or says "Maryland courts" without the
+      exclusivity or the state-court detail, or mentions the Senior Executive
+      escalation without naming Maryland. Incorrect: Delaware — a plausible
+      near-miss, since both parties are Delaware-organized — or New York, or
+      federal court in Maryland. The equitable-relief carve-out and the 20-day
+      escalation are bonus.
+    quote: >-
+      This Agreement shall be governed by and interpreted in accordance with the
+      laws of the state of Maryland
+
+  - id: edgar-contract-needle-2
+    doc_id: edgar-contract
+    type: needle
+    question: Who are the parties to this agreement and when did it take effect?
+    ground_truth: >-
+      Processa Pharmaceuticals, Inc. ("Processa"), organized under Delaware law
+      with a business address at 7380 Coca Cola Drive, Suite 106, Hanover, MD
+      21076, and Ocuphire Pharma, Inc. ("Ocuphire"), also Delaware-organized,
+      at 37000 Grand River Avenue, Suite 120, Farmington Hills, MI 48335. The
+      Effective Date is June 16, 2021. Ocuphire is the licensor of the Ocuphire
+      Patent Rights and Ocuphire Know-How; Processa is the licensee. Signed by
+      David Young for Processa and Mina Sooch for Ocuphire, both as CEO.
+    grading_notes: >-
+      Correct: both party names plus June 16, 2021. Partial: both parties with a
+      wrong or vague date, or the right date with only one party named.
+      Incorrect: June 17, 2020, which is the date of the unrelated Merger
+      Agreement referenced in Section 10.2(e) and a genuine trap; or naming
+      Rexahn Pharmaceuticals or Biosense Global as a party, since both appear as
+      background to the Biosense Agreement but are not parties here. Addresses
+      and signatories are bonus.
+    quote: THIS LICENSE AGREEMENT is entered into this 16 day of June, 2021
+
+  - id: edgar-contract-needle-3
+    doc_id: edgar-contract
+    type: needle
+    question: Where and to whom should a formal notice to Processa be sent?
+    ground_truth: >-
+      Under Section 12.4, notices to Processa go to Processa Pharmaceuticals,
+      Inc., 7380 Coca Cola Drive, Suite 106, Hanover, MD 21076, Attn: Wendy Guy,
+      Chief Administrative Officer, email wguy@processapharmaceuticals.com.
+      Notices must be in writing and delivered personally, by registered or
+      certified mail with return receipt, by reputable nationwide overnight
+      courier, or by email. Deemed delivery is on receipt if by hand, 3 Business
+      Days after sending if by registered or certified mail, 1 Business Day after
+      sending if by overnight courier, and on transmission with confirmation if
+      by email.
+    grading_notes: >-
+      Correct: the Hanover, Maryland street address plus Wendy Guy as the named
+      recipient; title and email are bonus. Partial: the correct address without
+      the attention party, or the attention party without the address. Note the
+      notice address matches the address in the preamble, so an arm quoting the
+      preamble can land the address and miss "Attn: Wendy Guy" — that is a
+      partial. Incorrect: giving Ocuphire's Farmington Hills address, or naming
+      David Young, who signed but is not the notice recipient.
+    quote: "Attn: Wendy Guy, Chief Administrative Officer"
+
+  - id: edgar-contract-multi_hop-1
+    doc_id: edgar-contract
+    type: multi_hop
+    question: >-
+      If Ocuphire is sued by a patient and seeks indemnification from Processa,
+      does the agreement's exclusion of consequential damages cut down what
+      Processa has to pay?
+    ground_truth: >-
+      No. Section 10.5 excludes indirect, incidental, consequential, special,
+      exemplary and punitive damages including lost profits, but expressly
+      states that nothing in Section 10.5 is intended to limit or restrict the
+      indemnification rights or obligations of either Party with respect to
+      Third-Party Claims, and also carves out breach of confidentiality and
+      willful misconduct, intentional breach or fraud. A patient suit is a
+      Product Liability Claim under Section 10.1(b), so the carve-out applies.
+      Critically, the indemnity runs to "Losses", a defined term in Section 1.28
+      that expressly includes "special, indirect, incidental, and consequential
+      damages, lost profits, and Third-Party punitive and multiple damages",
+      plus fines, penalties, judgments, settlements and counsel fees. So the
+      very categories Section 10.5 excludes as between the Parties are
+      recoverable through the Article X indemnity. The only reductions are
+      Section 10.1's proviso for Losses resulting from Ocuphire's own breach or
+      negligence, and Section 10.3(e)'s net-of-insurance requirement. There is
+      no monetary cap, and Article X survives termination under Section 11.9.
+    grading_notes: >-
+      Correct: "no", plus at least one of the two load-bearing reasons — the
+      Section 10.5 carve-out for Third-Party Claim indemnification, or the
+      Section 1.28 definition of Losses expressly including consequential and
+      punitive damages. Best answers give both. Partial: "no" with only a vague
+      gesture at Article X, or an answer that quotes the exclusion and its
+      carve-out without connecting it to Product Liability Claims or Losses.
+      Incorrect, and the likely retrieval failure: "yes, consequential damages
+      are excluded" — what an arm that retrieves only Section 10.5's first
+      sentence will say. Also incorrect: asserting a dollar cap exists.
+    quote: >-
+      including special, indirect, incidental, and consequential damages, lost
+      profits, and Third-Party punitive and multiple damages
+
+  - id: edgar-contract-multi_hop-2
+    doc_id: edgar-contract
+    type: multi_hop
+    question: >-
+      What is the lowest royalty percentage Ocuphire could ever end up receiving
+      on product sales, and what would have to happen for it to drop that far?
+    ground_truth: >-
+      The floor is 3% of annual Net Sales for the affected Product. The starting
+      rate in Section 6.5(a) is stated as "seven percent (7.5%)" — the words and
+      the numeral disagree in the document. Two reductions can apply. First,
+      Section 6.5(a): during any period within the Royalty Term when a country
+      has neither Regulatory Exclusivity nor a Valid Claim of the Ocuphire
+      Patent Rights, the rate for that Product in that country is reduced to 50%
+      of the Section 6.5 rates. Second, Section 6.5(c): where mutually
+      acceptable patent counsel opines a Third-Party Patent License is needed,
+      40% of the royalties actually paid under it are creditable against
+      royalties owed to Ocuphire. Both provisions state the same anti-erosion
+      floor — the reduction shall not cause the rate "to be reduced to less than
+      three percent (3%) of annual Net Sales for such Product". So the 50%
+      haircut alone yields 3.75%, and stacking the third-party credit takes it
+      to but not below 3%.
+    grading_notes: >-
+      Correct: 3% as the floor, plus at least one reduction mechanism. Best
+      answers name both and note the floor is stated twice. Partial: 3.75%,
+      which means it found the 50% haircut and stopped; or 3% with no mechanism;
+      or the headline rate only. Incorrect: stating the minimum is 7.5% or 7%,
+      or that royalties can fall to zero. Either 7.5% or 7% is acceptable for
+      the headline rate, and a fully correct answer flags the inconsistency. An
+      answer claiming royalties drop to 0% through sublicensing is a distinct
+      error: sublicensed sales are excluded from Net Sales, with Ocuphire paid
+      32% of Sublicense Consideration instead, rather than royalty-reduced.
+    quote: to be reduced to less than three percent (3%) of annual Net Sales for such Product
+
+  - id: edgar-contract-multi_hop-3
+    doc_id: edgar-contract
+    type: multi_hop
+    question: >-
+      After this agreement is terminated, can Ocuphire still audit Processa's
+      royalty records, and does Processa still owe money for sales made before
+      termination?
+    ground_truth: >-
+      Yes to both, with a time limit on the audit right. Section 11.9 lists the
+      surviving provisions and includes "6.8 (only for thirty-six (36) months
+      after expiration or termination)", so Ocuphire's audit right survives for
+      36 months. Under Section 6.8 the right is exercisable once annually at
+      Ocuphire's expense through an independent accounting firm reasonably
+      acceptable to Processa, on at least 14 days' notice, reaching payments
+      made within the preceding 36 months; Processa keeps records for 3 years.
+      A discrepancy must be paid within 5 Business Days with interest under
+      Section 6.12, and Processa bears the audit cost only if the underpayment
+      exceeds 5%. On accrued money, Section 11.8 — itself in the survival list —
+      provides that termination does not release either Party from liability
+      already accrued or attributable to a period prior to termination,
+      including Article VI payment obligations. So pre-termination royalties,
+      milestones and Sublicense Payments remain owing even though Sections 6.2,
+      6.4, 6.5, 6.6 and 6.7 are not individually listed as surviving.
+    grading_notes: >-
+      Correct: the audit right survives but only 36 months, and accrued
+      pre-termination payments survive via Section 11.8 or the survival clause.
+      Partial: the audit right survives without the 36-month limit; or the
+      36-month figure without accrued payments; or an answer drawn from Section
+      6.8 alone, which is the one-hop retrieval result and says nothing about
+      survival; or claiming Section 6.5 survives as such, when the correct route
+      is 11.8. Incorrect: "no, all Article VI obligations end at termination", or
+      conflating the 36-month survival period with the 3-year record-retention
+      period, which are separate figures. Section 6.8 contains a self-referential
+      drafting error; do not penalize an answer that reads it as Article VI
+      payments generally.
+    quote: 6.8 (only for thirty-six (36) months after expiration or termination)
+
+  - id: edgar-contract-aggregation-1
+    doc_id: edgar-contract
+    type: aggregation
+    question: How many termination rights does either party have under this agreement?
+    ground_truth: >-
+      Article XI contains five subsections conferring a right to terminate —
+      Sections 11.2 through 11.6 — which resolve into seven party-specific
+      rights, three for Processa and four for Ocuphire. They are: Section 11.2,
+      Termination for Convenience, Processa only, on 120 days' notice; Section
+      11.3, Termination for Cause, either Party on material breach after a
+      120-day cure period, or 15 days for a payment breach; Section 11.4,
+      Additional Termination by Ocuphire, where Ocuphire has given the Section
+      5.2 diligence notice and Processa fails within 90 days to demonstrate
+      compliance; Section 11.5, Termination for Insolvency, either Party;
+      Section 11.6, Termination for Challenge of Patent Rights, Ocuphire only,
+      if Processa or its Affiliates or Sublicensees challenge the Ocuphire or
+      Joint Patent Rights, with an exception where Processa terminates the
+      offending Sublicensee within 30 days.
+    grading_notes: >-
+      Counting method: distinct Article XI subsections that themselves confer a
+      right to terminate the Agreement, which is five, expanding to seven when
+      counted per party because 11.3 and 11.5 are mutual. Cross-references are
+      not counted separately: Section 5.2 is a pointer that says Ocuphire may
+      terminate pursuant to Section 11.4, not an independent right, and Section
+      11.1 is expiration by run-off of the last Royalty Term. Correct: 5, or 7
+      party-specific, with all five provisions named or described; accept either
+      number if the enumeration is right and the basis is stated. Also
+      acceptable: 6, if Section 5.2 is counted separately but identified as the
+      diligence route into 11.4. Partial: three or four of the five — the
+      classic failure is finding the generic convenience, breach and insolvency
+      trio and missing the two Ocuphire-specific levers, diligence and patent
+      challenge. Incorrect: one or two; claiming both Parties can terminate for
+      convenience, when only Processa can; or claiming Processa can terminate
+      for Ocuphire's diligence failure or patent challenge, both Ocuphire-only.
+    quote: Termination for Challenge of Patent Rights
+
+  - id: edgar-contract-aggregation-2
+    doc_id: edgar-contract
+    type: aggregation
+    question: >-
+      How many separate milestone payments could Processa owe Ocuphire, and what
+      would they add up to in total?
+    ground_truth: >-
+      Fifteen milestone payments totalling $227,750,000 — eight Development
+      Milestone Payments under Section 6.2 worth $20,250,000, and seven Sales
+      Milestone Payments under Section 6.4 worth $207,500,000. The development
+      milestones are $750,000 and $750,000 on first and last patient dosed in
+      the first Pivotal Clinical Trial for the 1st Indication; $375,000 and
+      $375,000 for the same events in the 2nd Indication; $7,000,000 on 1st U.S.
+      Regulatory Approval; $5,000,000 on the 2nd; $4,000,000 on 1st Regulatory
+      Approval outside the U.S. in the licensed Territory; and $2,000,000 on the
+      2nd. The sales milestones are keyed to worldwide annual accrued Net Sales:
+      $2,500,000 at $50M or more, $5,000,000 at $100M, $12,500,000 at $250M,
+      $25,000,000 at $500M, $37,500,000 at $750M, $50,000,000 at $1 billion and
+      $75,000,000 at $1.5 billion. Only one Sales Milestone is payable per
+      Calendar Year, the highest achieved being paid and the rest carried
+      forward. Under Section 6.6(b) a Sublicensee's achievement of a Development
+      Milestone triggers no payment, and Sublicense Consideration is excluded
+      from the sales milestone and royalty calculations.
+    grading_notes: >-
+      Counting method: distinct rows in the Section 6.2 and Section 6.4 payment
+      tables, eight plus seven. Correct: 15 and $227,750,000, or a clearly shown
+      split of eight development milestones at $20.25M and seven sales
+      milestones at $207.5M. Accept $228.25M only if the answer says explicitly
+      that it is adding the $500,000 Upfront Fee, which is not a milestone.
+      Partial: one table only — the expected single-chunk retrieval result,
+      since the two tables sit about fifty lines apart with Section 6.3 between
+      them; or the right count with the arithmetic wrong. Incorrect: totals
+      derived by summing the Net Sales thresholds, which comes to $4.15 billion,
+      rather than the payments — a very plausible table misparse; or describing
+      the milestones as redacted or unstated.
+    quote: 1st Regulatory Approval in the U.S.
+
+  - id: edgar-contract-aggregation-3
+    doc_id: edgar-contract
+    type: aggregation
+    question: How many defined terms does Article I of the agreement establish?
+    ground_truth: >-
+      Article I runs from Section 1.1 to Section 1.60, and Sections 1.1 through
+      1.58 are the substantive definitions — 58 defined terms, running
+      alphabetically from "Affiliate" to "Valid Claim". Section 1.59,
+      "Additional Definitions", is not a definition but a table
+      cross-referencing 49 further defined terms established elsewhere in the
+      Agreement (47 distinct, since the table lists Ocuphire twice and lists
+      both singular and plural forms of Product Liability Claim). Section 1.60
+      sets out interpretive rules, not definitions. Several of the 58
+      subsections define more than one form of a term, and several embed
+      additional quoted defined terms, so a term-by-term count runs higher
+      than 58.
+    grading_notes: >-
+      Counting method: numbered subsections of Article I that state a definition,
+      which is 1.1 through 1.58, excluding Section 1.59, a cross-reference
+      table, and Section 1.60, construction rules. Correct: 58; or 60 if the
+      answer explains it is counting all Article I subsections. Also correct: 58
+      in Article I plus 49 cross-referenced in Section 1.59, for roughly 105 to
+      107 defined terms in the Agreement. Partial: 59 or 60 stated without
+      explanation, an off-by-one from miscounting 1.59 and 1.60; a count of the
+      Section 1.59 table alone, which is 49; or an approximation such as "about
+      60". Incorrect: under 50 or over 120, or an answer that cannot name the
+      first and last definitions. The Section 1.59 table itself carries stale
+      cross-references; do not penalize an answer that flags them.
+    quote: Additional Definitions
+
+  - id: edgar-contract-global-1
+    doc_id: edgar-contract
+    type: global
+    question: Taken as a whole, which party bears more risk under this deal, and why?
+    ground_truth: >-
+      Processa bears substantially more risk. This is a classic out-license in
+      which Ocuphire hands over an asset and retreats to a royalty and milestone
+      position while Processa assumes all execution, funding and liability
+      exposure. Cost and execution risk are entirely Processa's: it is solely
+      responsible for all Development and regulatory activity (Section 3.1) and
+      all Commercialization (Section 4.1) including costs, and each section says
+      "Ocuphire shall have no future obligations". Patent costs sit with
+      Processa: Sections 7.2(a) and 7.2(b) put 100% of the cost of prosecuting
+      and maintaining even the Ocuphire Patent Rights on Processa. Indemnity
+      flows mainly one way: Processa's Section 10.1 indemnity covers all
+      Development, Manufacture, use and Commercialization including Product
+      Liability Claims, while Ocuphire's Section 10.2 indemnity is largely
+      limited to its pre-Effective-Date activities and its own breaches — and
+      because Losses include consequential and punitive damages and there is no
+      aggregate liability cap, that exposure is open-ended. Only Processa must
+      carry insurance: at least $5,000,000 per occurrence and $10,000,000
+      aggregate under Section 10.4. The termination levers point at Processa:
+      Ocuphire has four routes out against Processa's three, two of them
+      Processa-specific, and on an Ocuphire termination Section 11.7 transfers
+      regulatory filings, data and manufacturing arrangements to Ocuphire.
+      Finally Processa takes the asset largely as-is, since Section 9.5
+      disclaims all warranties in capitals. Ocuphire's residual risks are real
+      but bounded: its IP representations, its Biosense Agreement covenants, its
+      acceptance of illiquid locked-up equity for 60% of the upfront value, and
+      its exposure to Processa simply walking away on 120 days' notice.
+    grading_notes: >-
+      Correct: identifies Processa and supports it with at least three distinct
+      document-grounded reasons drawn from different Articles — sole funding of
+      Development and Commercialization, 100% of patent prosecution cost, the
+      uncapped product-liability indemnity, the mandatory insurance, Ocuphire's
+      extra termination rights with the Section 11.7 clawback, or the Section
+      9.5 warranty disclaimer. Partial: the right conclusion with only one or
+      two reasons, or reasons all drawn from a single Article; or a "both bear
+      risk" answer that still identifies Processa's cost and indemnity exposure
+      alongside Ocuphire's reliance and equity risk. Incorrect: concludes
+      Ocuphire bears more risk without acknowledging Processa's cost, indemnity
+      and insurance burdens; or asserts risk is balanced because the indemnities
+      are mutual, when they are formally reciprocal but asymmetric in scope.
+    quote: >-
+      Ocuphire shall have no future obligations with regard to the Development of
+      Products
+
+  - id: edgar-contract-global-2
+    doc_id: edgar-contract
+    type: global
+    question: >-
+      How does this agreement divide up responsibility for developing and
+      commercializing the product?
+    ground_truth: >-
+      The allocation is close to total: Processa does everything, Ocuphire hands
+      over what it has and then monitors. Ocuphire grants an exclusive — even as
+      to Ocuphire and its Affiliates — royalty-bearing worldwide license with the
+      right to sublicense, to Develop, Manufacture, use and Commercialize
+      Products in the Field in the Territory, the Territory excluding the
+      territory already licensed under the Biosense Agreement. Ocuphire's
+      affirmative obligations are front-loaded and one-time: within 30 days it
+      transfers the Ocuphire Know-How and within 90 days the drug substance,
+      drug product and Product documents including Regulatory Approvals
+      (Section 2.4). Thereafter Processa controls and is solely responsible for
+      Development and regulatory activity (Section 3.1) and Commercialization
+      (Section 4.1) including all costs, and also controls patent prosecution at
+      its own cost, holds the first right to enforce, and has the exclusive
+      right to seek patent term extensions. There is no joint steering
+      committee. The Development Plan is delivered to Ocuphire but is expressly
+      "a guide not a recipe or required steps", and the Commercialization Plan is
+      provided for information only. Ocuphire's real lever is Article V:
+      Processa must use Commercially Reasonable Efforts and hit two hard
+      milestones — first patient dosed in a Clinical Trial before the third
+      anniversary, and first patient dosed in a Pivotal Clinical Trial or in a
+      Clinical Trial for a second Indication before the fifth — failing which
+      Ocuphire can begin the Section 5.2 process leading to termination.
+      Ocuphire also holds a consent right over Third-Party sublicenses, a
+      step-in option on Abandoned Patents, and a step-in enforcement right.
+    grading_notes: >-
+      Correct: states that Processa is solely responsible for Development,
+      Manufacturing and Commercialization and bears all associated costs, that
+      Ocuphire's obligations are essentially the one-time transfer under Section
+      2.4, and identifies Ocuphire's retained oversight — the Article V
+      diligence obligations, the reporting and plan-delivery duties, or the
+      sublicense consent right. Partial: says Processa does everything without
+      Ocuphire's retained rights, or lists the reporting obligations without the
+      "solely responsible" allocation, or describes it as a collaboration.
+      Incorrect: describing a joint development or steering committee, which
+      does not exist and is a plausible hallucination for a pharma licence;
+      saying Ocuphire funds or shares Development costs; or saying Ocuphire
+      controls regulatory filings before termination, when it receives them only
+      on an Ocuphire-initiated termination under Section 11.7(c).
+    quote: shall control and be solely responsible for the Development
+
+  - id: edgar-contract-global-3
+    doc_id: edgar-contract
+    type: global
+    question: How is the money in this deal structured overall?
+    ground_truth: >-
+      A four-layer out-licence package with a sublicence overlay that can
+      substitute for the last three layers. First, an Upfront Fee of $500,000
+      under Section 6.1(a), payable within 45 Business Days: 44,689 shares of
+      Processa Common Stock worth $300,000 at $6.7131 per share, plus $200,000
+      in cash, the shares carrying a one-year lock-up. Second, Development
+      Milestone Payments of up to $20,250,000 across eight milestones. Third,
+      Sales Milestone Payments of up to $207,500,000 across seven Net Sales
+      tiers, one-time and non-creditable, with only one payable per Calendar
+      Year. Fourth, royalties under Section 6.5 at a headline 7.5% of aggregate
+      worldwide annual accrued Net Sales, halved where a country has neither
+      Regulatory Exclusivity nor a Valid Claim, reducible by a credit of 40% of
+      Third-Party Patent License royalties, but never below a 3% floor; the
+      Royalty Term runs at least to the tenth anniversary of First Commercial
+      Sale, after which the licence is fully paid-up. Overlaying these, Section
+      6.6 gives Ocuphire 32% of all Sublicense Consideration, and that layer
+      substitutes rather than stacks: a Sublicensee's milestone triggers no
+      Development Milestone Payment and Sublicense Consideration is excluded
+      from the sales milestone and royalty calculations. Total non-royalty
+      potential is $228,250,000. Mechanics include quarterly reports and payment
+      within 30 days, payment in U.S. dollars, Ocuphire bearing withholding-tax
+      risk, and late payments accruing 30-day USD LIBOR plus 5%.
+    grading_notes: >-
+      Correct: all four core layers with correct figures for at least three —
+      $500,000 upfront split $300,000 in stock and $200,000 cash, about $20.25M
+      in development milestones, about $207.5M in sales milestones, and a 7.5%
+      royalty with a 3% floor. Best answers add the 32% sublicence share and the
+      ten-year minimum Royalty Term. Partial: two or three layers with correct
+      figures; all four described qualitatively without figures; or correct
+      milestone totals while describing the upfront as all cash. Incorrect:
+      stating the financial terms are redacted or unspecified, which an arm
+      trained to expect redactions may do; reporting the royalty as a tiered or
+      escalating scale, when it is a single rate subject to reductions; or
+      summing the Net Sales thresholds as if they were payments.
+    quote: 44,689 shares of Processa Common Stock
+
+  - id: edgar-contract-absent-1
+    doc_id: edgar-contract
+    type: absent
+    question: >-
+      Does the agreement guarantee Ocuphire most-favored-nation treatment if
+      Processa later grants a third party better royalty terms?
+    ground_truth: >-
+      No — the agreement contains no most-favored-nation, most-favored-licensor
+      or comparable-terms provision of any kind. Nothing obliges Processa to
+      give Ocuphire terms at least as favourable as those granted to or by any
+      other party, and nothing entitles Ocuphire to have its royalty rate
+      adjusted by reference to another licensee's deal. The closest things it
+      does contain are Section 6.6(a), a fixed 32% share of any Sublicense
+      Consideration — economic participation, but a fixed percentage with no
+      benchmarking or ratchet; Section 2.1(b), Ocuphire's consent right over
+      Third-Party sublicences with copies due within 30 days, a visibility and
+      veto mechanism rather than a terms-matching right; Section 9.3(a),
+      Ocuphire's covenant not to grant conflicting rights, which runs the other
+      way and protects Processa; and Sections 6.5(a) and 6.5(c), which adjust
+      the royalty only for loss of exclusivity or patent stacking, never by
+      comparison to another party's terms.
+    grading_notes: >-
+      Correct: states affirmatively that there is no most-favoured-nation or
+      comparable-terms clause. Credit is higher if the answer names the closest
+      actual provision, the fixed 32% Sublicense Payment or the Section 2.1(b)
+      consent right, so the refusal reads as informed rather than a shrug.
+      Partial: a hedged non-answer with no supporting orientation, or an answer
+      that says no MFN but then misdescribes Section 6.6 as functioning like
+      one. Hallucinated: asserting an MFN clause exists, citing a section number
+      for one, or presenting the Section 6.5 royalty reductions or the 3% floor
+      as a benchmarking mechanism. An answer calling the 32% sublicence share
+      "effectively an MFN" without first stating no MFN clause exists is wrong.
+    absent_terms:
+      - most favored
+      - most-favored
+      - MFN
+      - no less favorable
+      - comparable terms
+      - parity
+
+  - id: edgar-contract-absent-2
+    doc_id: edgar-contract
+    type: absent
+    question: If Processa is acquired, can Ocuphire terminate the license?
+    ground_truth: >-
+      No — the agreement gives neither party a right to terminate on the other's
+      change of control. "Change of Control" is a defined term in Section 1.8,
+      with five triggers, but it is used in only two operative places and
+      neither is a termination right: Section 12.7 permits either Party to
+      assign the Agreement without the other's consent to a successor by way of
+      a Change of Control or a sale of all or substantially all of the relevant
+      business, provided the successor agrees in writing to be bound; and
+      Section 8.1 permits disclosure of Confidential Information to potential
+      Acquirors evaluating such a transaction. The exhaustive list of
+      termination rights is Sections 11.2 through 11.6 — convenience by
+      Processa, material breach by either Party, Ocuphire's diligence-failure
+      right, insolvency by either Party, and Ocuphire's patent-challenge right —
+      none triggered by an acquisition. The only consequences the agreement
+      attaches to Processa being acquired are definitional: Sections 1.46 and
+      1.47 exclude the acquirer's other affiliates' intellectual property from
+      Processa Know-How and Processa Patent Rights unless they later work on a
+      Compound or Product.
+    grading_notes: >-
+      Correct: states there is no change-of-control termination right for either
+      party, ideally noting that Change of Control is nonetheless a defined term
+      used for assignment and confidential disclosure. Partial: says no such
+      right exists without locating where Change of Control is actually used, or
+      says only that termination rights are limited to Sections 11.2 to 11.6
+      without addressing the concept. Hallucinated: asserting either party may
+      terminate on a change of control; citing Section 11.5 on insolvency or
+      Section 12.7 on assignment as conferring a termination right; or claiming
+      consent is required for an assignment to an acquirer, when Section 12.7
+      expressly makes that assignment consent-free. The plausible near-miss that
+      Section 11.5 insolvency covers distressed acquisitions does not cover a
+      solvent acquisition and is not correct.
+    absent_terms:
+      - terminate upon a change
+      - acquired by a competitor
+      - change of control of the licensee
+
+  - id: edgar-contract-absent-3
+    doc_id: edgar-contract
+    type: absent
+    question: >-
+      If Ocuphire licenses the compound in the excluded territory, or Processa
+      sells the program off, does the other party get a right of first refusal?
+    ground_truth: >-
+      No — the agreement contains no right of first refusal, right of first
+      negotiation, right of first offer, or matching right of any kind, for
+      either party, on any subject. Nothing requires either party to bring a
+      proposed transaction to the other before dealing with a Third Party.
+      Nothing gives Processa any right over the Excluded Territory: Section 1.55
+      simply carves out of the Territory any territory already licensed under
+      the Biosense Agreement, and the only other mention permits Ocuphire to
+      redact information relating to it. The closest things the agreement does
+      contain, none of which is a right of first refusal, are Section 2.1(b),
+      Ocuphire's consent right over Third-Party sublicences; Section 12.7, a
+      mutual anti-assignment provision with consent-free carve-outs for
+      Affiliates and successors; Sections 7.2(a) and 7.2(b), Ocuphire's option
+      to continue prosecuting Abandoned Patents at its own expense; Section
+      11.7(e), Ocuphire's option to take assignment of Manufacturing agreements
+      on termination; and Section 11.7(f), its right to buy remaining inventory
+      at cost of Manufacture. All of those are options triggered by abandonment
+      or termination, not pre-emptive rights over a third-party transaction.
+    grading_notes: >-
+      Correct: states plainly that there is no right of first refusal or first
+      negotiation. Higher credit for naming the closest present mechanisms — the
+      sublicence consent right, the assignment consent requirement, or the
+      post-termination options over Manufacturing agreements and inventory — and
+      for noting that the Excluded Territory carve-out confers no expansion
+      right on Processa. Partial: a bare "not addressed" with no orientation, or
+      an answer that denies a right of first refusal but then describes the
+      Section 2.1(b) consent right as functionally equivalent without flagging
+      the difference. Hallucinated: asserting any such right exists; treating the
+      sublicence consent, the assignment consent, or the Section 11.7 options as
+      a right of first refusal; or claiming Processa has an option over the
+      Excluded Territory. The Section 7.2 "option to continue to prosecute" and
+      the Section 11.7(e) "at Ocuphire's option" language are the two likeliest
+      false positives, since both use the word option.
+    absent_terms:
+      - first refusal
+      - right of first
+      - first negotiation
+      - first offer
+      - ROFR
+      - ROFN
+      - option to acquire
+      - reversion
+
+  # ---------------------------------------------------------------------------
+  # form-10k — Ford Motor Company Annual Report on Form 10-K, FY2025, filed
+  # 2026-02-11. U.S. public filing. ~173k tokens. An order of magnitude larger
+  # than the paper, which is what moves the cost crossover.
+  # ---------------------------------------------------------------------------
+
+  - id: form-10k-needle-1
+    doc_id: form-10k
+    type: needle
+    question: >-
+      Which accounting firm audits the company's financial statements, and how
+      long has it served as auditor?
+    ground_truth: >-
+      PricewaterhouseCoopers LLP, which states "We have served as the Company's
+      auditor since 1946". The report is signed in Detroit, Michigan and dated
+      February 10, 2026; PwC's PCAOB ID is 238. It issued unqualified opinions on
+      both the consolidated financial statements as of December 31, 2025 and
+      2024, and on internal control over financial reporting as of December 31,
+      2025.
+    grading_notes: >-
+      Correct requires PricewaterhouseCoopers or PwC and the year 1946, or
+      "since 1946" or "about 80 years". Partial: names the firm without the
+      tenure, or the tenure without the firm. Incorrect: any other firm, or a
+      tenure computed from the report date of 2026 rather than 1946. Detroit and
+      the PCAOB ID are bonus.
+    quote: We have served as the Company
+
+  - id: form-10k-needle-2
+    doc_id: form-10k
+    type: needle
+    question: >-
+      How many people did the company employ at the end of the fiscal year, and
+      how does that break down?
+    ground_truth: >-
+      About 169,000 worldwide as of December 31, 2025, down from 171,000 a year
+      earlier. The Employment Data table, in thousands, gives United States 87
+      for both 2024 and 2025; Rest of World 78 then 76; Company excluding Ford
+      Credit 165 then 163; Ford Credit 6 for both; Total Company 171 then 169.
+      Separately, approximately 56,300 hourly U.S. employees were represented by
+      the UAW at December 31, 2025, and roughly 99% of U.S. unionized hourly
+      employees are covered by collective bargaining agreements.
+    grading_notes: >-
+      Correct requires about 169,000 for 2025. Partial: gives a correct component
+      such as 163,000 excluding Ford Credit or 87,000 in the U.S., but not the
+      total. The near-miss to watch is 171,000, which is the 2024 figure in the
+      same two-column table — that is incorrect, not partial. The breakdown is
+      bonus.
+    quote: With about 169,000 employees worldwide
+
+  - id: form-10k-needle-3
+    doc_id: form-10k
+    type: needle
+    question: >-
+      How many facilities and manufacturing plants does the company operate, and
+      in how many countries?
+    ground_truth: >-
+      Over 409 operations facilities globally, including testing and prototype
+      facilities, across 27 countries, and 42 manufacturing and assembly plants
+      including plants operated by Ford or its consolidated joint venture,
+      supporting the Ford Blue, Ford Model e and Ford Pro segments, as of
+      December 31, 2025. The one consolidated manufacturing joint venture is Ford
+      Vietnam Limited, 75% Ford and 25% Diesel Song Cong, operating one plant.
+    grading_notes: >-
+      Correct requires all three numbers: 409 or more facilities, 27 countries,
+      and 42 manufacturing and assembly plants. Partial: two of the three. Do not
+      credit answers reporting only unconsolidated joint-venture plant counts —
+      AAT, CAF's four assembly plants, Ford Otosan's three, JMC's two — which are
+      additional plants described separately.
+    quote: use over 409 operations facilities globally
+
+  - id: form-10k-multi_hop-1
+    doc_id: form-10k
+    type: multi_hop
+    question: >-
+      How did the operating result of the company's largest segment by revenue
+      change year over year?
+    ground_truth: >-
+      The largest segment by revenue is Ford Blue, with 2025 external revenue of
+      $101,019 million and total revenues including intersegment of $145,928
+      million, against Ford Pro at $66,286M, Ford Credit at $13,271M and Ford
+      Model e at $6,670M, out of $187,267M total Company revenue. Ford Blue's
+      EBIT decreased $2,245 million, from $5,269 million in 2024 to $3,024
+      million in 2025, with EBIT margin falling from 5.2% to 3.0%. The causal
+      factors given are volume and mix minus $1,661M, net pricing plus $1,487M,
+      cost minus $1,125M, exchange minus $778M and other minus $168M. Management
+      attributes the decline primarily to lower volume including the
+      aluminium-supply disruption from the Novelis plant fires, higher
+      tariff-related costs and adverse exchange, partly offset by favourable net
+      pricing and lower material and warranty costs.
+    grading_notes: >-
+      Correct requires identifying Ford Blue as largest by revenue, $3,024M for
+      2025, $5,269M for 2024, and a decrease of about $2,245M. The wrong-year
+      trap: the document also contains a 2023-versus-2024 table showing Ford Blue
+      EBIT of $7,453M falling to $5,269M, a decrease of $2,184 million. An answer
+      of "$5,269M, down $2,184M from $7,453M" is the wrong-year failure and
+      should be scored incorrect, not partial, even though every number in it is
+      real. Also incorrect: identifying Ford Pro as largest, since it is largest
+      by EBIT at $6,843M rather than by revenue — unless the answer explicitly
+      justifies a different basis for "largest", in which case grade the figures
+      on that basis and mark partial. Margins and causal factors are bonus.
+    quote: a decrease of $2,245 million
+
+  - id: form-10k-multi_hop-2
+    doc_id: form-10k
+    type: multi_hop
+    question: >-
+      What does the company's adjusted free cash flow measure represent, and how
+      did it move this year?
+    ground_truth: >-
+      Company Adjusted Free Cash Flow is a non-GAAP measure whose most comparable
+      GAAP measure is net cash provided by operating activities. It is the
+      Company's operating cash flow excluding Ford Credit's operating cash flows,
+      including items management considers operating — Company excluding Ford
+      Credit capital spending, Ford Credit distributions to its parent, and
+      settlement of derivatives — while excluding cash outflows for funded
+      pension contributions, restructuring actions and other items that are
+      operating cash flows under U.S. GAAP. It fell from $6,672 million in 2024
+      to $3,513 million in 2025, a decrease of about $3.2 billion. This happened
+      even though GAAP operating cash flow rose from $15,423M to $21,282M,
+      because $12,931M of 2025 operating cash flow was Ford Credit's against
+      $3,600M in 2024, and $8,694M of Company excluding Ford Credit capital
+      spending was deducted. The 2023 figure was $6,801M, and 2026 guidance is
+      $5.0 to $6.0 billion.
+    grading_notes: >-
+      Correct requires the core of the definition — operating cash flow excluding
+      Ford Credit's, adjusted for Company capital spending, Ford Credit
+      distributions and derivative settlements, and excluding funded pension and
+      restructuring outflows — and the movement from $6.7B to $3.5B, down about
+      $3.2B. Partial: the change without the definition, or the definition
+      without the change. A notable near-miss to score incorrect on direction:
+      answering that free cash flow improved, which happens if an arm reads only
+      the GAAP operating cash flow line rising from $15.4B to $21.3B. Accept
+      $3,513M and $3.5B interchangeably.
+    quote: Measure of Company
+
+  - id: form-10k-multi_hop-3
+    doc_id: form-10k
+    type: multi_hop
+    question: Did the company's electric vehicle volumes go up or down this year?
+    ground_truth: >-
+      It depends on the measure, and the document gives both. Globally, Ford
+      Model e wholesales rose 69%, from 105,000 units in 2024 to 178,000 in 2025,
+      with segment revenue up 73% from $3,858M to $6,670M, driven primarily by
+      higher wholesales in Europe — a full year of Explorer and Capri production
+      plus the introduction of the Puma Gen-E. In the United States, EV retail
+      sales fell from 97,865 in 2024 to 84,113 in 2025, down about 14%, while
+      U.S. EV wholesales rose from 68,990 to 82,530. So U.S. end-customer EV
+      demand declined even as wholesale and global volumes grew. For context,
+      U.S. hybrid sales rose from 187,426 to 228,072 and U.S. total sales from
+      2,078,832 to 2,204,124.
+    grading_notes: >-
+      Full credit requires recognizing the divergence: global Model e wholesales
+      up from 105k to 178k, and U.S. EV retail sales down from 97,865 to 84,113.
+      Partial for either side alone with correct figures — an answer saying only
+      "EV volumes increased" with the 69% figure is partial, and so is one saying
+      only "EV sales declined" citing U.S. retail. Incorrect if it claims Model e
+      revenue or global wholesales declined. The two facts sit about 1,860 lines
+      apart, in Item 1 and Item 7, so passage-local arms will typically produce
+      only one side.
+    quote: wholesales increased 69% from a year ago
+
+  - id: form-10k-aggregation-1
+    doc_id: form-10k
+    type: aggregation
+    question: How many risk factors does the company disclose, and how are they organized?
+    ground_truth: >-
+      Twenty-six risk factors, grouped into four categories: Operational Risks
+      with eleven, Macroeconomic, Market and Strategic Risks with six, Financial
+      Risks with five, and Legal and Regulatory Risks with four. Examples include
+      dependence on delivering the Ford+ plan; product defects resulting in
+      recalls and warranty costs; dependence on suppliers; production disruption
+      from labour, disaster or climate factors; cybersecurity incidents;
+      protectionist trade policies including tariffs; price competition
+      particularly for electrified vehicles; Ford Credit credit losses and
+      residual values; pension and OPEB experience; litigation and governmental
+      investigations; privacy, data and AI regulation; and Ford Credit
+      consumer-finance regulation.
+    grading_notes: >-
+      Counting method: each bolded lead-in risk-factor heading in Item 1A counts
+      as one. The count was verified independently — the Cautionary Note on
+      Forward-Looking Statements enumerates exactly 26 bullets, and each bullet's
+      opening clause appears exactly once inside Item 1A as a lead-in, a clean
+      one-to-one correspondence with nothing left over on either side. Correct:
+      26. Partial: 25 or 27, since boundary judgment on one heading is
+      defensible; or naming the four categories without a factor count.
+      Incorrect: a paragraph count, since Item 1A runs to roughly 190
+      paragraphs, or a vague "many".
+    quote: "grouped into the following categories: Operational Risks"
+
+  - id: form-10k-aggregation-2
+    doc_id: form-10k
+    type: aggregation
+    question: >-
+      How many executive officers does the company list in this filing, and how
+      many of them came from outside the company?
+    ground_truth: >-
+      Fourteen executive officers, with positions and ages as of February 1,
+      2026: William Clay Ford, Jr., Executive Chair and Chair of the Board;
+      James D. Farley, Jr., President and CEO; John Lawler, Vice Chair; Sherry
+      House, CFO; Ashwani "Kumar" Galhotra, COO; Michael Amend, Chief Enterprise
+      Technology Officer; Michael Aragon, President of Ford Integrated Services;
+      Steven P. Croley, Chief Policy Officer and General Counsel; Alicia Boler
+      Davis, President of Ford Pro; J. Doug Field, Chief EV, Digital and Design
+      Officer; Andrew Frick, President of Ford Blue and Model e; Jennifer Waldo,
+      Chief People and Employee Experience Officer; Shengpo "Sam" Wu, President
+      and CEO of Ford China and IMG; and Kyle Crockett, Chief Accounting Officer.
+      Nine of the fourteen have prior-employer disclosures under "Prior to
+      joining Ford": House, Amend, Aragon, Boler Davis, Croley, Field, Waldo, Wu
+      and Crockett.
+    grading_notes: >-
+      Counting method: one count per data row in the Item 4A officer table; the
+      external-hire count is one per bullet in the "Prior to joining Ford" list,
+      which is seven bullets before a page break plus two after it. Correct
+      requires 14. Accept 9 for the second part; an answer giving 7 has missed
+      the two bullets continuing after the page break, so score that half. 14
+      alone is partial-to-good, since the officer count is the primary ask.
+      Incorrect: a count of five or similar, which would come from importing the
+      proxy statement's notion of named executive officers — a term that does not
+      appear in this document. Ages and exact titles are not required.
+    quote: position and age at February 1, 2026
+
+  - id: form-10k-aggregation-3
+    doc_id: form-10k
+    type: aggregation
+    question: >-
+      What critical accounting estimates does the company identify, and how many
+      are there?
+    ground_truth: >-
+      Six: Warranties and Field Service Actions; Pensions and Other
+      Postretirement Employee Benefits; Income Taxes; Impairment of Long-Lived
+      Assets and Goodwill; Allowance for Credit Losses; and Accumulated
+      Depreciation on Vehicles Subject to Operating Leases. An estimate is
+      defined as critical if it required assumptions about matters highly
+      uncertain at the time and if reasonably likely changes would materially
+      affect financial condition or results, and management discussed their
+      development and selection with the Audit Committee. This is distinct from
+      the auditor's three critical audit matters: Model e long-lived asset and
+      affiliate impairments, the U.S. warranty and field service actions accrual,
+      and the Ford Credit consumer finance receivables allowance.
+    grading_notes: >-
+      Counting method: standalone sub-headings under the Critical Accounting
+      Estimates heading in Item 7, bounded below by the accounting-standards
+      heading. Sub-sub-headings within them, such as Pension Plans, Other
+      Postretirement Employee Benefits, Nature of Estimates Required and
+      Sensitivity Analysis, are structure within a single estimate and are not
+      counted separately. Correct: 6, with at least four of the six named.
+      Partial: 5 or 7; or 6 with only two or three named. The common near-miss to
+      score incorrect is answering 3 and listing the auditor's critical audit
+      matters, which is a different disclosure entirely. Also incorrect: 7 or 8
+      from counting Pension Plans and Other Postretirement Employee Benefits
+      separately.
+    quote: Accumulated Depreciation on Vehicles Subject to Operating Leases
+
+  - id: form-10k-global-1
+    doc_id: form-10k
+    type: global
+    question: What does management say drove the company's results this year?
+    ground_truth: >-
+      Ford swung to a net loss attributable to Ford of $8,182 million in 2025
+      from net income of $5,879 million in 2024, a $14,061 million
+      deterioration, on revenue that rose 1% to $187,267 million. Management
+      attributes the decline primarily to higher special items and lower Ford
+      Blue and Ford Pro EBIT, partly offset by lower taxes. The higher special
+      items — $17,356M pre-tax in 2025 against $1,860M in 2024 — primarily
+      reflect the Model e asset impairment and EV program cancellations plus the
+      BOSK joint-venture disposition. Company adjusted EBIT fell $3,428 million
+      to $6,780 million, which management says primarily reflects lower Ford Blue
+      and Ford Pro EBIT including the impact of new and revised tariffs, offset
+      partially by higher Ford Credit EBT and improved Model e EBIT. Other
+      drivers named across the filing: tariffs, about $3 billion gross and about
+      $2 billion net of offsets; the Novelis aluminium plant fires in September
+      and November 2025, a roughly $2 billion headwind; unfavourable fleet and
+      daily-rental pricing at Ford Pro; a planned reduction in dealer stocks and
+      lower F-150 wholesales at Ford Blue; adverse exchange; and a $3,668 million
+      tax benefit. Segment results were Ford Blue $3,024M down $2,245M, Ford Pro
+      $6,843M down $2,164M, Ford Model e negative $4,806M up $299M, Ford Credit
+      EBT $2,557M up $903M, and Corporate Other negative $838M.
+    grading_notes: >-
+      Full credit requires the net loss, roughly an $8.2B loss against a $5.9B
+      prior-year profit, plus at least three of the four principal drivers:
+      special items and EV-related impairments, tariffs, the Novelis aluminium
+      disruption, and lower Ford Blue and Ford Pro EBIT. Partial: names the loss
+      but only one driver, or drivers without the loss. Incorrect if it
+      characterizes 2025 as profitable, attributes the loss primarily to a
+      revenue decline when revenue actually rose 1%, or blames Ford Model e's
+      operating loss alone, since Model e EBIT actually improved $299 million
+      year over year — a common inversion. Ford Credit improving is a genuine
+      offset and should not be penalized.
+    quote: The net loss attributable to Ford Motor Company was $8,182 million in 2025
+
+  - id: form-10k-global-2
+    doc_id: form-10k
+    type: global
+    question: >-
+      How does this filing characterize the company's electric vehicle strategy
+      and its future?
+    ground_truth: >-
+      As a strategic retreat and rescoping, not an acceleration. Ford reports
+      lower-than-anticipated industrywide EV adoption, driven by consumer
+      sentiment, competitive dynamics, legal and policy changes and pricing
+      dynamics, worsened by U.S. policy changes that reduced or eliminated EV
+      incentives, relaxed federal emissions and fuel-economy standards, and
+      eliminated California's and other states' authority to enforce their most
+      stringent standards — which "could extend the period of underutilization of
+      EV production capacity across the industry". In December 2025 Ford
+      announced it would rationalize EV manufacturing capacity and its product
+      roadmap, cancelling three previously planned EVs and ending production of
+      the current-generation F-150 Lightning, and agreed to exit the BlueOval SK
+      battery joint venture. The resulting charges were an $8.4 billion pre-tax
+      non-cash impairment of Model e long-lived assets including goodwill, $1.1
+      billion of write-downs for the cancellations, $1.2 billion of other cash
+      charges and a $3.2 billion impairment of the BOSK investment — about $13.8
+      billion in the fourth quarter, with up to about $4 billion of further
+      expenses expected plus about $3 billion on closing. Yet the filing also
+      frames EVs as continuing: Model e remains one of three reportable segments,
+      its wholesales rose 69% and revenue 73%, its EBIT loss narrowed to $4,806
+      million, investment in the Universal EV platform continues, and the stated
+      strategy is freedom of choice across ICE, hybrid, EREV and electric
+      powertrains. 2026 guidance still contemplates a Model e EBIT loss of $4.0
+      to $4.5 billion.
+    grading_notes: >-
+      Full credit requires the retrenchment narrative — slower-than-expected
+      adoption, the December 2025 rationalization with three cancellations and
+      the end of current-generation F-150 Lightning production, the BOSK exit,
+      and the scale of the impairments — and the counterweight that Ford has not
+      exited EVs, with Model e retained as a segment, volumes and revenue up, the
+      loss narrowing and platform investment continuing. Partial: retrenchment
+      only, or growth only. Incorrect: implying Ford is accelerating EV
+      investment, or expects Model e profitability in 2026. Accept $8.1B
+      alongside $8.4B — the filing uses $8.1B for the charge to cost of sales and
+      $8.4B including goodwill.
+    quote: lower-than-anticipated industrywide EV adoption
+
+  - id: form-10k-global-3
+    doc_id: form-10k
+    type: global
+    question: >-
+      What is the company's overall financial trajectory over the periods covered
+      by this filing?
+    ground_truth: >-
+      Revenue grew steadily but profitability deteriorated sharply, while cash
+      generation diverged by measure. Revenue went $176,191M in 2023 to
+      $184,992M in 2024, up 5%, to $187,267M in 2025, up 1%. Net income
+      attributable to Ford went $4,347M to $5,879M to negative $8,182M, with
+      margin 2.5% to 3.2% to negative 4.4%, and diluted EPS $1.08 to $1.46 to
+      negative $2.06. Company adjusted EBIT declined throughout — $10,416M,
+      $10,208M, $6,780M — with margin 5.9% to 5.5% to 3.6%, adjusted diluted EPS
+      $2.01 to $1.84 to $1.09, and adjusted ROIC 13.9% to 12.9% to 8.8%. So even
+      excluding special items, underlying earnings power fell each year.
+      Pre-tax special items worsened from negative $5,147M to negative $1,860M to
+      negative $17,356M. GAAP operating cash flow improved every year — $14,918M,
+      $15,423M, $21,282M — but Company adjusted free cash flow fell from $6,801M
+      to $6,672M to $3,513M. The balance sheet grew modestly and stayed liquid:
+      total assets $273,310M to $285,196M to $289,160M, while retained earnings
+      dropped from $33,740M to $22,508M and Company excluding Ford Credit
+      liquidity was $49.8B against a $20B cash target. Ford Credit strengthened,
+      with EBT $1,331M to $1,654M to $2,557M. Guidance for 2026 is adjusted EBIT
+      of $8.0 to $10.0B and adjusted free cash flow of $5.0 to $6.0B, a partial
+      recovery still below 2023 and 2024 adjusted EBIT.
+    grading_notes: >-
+      Full credit requires the three-year shape: revenue up modestly each year,
+      adjusted EBIT down each year, and a large 2025 GAAP net loss driven by
+      special items, plus recognition that the balance sheet and liquidity stayed
+      solid and Ford Credit improved. Partial: 2024 against 2025 only, or the
+      revenue trend without the earnings trend. Incorrect if it claims revenue
+      declined, or that the 2025 loss reflects deteriorating cash generation on a
+      GAAP basis, since GAAP operating cash flow actually rose about 38% to
+      $21.3B — a good answer notes the divergence between GAAP operating cash
+      flow and adjusted free cash flow. Exact figures for every line are not
+      required; directional accuracy plus several correct anchors suffices.
+    quote: PricewaterhouseCoopers LLP
+
+  - id: form-10k-absent-1
+    doc_id: form-10k
+    type: absent
+    question: What was the total compensation of the chief executive officer for the year?
+    ground_truth: >-
+      The document does not contain this. Executive compensation is not disclosed
+      in the 10-K: Item 11 states the required information is incorporated by
+      reference from named captions in the Proxy Statement, including
+      Compensation Discussion and Analysis, Compensation of Named Executives,
+      Summary Compensation Table, Grants of Plan-Based Awards, Outstanding Equity
+      Awards, Pension Benefits and Pay Ratio. No dollar amount of any officer's
+      pay appears anywhere in the filing. The closest related content: Item 4A
+      identifies James D. Farley, Jr. as President and CEO since October 2020,
+      age 63; Note 6 gives aggregate company-wide share-based compensation
+      expense rather than individual pay; the exhibit index lists an agreement
+      with Farley dated August 3, 2020, incorporated by reference and not
+      reproduced; and the cover page notes the Proxy Statement is incorporated by
+      reference into Part III.
+    grading_notes: >-
+      Correct: states the 10-K does not disclose CEO compensation, ideally noting
+      that Item 11 incorporates it by reference from the Proxy Statement. Also
+      correct: identifying Farley as CEO while declining to give a pay figure.
+      Any dollar compensation figure is a hallucination and a hard failure, even
+      a hedged one. Do not credit an answer citing aggregate share-based
+      compensation expense from Note 6 as if it were CEO pay. Partial: "not
+      found" without explaining the incorporation-by-reference mechanism.
+    absent_terms:
+      - total compensation
+      - base salary
+      - annual incentive
+      - CEO compensation
+      - named executive officer
+
+  - id: form-10k-absent-2
+    doc_id: form-10k
+    type: absent
+    question: By what year has the company committed to becoming carbon neutral?
+    ground_truth: >-
+      The document does not contain this. Ford states no carbon-neutrality date,
+      no net-zero target year and no quantified emissions-reduction target
+      anywhere in the filing. The closest content is in the climate-related risk
+      factor, where Ford says it is addressing its impact on climate change
+      aligned with the Paris Agreement "by working to reduce our carbon footprint
+      over time across our vehicles, operations, and supply chain", and that it
+      has "announced interim emissions targets approved by the Science Based
+      Targets initiative" — but the targets themselves are never quantified and
+      no target year is given. The same passage says Ford is reassessing its
+      near-term decarbonization strategy and warns there is no assurance the
+      desired outcomes will be achieved. The only 2050 climate-neutrality date in
+      the document belongs to a third party: "The EU Commission targets net
+      climate neutrality by 2050", a regulatory description rather than a Ford
+      commitment. Other third-party dates appear similarly, including the EU's
+      2040 GHG target and Canada's stated goals of 75% EV sales by 2035 and 90%
+      by 2040.
+    grading_notes: >-
+      Correct: states that Ford discloses no carbon-neutrality target year in
+      this filing. Stronger if it also notes the unquantified SBTi-approved
+      interim targets, or that Ford is reassessing its near-term decarbonization
+      strategy. Hallucinated: any Ford carbon-neutral year, especially 2050 —
+      that is the trap, since 2050 appears in the document as the EU
+      Commission's target and an arm may misattribute it to Ford. Also
+      hallucinated: inventing a percentage reduction for the SBTi targets.
+      Partial: "not stated" with no mention of the SBTi language or the
+      EU-attribution distinction.
+    absent_terms:
+      - carbon neutral
+      - carbon-neutral
+      - net zero
+      - net-zero
+      - Scope 1
+      - Scope 3
+
+  - id: form-10k-absent-3
+    doc_id: form-10k
+    type: absent
+    question: How many BlueCruise subscribers did the company have at year end?
+    ground_truth: >-
+      The document does not contain this. Ford never discloses a BlueCruise
+      subscriber count, subscription revenue, attach rate or hands-free miles
+      driven, nor any equivalent metric for its connected or digital services.
+      BlueCruise appears six times, always qualitatively: described as Ford's
+      hands-free highway driving system and an ADAS or connected service in the
+      business overview; a risk factor says "We continue to increase the number
+      of BlueCruise enabled vehicles on the road and its growth and expansion
+      remains an important part of our strategy" without giving that number; and
+      it is discussed in the context of NHTSA and National Transportation Safety
+      Board information requests. The closest quantified disclosures are much
+      broader and are not subscriber counts: Note 4 disaggregates revenue into
+      vehicles, parts and accessories at $167,310M in 2025, used vehicles at
+      $2,853M, and services and other revenue at $3,586M, the last described as
+      including extended service contract revenue. There is no software,
+      connected-services or subscription line item.
+    grading_notes: >-
+      Correct: states that no BlueCruise subscriber count or subscription revenue
+      is disclosed. Stronger if it notes BlueCruise is discussed only
+      qualitatively and that revenue is disaggregated only into vehicles and
+      parts, used vehicles, and services and other. Hallucinated: any specific
+      subscriber number, and also presenting services and other revenue of
+      $3,586M as BlueCruise or subscription revenue, since that line includes
+      extended service contracts and is not a software metric. Partial: "not
+      disclosed" with no characterization of what the document does say.
+    absent_terms:
+      - paid subscription
+      - software revenue
+      - connected services revenue
+      - active subscri
+      - hands free miles

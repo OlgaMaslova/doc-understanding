@@ -1,0 +1,2053 @@
+EX-10.1
+2
+brhc10026111_ex10-1.htm
+EXHIBIT 10.1
+
+ Exhibit 10.1
+
+ LICENSE AGREEMENT
+
+ BY AND BETWEEN
+
+ PROCESSA PHARMACEUTICALS, INC.
+
+ AND
+
+ OCUPHIRE PHARMA, INC.
+
+ DATED AS OF JUNE 16, 2021
+
+ TABLE OF CONTENTS
+
+ ARTICLE I DEFINITIONS
+
+ 1
+
+ ARTICLE II GRANTS OF RIGHTS
+
+ 11
+
+ 2.1
+
+ Licenses
+
+ 11
+
+ 2.2
+
+ Rights Retained by the Parties
+
+ 12
+
+ 2.3
+
+ Section 365(n) of the Bankruptcy Code
+
+ 12
+
+ 2.4
+
+ Transfer of Ocuphire material and Know-How
+
+ 12
+
+ ARTICLE III DEVELOPMENT
+
+ 13
+
+ 3.1
+
+ General
+
+ 13
+
+ 3.2
+
+ Exchange of Information Regarding Development
+
+ 13
+
+ ARTICLE IV COMMERCIALIZATION
+
+ 13
+
+ 4.1
+
+ General
+
+ 13
+
+ 4.2
+
+ Commercialization Plans
+
+ 14
+
+ ARTICLE V DILIGENCE
+
+ 14
+
+ 5.1
+
+ Commercially Reasonable Efforts
+
+ 14
+
+ 5.2
+
+ Termination for Failure to Meet Diligence Obligations
+
+ 14
+
+ ARTICLE VI FINANCIAL PROVISIONS
+
+ 14
+
+ 6.1
+
+ Upfront Fee
+
+ 14
+
+ 6.2
+
+ Development Milestones.
+
+ 15
+
+ 6.3
+
+ Development and Commercialization Costs
+
+ 15
+
+ 6.4
+
+ Sales Milestone Payments
+
+ 15
+
+ 6.5
+
+ Product Royalties
+
+ 16
+
+ 6.6
+
+ Sublicense Payments
+
+ 17
+
+ 6.7
+
+ Reports; Payments
+
+ 18
+
+ 6.8
+
+ Books and Reconrds; Audit Rights
+
+ 19
+
+ 6.9
+
+ Tax Matters
+
+ 19
+
+ 6.10
+
+ Payment Method and Currency Conversion
+
+ 20
+
+ 6.11
+
+ Blocked Payments
+
+ 20
+
+ 6.12
+
+ Late Payments
+
+ 20
+
+ ARTICLE VII INTELLECTUAL PROPERTY OWNERSHIP, PROTECTION AND RELATED MATTERS
+
+ 20
+
+ 7.1
+
+ Ownership of Inventions
+
+ 20
+
+ 7.2
+
+ Prosecution and Maintenance of Patent Rights
+
+ 21
+
+ 7.3
+
+ Third-Party Infringement
+
+ 22
+
+ 7.4
+
+ Patent Invalidity Claim
+
+ 24
+
+ 7.5
+
+ Claimed Infringement
+
+ 24
+
+ 7.6
+
+ Patent Term Extensions
+
+ 25
+
+ 7.7
+
+ Patent Marking
+
+ 25
+
+ 7.8
+
+ Certification under Drug Price Competition and Patent Restoration Act
+
+ 25
+
+ 7.9
+
+ Privileged Communications
+
+ 25
+
+ 7.10
+
+ Settlement
+
+ 26
+
+ - i -
+
+ ARTICLE VIII CONFIDENTIAL INFORMATION
+
+ 26
+
+ 8.1
+
+ Treatment of Confidential Information
+
+ 26
+
+ 8.2
+
+ Confidential Information
+
+ 27
+
+ 8.3
+
+ Publications
+
+ 27
+
+ 8.4
+
+ Press Releases and Other Disclosures
+
+ 28
+
+ 8.5
+
+ Equitable Relief
+
+ 28
+
+ ARTICLE IX REPRESENTATIONS, WARRANTIES AND COVENANTS
+
+ 28
+
+ 9.1
+
+ Ocuphire’s Representations
+
+ 28
+
+ 9.2
+
+ Processa’s Representations
+
+ 31
+
+ 9.3
+
+ Ocuphire Covenants
+
+ 31
+
+ 9.4
+
+ Processa Covenants
+
+ 32
+
+ 9.5
+
+ No Warranty
+
+ 33
+
+ ARTICLE X INDEMNIFICATION
+
+ 33
+
+ 10.1
+
+ Indemnification in Favor of Ocuphire
+
+ 33
+
+ 10.2
+
+ Indemnification in Favor of Processa
+
+ 34
+
+ 10.3
+
+ General Indemnification Procedures
+
+ 35
+
+ 10.4
+
+ Insurance
+
+ 36
+
+ 10.5
+
+ No Consequential or Punitive Damages
+
+ 36
+
+ ARTICLE XI TERM AND TERMINATION
+
+ 36
+
+ 11.1
+
+ Term
+
+ 36
+
+ 11.2
+
+ Termination for Convenience
+
+ 37
+
+ 11.3
+
+ Termination for Cause
+
+ 37
+
+ 11.4
+
+ Additional Termination by Ocuphire
+
+ 37
+
+ 11.5
+
+ Termination for Insolvency
+
+ 37
+
+ 11.6
+
+ Termination for Challenge of Ocuphire Patent Rights
+
+ 37
+
+ 11.7
+
+ Consequences of Termination
+
+ 38
+
+ 11.8
+
+ Effect of Termination; Accrued Rights and Obligations
+
+ 39
+
+ 11.9
+
+ Survival
+
+ 40
+
+ ARTICLE XII MISCELLANEOUS
+
+ 40
+
+ 12.1
+
+ Governing Law; Jurisdiction
+
+ 40
+
+ 12.2
+
+ Dispute Resolution
+
+ 40
+
+ 12.3
+
+ Waiver
+
+ 40
+
+ 12.4
+
+ Notices
+
+ 41
+
+ 12.5
+
+ Entire Agreement
+
+ 41
+
+ 12.6
+
+ Severability
+
+ 41
+
+ 12.7
+
+ Assignment
+
+ 41
+
+ 12.8
+
+ Counterparts; Exchange by Facsimile
+
+ 42
+
+ 12.9
+
+ Force Majeure
+
+ 42
+
+ 12.10
+
+ Third-Party Beneficiaries
+
+ 42
+
+ 12.11
+
+ Relationship of the Parties
+
+ 42
+
+ 12.12
+
+ Performance by Affiliates
+
+ 42
+
+ - ii -
+
+ LICENSE AGREEMENT
+
+ THIS LICENSE AGREEMENT is entered into this 16 day of June, 2021 (the “Effective Date”), by and between Processa Pharmaceuticals, Inc., a company
+ organized under the laws of Delaware, having a business address at 7380 Coca Cola Drive, Suite 106, Hanover, MD 21076 (“Processa”), and Ocuphire Pharma, Inc., a company organized under the laws of Delaware, having a business address at 37000
+ Grand River Avenue, Suite 120, Farmington Hills, MI 48335 (“Ocuphire”).
+
+ WHEREAS, Ocuphire has developed or obtained rights to Ocuphire Know-How, Ocuphire Patent Rights and the Compound (each as defined below); and
+
+ WHEREAS, Processa desires to obtain a license of the Ocuphire Patent Rights and the Ocuphire Know-How to Develop and Commercialize Compounds and Products (each as defined below), under the terms and
+ conditions set forth herein, and Ocuphire desires to grant such a license;
+
+ NOW, THEREFORE, in consideration of the foregoing premises and the mutual covenants herein contained, the Parties agree as follows:
+
+ ARTICLE I
+
+ DEFINITIONS
+
+ The following terms, whether used in the singular or plural, shall have the following meanings:
+
+ 1.1 “Affiliate”. Affiliate means any Person directly or indirectly controlled by, controlling or under common control with, a Party, but only for so long as such control shall
+ continue. For purposes of this definition, “control” (including, with correlative meanings, “controlled by”, “controlling” and “under common control with”) means, with respect to a Person, possession, direct or indirect, of (a) the power to direct or
+ cause direction of the management and policies of such Person (whether through ownership of securities or partnership or other ownership interests, by contract or otherwise), or (b) at least 50% of the voting securities (whether directly or pursuant
+ to any vested and exercisable option, warrant or other similar arrangement) or other comparable equity interests. For clarity, neither of the Parties shall be deemed to be an “Affiliate” of the other.
+
+ 1.2 “Anti-Bribery Laws”. Anti-Bribery Laws means all Laws in the Territory regarding corruption, bribery, ethical business conduct, money laundering, political contributions, gifts and
+ gratuities, or lawful expenses to public officials and private persons, agency relationships, commissions, lobbying books and records and financial controls, including U.S. Foreign Corrupt Practices Act of 1977, 15 U.S.C. §§ 78dd-1, et seq., as
+ amended, the U.S. False Claims Act, 31 U.S.C. §§ 3729-3733, the U.S. Anti-Kickback Statute, 42 U.S.C. § 1320a-7b(b), the U.K. Bribery Act 2010.
+
+ 1.3 “Bankruptcy Code”. Bankruptcy Code means Title 11 of the U.S. Code, as amended from time to time.
+
+ 1.4 “Business Day”. Business Day means a day that is not a Saturday, Sunday or a day on which banking institutions in Baltimore, Maryland are authorized by Law to remain closed.
+
+ 1.5 “Biosense Agreement”. Biosense Agreement means the Collaboration and License Agreement dated February 24, 2019 between Biosense Global LLC (“Biosense”) and Rexahn
+ Pharmaceuticals, Inc., as amended by the first amendment dated August 24, 2019 to the Biosense Agreement, and the second amendment dated March 10, 2020 to the Biosense Agreement, and which has been assigned to Ocuphire pursuant to the merger of
+ Rexahn Pharmaceuticals, Inc.
+
+ 1.6 “Calendar Quarter”. Calendar Quarter means each of the periods ending on March 31, June 30, September 30, and December 31 of any Calendar Year.
+
+ 1.7 “Calendar Year”. Calendar Year means each calendar year during the Term.
+
+ 1.8 “Change of Control”. A Change of Control shall occur if: (a) any Third Party (an “Acquiror”) acquires directly or indirectly the beneficial ownership of any voting security
+ of a Party, or if the percentage ownership of such Third Party in the voting securities of a Party is increased through stock redemption, cancellation or other recapitalization, and immediately after such acquisition or increase such Acquiror is,
+ directly or indirectly, the beneficial owner of voting securities representing more than fifty percent (50%) of the total voting power of all of the then outstanding voting securities of a Party; (b) a merger, consolidation, recapitalization or
+ reorganization of a Party is consummated, other than any such transaction, which would result in stockholders or equity holders of such Party immediately prior to such transaction, owning, directly or indirectly, at least fifty percent (50%) of the
+ outstanding securities of the surviving entity (or its parent entity) immediately following such transaction; (c) the stockholders or equity holders of a Party approve a plan of complete liquidation of such Party, or an agreement for the sale or
+ disposition by such Party of all or substantially all of such Party’s assets, other than pursuant to a transaction described above or to an Affiliate; (d) individuals who, as of the date hereof, constitute the Board of Directors of a Party (the “Incumbent
+ Board”) cease for any reason to constitute at least a majority of the Board of Directors of such Party (provided, however, that any individual becoming a director subsequent to the Effective Date whose election, or nomination for
+ election by such Party’s shareholders, was recommended or approved by a vote of at least a majority of the directors then comprising the Incumbent Board shall be considered as though such individual were a member of the Incumbent Board); or (e) the
+ sale, transfer or exclusive license to an Acquiror of all or substantially all of such Party’s assets.
+
+ 1.9 “Clinical Trial” shall mean any study in which human subjects are dosed with a drug, whether approved or investigational, including any Phase I, II, III or IV clinical study.
+
+ 1.10 “Combination Product”. Combination Product means (a) any pharmaceutical product that is a single formulation consisting of a Compound and one or more other active compounds, active
+ excipients or active ingredients, which other active compounds or active ingredients are not Compounds (“Other API”) or (b) any combination of a Compound sold together with any separately formulated Other API for a single invoiced price.
+
+ 1.11 “Commercialization” or “Commercialize”. Commercialization or Commercialize means activities directed to obtaining pricing and reimbursement approvals, marketing, promoting,
+ Manufacturing commercial supplies of, distributing, importing, offering for sale, or selling a product.
+
+ 2
+
+ 1.12 “Commercially Reasonable Efforts”. Commercially Reasonable Efforts means, with respect to an objective, the reasonable, diligent, good faith efforts of a Party (including the efforts
+ of its Affiliates and Sublicensees) to accomplish such objective that a biopharmaceutical company of comparable size and resources would normally use to accomplish a similar objective under similar circumstances, and, specifically with respect to
+ obligations hereunder relating to a Compound or Product, the carrying out of such obligations with those efforts and resources that a biopharmaceutical company of comparable size and resources would use were it Developing, Manufacturing or
+ Commercializing its own pharmaceutical products that are at a similar stage of development or product life cycle and of similar market potential as the Compound or Product, taking into account actual and potential issues of safety, efficacy or
+ stability, product profile (including product modality, category and mechanism of action), stage of development or life cycle status, product labeling or anticipated labeling, the present and future market potential, past performance of the Compound
+ or Product, actual and projected Development, Regulatory Approval, pricing and reimbursement approval, Manufacturing and Commercialization costs, existing or projected pricing, sales, reimbursement and financial return, medical and clinical
+ considerations, present and future regulatory environment, any issues regarding the ability to Manufacture the Compound or Product, the likelihood and timing of obtaining Regulatory Approvals and pricing and reimbursement approvals, proprietary
+ position, strength and duration of patent protection and anticipated exclusivity, competitive Third-Party products at the time and the likely competitive environment at the time of projected entry into the market and thereafter, and any other
+ relevant scientific, technical, operational and commercial factors, all as measured by the facts and circumstances at the time such efforts are due. Commercially Reasonable Efforts will be determined on a country-by-country and
+ Indication-by-Indication basis for the Compound or Product, and the level of effort is expected to change over time, reflecting changes in the status and value of the Compound or Product and the market conditions and country(ies) involved.
+
+ 1.13 “Compound”. Compound means RX-3117 (fluorocyclopentenylcytosine or also known as roducitabine) [which is a cytidine analog, similar to gemcitabine,][with a sequence of
+ 4-amino-1-[(1S,4R,5S)-2-fluoro-4,5-dihydroxy-3-(hydroxymethyl)cyclopent-2-en-1-yl] pyrimidin-2-one] together with all analogs, derivatives, metabolites, stereoisomers, polymorphs, formulations, mixtures or compositions thereof covered by Ocuphire
+ Intellectual Property, and any existing or future improved or modified versions of the foregoing developed by or on behalf of Processa, its Affiliates or Sublicensees.
+
+ 1.14 “Control” or “Controlled”. Control or Controlled means, with respect to any tangible property or intellectual property right or other intangible property, the possession
+ (whether by ownership or license (other than by grant of a license to one Party by the other Party pursuant to this Agreement or by grant of a license or sublicense to a Sublicensee by Processa pursuant to a license or sublicense agreement)) by a
+ Person of the ability to grant to another Person access to such tangible property or access to or a license or sublicense to such intellectual property right or other intangible property, as provided herein without violating the terms of any
+ agreement with any other Person.
+
+ 3
+
+ 1.15 “Cover”, “Covering” or “Covered”. Cover, Covering or Covered means, with respect to a compound, product, technology, process or method that, in the absence of
+ ownership of or a license granted under a Patent Right, the Manufacture, use, offer for sale, sale or importation of such compound or product or the practice of such technology, process or method would infringe such Patent Right (or, in the case of a
+ Patent Right that has not yet issued, would infringe such Patent Right if it were to issue).
+
+ 1.16 “Development” or “Develop”. Development or Develop means pre-clinical, non-clinical and clinical drug research, discovery and development activities, including IND-enabling
+ toxicology and other IND-enabling pre-clinical development efforts, stability testing, process development, compound property optimization, formulation development, delivery system development, quality assurance and quality control development,
+ statistical analysis, clinical pharmacology, Manufacturing supplies of compounds and products for pre-clinical, non-clinical and clinical use, Clinical Trials (including pre- and post-approval studies and investigator sponsored Clinical Trials),
+ regulatory affairs, regulatory activities (excluding regulatory activities directed to obtaining pricing and reimbursement approvals) and other activities, reasonably necessary to obtain or maintain Regulatory Approval of a pharmaceutical product.
+
+ 1.17 “EMA”. EMA means the European Medicines Agency and any successor agency.
+
+ 1.18 “EU”. EU means the European Union member states as then-currently constituted; provided, however, that the EU shall always be deemed to include the Major European
+ Countries.
+
+ 1.19 “FDA”. FDA means the U.S. Food and Drug Administration and any successor agency.
+
+ 1.20 “Field”. Field means for use in the treatment, prevention, palliation, and/or diagnosis of any and all human and/or animal diseases, disorders, or conditions.
+
+ 1.21 “First Commercial Sale”. First Commercial Sale means, with respect to a Product in a country, the first sale of such Product in such country by Processa, any of its Affiliates or
+ any Sublicensee for which revenue has been recognized by Processa or its Affiliates or Sublicensees in such country for use or consumption of such Product in such country after receipt of the first Regulatory Approval for such Product in such
+ country. Sales for purposes of testing the Product and sample purposes shall not be deemed a First Commercial Sale. For clarity, First Commercial Sale will be determined on a Product-by-Product and country-by-country basis, as applicable.
+
+ 1.22 “Governmental Authority”. Governmental Authority means any national, federal, state or local government, or political subdivision thereof, or any multinational organization or
+ authority or any authority, agency or commission entitled to exercise any administrative, executive, judicial, legislative, police, regulatory or taxing authority or power, any court or tribunal (or any department, bureau or division thereof), or any
+ governmental arbitrator or arbitral body.
+
+ 1.23 “IND”. IND means an investigational new drug application filed with the FDA with respect to a Compound or Product, or an equivalent application filed with the Regulatory Authority
+ of a country or regulatory jurisdiction in the Territory other than the U.S., and all amendments and supplements thereto.
+
+ 4
+
+ 1.24 “Indication”. Indication means the disease or condition the Product is intended to be used to diagnose, treat, prevent, cure, or mitigate, including the target patient population.
+ For the avoidance of doubt, the first Indication means the first disease or condition the Product is developed for or has Regulatory Approval for within a target patient population, and the second Indication means the second disease or condition the
+ Product is developed for or has Regulatory Approval for within a target patient population and does not require that a Product has Regulatory Approval for the first Indication.
+
+ 1.25 “Invention”. Invention means any discovery, development, update, enhancement, modification, adaptation, variation or revision conceived and reduced to practice by or on behalf of a
+ Party or the Parties jointly during the Term (a) in connection with the activities under this Agreement or (b) that relate to the Ocuphire Intellectual Property, in each case, whether or not subject to the protection of any Patent Rights or other
+ intellectual property rights, and whether or not any exploitation thereof would infringe any of the Ocuphire Intellectual Property.
+
+ 1.26 “Know-How”. Know-How means all unpatented technical information, trade secrets, formulae, standards, knowledge, directions, instructions, test protocols, procedures and results,
+ studies, analyses, raw material sources, data, Manufacturing data, and any other confidential or proprietary interest in information.
+
+ 1.27 “Law” or “Laws”. Law or Laws means all laws, statutes, rules, regulations, orders, judgments, or ordinances of any Governmental Authority.
+
+ 1.28 “Losses”. Losses means any and all (a) claims, losses, liabilities, damages, fines, royalties, governmental penalties or punitive damages, deficiencies, interest, awards, judgments,
+ and settlement amounts (including special, indirect, incidental, and consequential damages, lost profits, and Third-Party punitive and multiple damages), and (b) in connection with all of the items referred to in clause (a) above, any and all costs
+ and expenses (including reasonable counsel fees and all other expenses reasonably incurred in investigating, preparing or defending any litigation or proceeding, commenced or threatened).
+
+ 1.29 “Major European Countries”. Major European Countries means, collectively, France, Germany, Italy, Spain and the United Kingdom.
+
+ 1.30 “Major Markets”. Major Markets means, collectively, the U.S., each of the Major European Countries and Japan, and Major Market means any one of the foregoing.
+
+ 1.31 “Manufacture” or “Manufacturing”. Manufacture or Manufacturing means activities directed to making, having made, producing, Manufacturing, processing, filling, finishing,
+ packaging, labeling, quality assurance testing and release, shipping and storage of a product.
+
+ 1.32 “MHLW”. MHLW means the Japanese Ministry of Health, Labour and Welfare, and any successor agency.
+
+ 1.33 “NDA”. NDA means a New Drug Application, as defined in the Act, filed with the FDA with respect to a pharmaceutical product, or an equivalent application filed with the Regulatory
+ Authority of a country in the Territory other than the U.S., and all amendments and supplements thereto.
+
+ 5
+
+ 1.34 “Net Sales”. Net Sales means the gross amounts billed or invoiced by Processa, or any of its Affiliates, to any Third-Party purchasers (including its distributors) that is not a
+ Sublicensee with respect to sales of Products in the Territory, calculated in accordance with GAAP, consistently applied, and in the same manner as reported in such Person’s audited financial statements, less the following (without duplication):
+
+ (a) Volume, cash or trade discounts, credits or allowances, including discounts in the form of inventory management fees paid to wholesalers and distributors, in each case, to the extent
+ such discounts are included in the invoices and actually granted;
+
+ (b) Credits, refunds or allowances granted upon returns, rejections or recalls and for retroactive price reductions or billing errors;
+
+ (c) Freight, postage, shipping and insurance costs incurred in transporting the applicable Products, to the extent that such items are applicable to such sale and are separately itemized and
+ invoiced and actually paid as evidenced by invoices, receipts or other appropriate documents;
+
+ (d) Amounts paid (including rebates and chargeback payments or credits or other equivalents thereof) to formularies, government or government agency programs, trade customers, managed health
+ care organizations and pharmacy benefit managers (or equivalents thereof) to obtain listing or purchase of the applicable Products not to exceed forty percent (40%) of the billed or invoiced amount;
+
+ (e) Bad debts, , actual and estimated uncollectible amounts, and collection costs relating to the sale of Products that are actually written off; and
+
+ (f) To the extent not reimbursed by a Third Party, taxes, tariffs, duties or other governmental charges (other than income taxes) levied on, absorbed, or otherwise imposed on the sales,
+ transportation, delivery, use, exportation, or importation of the applicable Products and included in the invoice in respect of such sale.
+
+ Sales of Products between Processa and its Affiliates or Sublicensees for resale shall be excluded from the computation of Net Sales, and Net Sales shall be determined based on the total amount invoiced by such
+ Affiliate or Sublicensee on resale. Disposal or use of Products at or below cost for regulatory, development or charitable purposes, such as Clinical Trials, compassionate use, named patient use, or indigent patient programs, shall not be deemed a
+ sale hereunder.
+
+ With respect to any sale of any Product in a given country for any substantive consideration other than monetary consideration on arm’s length terms (which has the effect of reducing the invoiced amount below what it
+ would have been in the absence of such non-monetary consideration), for purposes of calculating the Net Sales under this Agreement, such Product shall be deemed to be sold exclusively for cash at the average Net Sales price charged to Third Parties
+ for cash sales in such country during the applicable reporting period (or if there were only de minimis cash sales in such country, at the fair market value as determined in good faith based on pricing in
+ comparable markets).
+
+ 6
+
+ If a Product is sold as part of a Combination Product, Net Sales will be the product of (x) Net Sales of the Combination Product calculated as above (i.e., calculated as for a
+ non-Combination Product) and (y) the fraction (A/(A+B)), where:
+
+ (i) A is the average selling price of the Product comprising a Compound as the sole therapeutically active ingredient during the most recently completed Calendar Quarter during which such
+ non-Combination Product was sold in such country; and
+
+ (ii) B is the average selling price in such country of products containing the Other API contained in the Combination Product as the sole therapeutically active ingredient when sold
+ separately during the most recently completed Calendar Quarter during which such products were sold in such country.
+
+ If both A and B cannot be determined by reference to non-Combination Product sales as described above, then Net Sales for purposes of determining royalty payments will be calculated as above, but the average selling
+ price in the above equation shall be determined by mutual agreement reached in good faith by the Parties prior to the end of the accounting period in question based on an equitable method of determining same that takes into account, in the applicable
+ country, variations in dosage units and the relative fair market value of each therapeutically active ingredient in the Combination Product. If the Parties are unable to reach such an agreement prior to the end of the applicable accounting period,
+ then the Parties will refer such matter to a jointly selected Third Party with expertise in the pricing of pharmaceutical products that is not an employee, consultant, legal advisor, officer, director or stockholder of, and does not have any conflict
+ of interest with respect to, either Party for resolution, which will be final and binding on the Parties.
+
+ 1.35 “Ocuphire Intellectual Property”. Ocuphire Intellectual Property means the Ocuphire Know-How and the Ocuphire Patent Rights.
+
+ 1.36 “Ocuphire Know-How”. Ocuphire Know-How means all Know-How that is Controlled by Ocuphire or any of its Affiliates as of the Effective Date and that is necessary or useful to Develop,
+ Manufacture or Commercialize any Compound or Product, including the Know-How set forth on Schedule 1.36.
+
+ 1.37 “Ocuphire Patent Rights”. Ocuphire Patent Rights means all Patent Rights in the Territory that are Controlled by Ocuphire or any of its Affiliates as of the Effective Date and that
+ Cover any Compound or Product, including the Patent Rights set forth on Schedule 1.37.
+
+ 1.38 “Party”. Party means either Ocuphire or Processa; “Parties” means both Ocuphire and Processa.
+
+ 1.39 “Patent Rights”. Patent Rights means all patent applications, patents, certificates of invention, applications for certificates of invention and priority patent filings, including
+ any continuations, continuations-in-part, renewals, requests for continued examination and divisions of any such patents and patent applications, any patents or certificates of invention issuing from any of the foregoing, any extensions, reissues,
+ reexaminations, substitutions, confirmations, registrations, revalidations, revisions, additions or supplementary patent certificates thereto, and all foreign counterparts thereof.
+
+ 7
+
+ 1.40 “Payments”. Payments means royalties and other amounts payable by Processa to Ocuphire pursuant to this Agreement.
+
+ 1.41 “Person”. Person means any natural person or any corporation, company, partnership, joint venture, firm, Governmental Authority, or other entity, including a Party.
+
+ 1.42 “Phase II Clinical Trial”. Phase II Clinical Trial means a Clinical Trial of a compound or product for an Indication, the principal purpose of which is a determination of safety and
+ efficacy for such Indication in a target patient population over a range of doses, as more fully defined in 21 C.F.R. §312.21(b), or its successor regulation, or the equivalent in any foreign country or region.
+
+ 1.43 “Phase III Clinical Trial”. Phase III Clinical Trial means a Clinical Trial of a compound or product for an Indication on a sufficient number of subjects that is designed to
+ establish that the compound or product is safe and efficacious for its intended use, and to determine warnings, precautions, and adverse reactions that are associated with the compound or product in the dosage range to be prescribed, and to support
+ Regulatory Approval of the compound or product for such Indication, as more fully defined in 21 C.F.R. §312.21(c), or its successor regulation, or the equivalent in any foreign country or region.
+
+ 1.44 “Pivotal Clinical Trial” shall mean (a) a Phase III Clinical Trial that is intended by Processa or its Affiliates or Sublicensees to be submitted (together with any other
+ registration trials that are prospectively planned when such Phase III Clinical Trial is initiated) for Regulatory Approval in the U.S. or the EU, or (b) any other Clinical Trial that is intended by Processa or its Affiliates or Sublicensees to
+ establish that a Product is safe and efficacious for its intended use, and to determine warnings, precautions, and adverse reactions that are associated with such pharmaceutical product in the dosage range to be prescribed, which Clinical Trial is a
+ registration trial intended by Processa or its Affiliates or Sublicensees to be sufficient for filing an application for a Regulatory Approval for such product in the U.S. or another country in the Territory, solely as evidenced by the acceptance for
+ filing for a Regulatory Approval for such Product after completion of such Clinical Trial.
+
+ 1.45 “Processa Intellectual Property” means, collectively, Processa Know-How and Processa Patent Rights.
+
+ 1.46 “Processa Know-How”. Processa Know-How means all Know-How Controlled as of the Effective Date or thereafter during the Term by Processa or any of its Affiliates (other than any
+ Know-How included in Joint Intellectual Property) that is used by Processa or any of its Affiliates in the Development, Manufacture or Commercialization of any Compound or Product; provided, however, that, if Processa is acquired by a
+ Third Party, “Processa Know-How” shall exclude any Know-How that (a) is Controlled by such Third Party or the Affiliates of such Third Party (other than Processa and the Persons that were Processa’s Affiliates immediately prior to the closing of such
+ acquisition transaction (such Affiliates, “Processa Pre-Existing Affiliates”)) (“Processa Excluded Affiliates”) and (b) was not Controlled by Processa or any of the Processa Pre-Existing Affiliates immediately prior to the closing of
+ such acquisition transaction; provided further that, if, after the closing of such acquisition, any such Processa Excluded Affiliate Develops or Commercializes any Compound or Product or otherwise performs any activities or obtains any rights
+ with respect to any Compound or Product, such Affiliate will cease to be a Processa Excluded Affiliate and applicable Know-How that is Controlled by such Affiliate shall be included in Processa Know-How.
+
+ 8
+
+ 1.47 “Processa Patent Rights”. Processa Patent Rights means all Patent Rights in the Territory Controlled as of the Effective Date or thereafter during the Term by Processa or any of its
+ Affiliates (other than Joint Patent Rights) that Cover any Compound or Product and are used by Processa or any of its Affiliates in the Development, Manufacture or Commercialization of any Compound or Product; provided, however, that,
+ if Processa is acquired by a Third Party, “Processa Patent Rights” shall exclude any Patent Rights that (a) are Controlled by such Third Party or the Affiliates of such Third Party (other than Processa and Processa Pre-Existing Affiliates) and (b)
+ were not Controlled by Processa or any of the Processa Pre-Existing Affiliates immediately prior to the closing of such acquisition transaction; provided further that, if, after the closing of such acquisition, any such Processa Excluded
+ Affiliate Develops or Commercializes any Compound or Product or otherwise performs any activities or obtains any rights with respect to any Compound or Product, such Affiliate will cease to be a Processa Excluded Affiliate and applicable Patent
+ Rights that are Controlled by such Affiliate shall be included in Processa Patent Rights.
+
+ 1.48 “Product”. Product means any pharmaceutical preparation containing one or more Compounds either as an active ingredient(s) or any Combination Product. For the avoidance of doubt,
+ nothing in this Agreement grants to Processa any right or license under any Patent Rights or Know-How Controlled by Ocuphire with respect to any Other API.
+
+ 1.49 “Regulatory Approval”. Regulatory Approval means an approval by the applicable Regulatory Authority of an NDA and any other approval, license, registration, permit, notification or
+ authorizations (or waiver) of the applicable Regulatory Authority, which is necessary for the Manufacture, use, storage, import, transport, promotion, marketing, distribution, offer for sale, sale, or other commercialization of pharmaceutical
+ products in a given country or regulatory jurisdiction, other than any pricing or reimbursement approval.
+
+ 1.50 “Regulatory Authority”. Regulatory Authority means any Governmental Authority with responsibility for granting licenses or approvals necessary for the Development, Manufacture, use,
+ storage, import, transport, or Commercialization of pharmaceutical products in a country or regulatory jurisdiction, including but limited to the FDA, EMA or MHLW.
+
+ 1.51 “Regulatory Exclusivity”. Regulatory Exclusivity means exclusive marketing rights or data protection or other exclusivity rights conferred by any Regulatory Authority with respect
+ to a Product in a country or regulatory jurisdiction within the Territory, other than a Patent Right, including orphan drug exclusivity, pediatric exclusivity and rights conferred in the U.S. under the Hatch-Waxman Act.
+
+ 9
+
+ 1.52 “Senior Executive”. Senior Executive means, with respect to Ocuphire, the CEO of Ocuphire, or his or her designee, and, with respect to Processa, the CEO of Processa, or his or her
+ designee. “Senior Executives” means the applicable officers of Ocuphire and Processa.
+
+ 1.53 “Sublicense Consideration”. Sublicense Consideration mean any payments or other consideration that Processa or its Affiliates receive from a Sublicensee for the grant of a
+ sublicense, an option to obtain such sublicense, a covenant not to asset, or a similar transfer of rights under this Agreement, in each case, under the Ocuphire Intellectual Property, including license fees, license option fees, milestone payments
+ (but only to the extent in excess of the applicable milestone payments due under this Agreement), license maintenance fees, equity, and royalties on Sublicensee Product sales, provided that in the event that Processa or its Affiliates receive
+ non-monetary consideration in connection with a sublicense, Sublicense Considerations shall be calculated based on the fair market value of such consideration or transaction, assuming an arm’s length transaction made in the ordinary course of
+ business. Notwithstanding the foregoing, “Sublicense Considerations” shall not include amounts expressly dedicated to, and actually expended by the Sublicensee to reimburse Processa and its Affiliates for, the Development of Products, up to the sum
+ of the actual external costs incurred by Processa and its Affiliates for such activities.
+
+ 1.54 “Sublicensee”. Sublicensee means a Third Party that has been granted a sublicense under the rights granted to Processa pursuant to Section 2.1 of this Agreement, beyond the mere
+ right to purchase Compound or Product from Processa or its Affiliates.
+
+ 1.55 “Territory”. Territory means all countries of the world, excluding any territory licensed by Ocuphire pursuant to the Biosense Agreement prior to the date of this Agreement (such
+ excluded territory, the “Excluded Territory”).
+
+ 1.56 “Third Party”. Third Party means any Person other than Ocuphire or Processa or any of their respective Affiliates.
+
+ 1.57 “U.S.”. U.S. means the United States of America, including its territories and possessions.
+
+ 1.58 “Valid Claim”. Valid Claim means any claim of (a) an issued and unexpired patent within the Ocuphire Patent Rights that has not been revoked or held unenforceable or invalid by a
+ final decision of a court or other Governmental Authority of competent jurisdiction, or that has not been disclaimed, denied or admitted to be invalid or unenforceable through reissue or disclaimer or otherwise; or (b) a patent application within the
+ Ocuphire Patent Rights; provided that such a claim within a patent application has not been canceled, withdrawn, or abandoned or been pending for more than seven (7) years from the date of its first priority filing in the applicable country.
+ For clarity, a claim of a patent that, pursuant to clause (b), had ceased to be a Valid Claim before it issued but that subsequently issues and is otherwise described by clause (a), shall again be considered to be a Valid Claim once it issues until
+ it is no longer considered a Valid Claim in accordance with clause (a).
+
+ 1.59 Additional Definitions. Each of the following definitions is set forth in the Section of this Agreement indicated below:
+
+ Definition:
+
+ Section:
+
+ Abandoned Patents
+
+ Section 7.2(a)
+
+ Action
+
+ Section 7.3(b)
+
+ Agents
+
+ Section 8.1
+
+ Biosense
+
+ Section 1.5
+
+ Commercialization Plan
+
+ Section 4.2
+
+ Confidential Information
+
+ Section 8.2
+
+ Confidentiality Agreement
+
+ Section 8.2
+
+ Courts
+
+ Section 13.1
+
+ Development Milestone
+
+ Section 6.2
+
+ Development Milestone Payment
+
+ Section 6.2
+
+ Development Plan
+
+ Section 3.2
+
+ Effective Date
+
+ Preamble
+
+ Incumbent Board
+
+ Section 1.8
+
+ Indemnified Party
+
+ Section 10.3(a)
+
+ Indemnifying Party
+
+ Section 10.3(a)
+
+ Infringement Claim
+
+ Section 7.3(a)
+
+ Joint Intellectual Property
+
+ Section 7.1(c)
+
+ Joint Inventions
+
+ Section 7.1(c)
+
+ Joint Patent Rights
+
+ Section 7.2(b)
+
+ MSs
+
+ Section 6.2
+
+ Ocuphire
+
+ Section 10.2(e)
+
+ Other API
+
+ Section 1.8
+
+ Paragraph IV Claim
+
+ Section 7.8(a)
+
+ Periodic Report
+
+ Section 6.7
+
+ Product Liability Claim
+
+ Section 10.1(b)
+
+ Processa
+
+ Preamble
+
+ Processa Common Stock
+
+ Section 6.1(a)
+
+ Processa Excluded Affiliates
+
+ Section 1.46
+
+ Processa Parties
+
+ Section 10.2
+
+ Processa Pre-Existing Affiliates
+
+ Section 1.46
+
+ Processa Sole Inventions
+
+ Section 7.1(b)
+
+ Product Liability Claims
+
+ Section 10.1(b)
+
+ Royalty Term
+
+ Section 6.5(b)
+
+ Ocuphire
+
+ Preamble
+
+ Ocuphire Parties
+
+ Section 10.1
+
+ Ocuphire Sole Inventions
+
+ Section 7.1(b)
+
+ Sales Milestone
+
+ Section 6.4
+
+ Sales Milestone Payment
+
+ Section 6.4
+
+ SEC
+
+ Section 6.1(b)
+
+ Sole Inventions
+
+ Section 7.1(b)
+
+ Sublicense Payment
+
+ Section 6.6(a)
+
+ Sublicensee Intellectual Property
+
+ Section 2.1(b)
+
+ Taxes
+
+ Section 6.9
+
+ Term
+
+ Section 11.1
+
+ Third-Party Claims
+
+ Section 10.1
+
+ Third-Party Patent Licenses
+
+ Section 6.5(c)
+
+ Upfront Fee
+
+ Section 6.1(a)
+
+ Upfront Shares
+
+ Section 6.1(a)
+
+ VWAP
+
+ Section 6.2
+
+ 10
+
+ 1.60 Captions; Certain Conventions; Construction. All headings and captions herein are for convenience only and shall not be interpreted as having any substantive meaning. The Schedules
+ to this Agreement are incorporated herein by reference and shall be deemed a part of this Agreement. Unless otherwise expressly provided herein or the context of this Agreement otherwise requires:
+
+ (a) words of any gender include each other gender;
+
+ (b) words such as “herein”, “hereof” and “hereunder” refer to this Agreement as a whole and not merely to the particular provision in which such words appear;
+
+ (c) words using the singular shall include the plural, and vice versa;
+
+ (d) the words “include,” “includes” and “including” shall be deemed to be followed by the phrase “but not limited to”, “without limitation”, “inter alia” or words of similar import;
+
+ (e) the word “or” shall be deemed to include the word “and” (i.e., shall mean “and/or”)
+
+ (f) references to “Article,” “Section,” “subsection”, “paragraph”, “clause” or other subdivision, or to a Schedule, without reference to a document, are to the specified provision or Schedule
+ of this Agreement; and
+
+ (g) references to “$” or “dollars” shall be references to U.S. Dollars.
+
+ This Agreement shall be construed as if the Parties drafted it jointly.
+
+ ARTICLE II
+
+ GRANTS OF RIGHTS
+
+ 2.1 Licenses.
+
+ (a) License. Subject to the terms of this Agreement, Ocuphire shall, and hereby does, grant to Processa an exclusive (even as to Ocuphire and its Affiliates), royalty-bearing right and
+ license, including the right to sublicense in accordance with Section 2.1(b), under the Ocuphire Intellectual Property and Ocuphire’s interest in the Joint Intellectual Property, to Develop, Manufacture, use and Commercialize, including filing for,
+ obtaining and maintaining Regulatory Approval for, Products in the Field in the Territory.
+
+ 11
+
+ (b) Sublicenses. From the Effective Date, Processa shall have the right to grant sublicenses under the licenses to Ocuphire Intellectual Property and Ocuphire’s interest in the Joint
+ Intellectual Property granted to Processa under Section 2.1(a) to its Affiliates and to Third Parties; provided that Ocuphire provides its prior written consent to such sublicense, such consent not to be unreasonably withheld, conditioned or
+ delayed, except that a sublicense to an Affiliate shall not require Ocuphire’s consent for so long as such Affiliate remains an Affiliate of Processa; provided, further, that any such sublicense shall be consistent with, and subject
+ to, all applicable terms and conditions of this Agreement, and Processa shall remain responsible for the performance of its obligations under this Agreement, regardless of whether Processa may have delegated those obligations to its Sublicensee or
+ Affiliate. Each agreement with each Sublicensee must include grants of rights sufficient to enable Processa to grant substantially the rights set forth in Sections 11.7(c) through 11.7(e) with respect to (i) all Know-How and Patent Rights (including
+ all applicable pre-clinical and clinical data, including pharmacology and biology data; Manufacturing documents and materials; and Manufacturing technologies) Controlled by such Sublicensee during the Term and used by such Sublicensee in the
+ Development, Manufacture or Commercialization of any Compound or Product (collectively, “Sublicensee Intellectual Property”); (ii) all filings with Regulatory Authorities in the Territory relating to Compounds and Products and Regulatory
+ Approvals relating to Compounds and Products held by such Sublicensee, including related correspondence with Regulatory Authorities; (iii) all Manufacturing agreements to which such Sublicensee is a party that are related to Compounds or Products;
+ (iv) all of such Sublicensee’s inventory of Compounds and Products existing as of the applicable date; and (v) all trademarks owned by such Sublicensee and used solely in connection with the Products, along with all associated goodwill. Without
+ limiting the foregoing, Processa shall, within thirty (30) days after granting any sublicense, notify Ocuphire of the grant of such sublicense and provide Ocuphire with a copy of such sublicense agreement.
+
+ 2.2 Rights Retained by the Parties. Any rights of Ocuphire or Processa, as the case may be, not expressly granted to the other Party under the provisions of this
+ Agreement shall be retained by such Party.
+
+ 2.3 Section 365(n) of the Bankruptcy Code. All rights and licenses granted under or pursuant to any section of this Agreement, including the licenses granted under
+ Section 2.1 to Patent Rights and Know-How (including any data included in the Know-How), are and will otherwise be deemed to be for purposes of Section 365(n) of the Bankruptcy Code, licenses of rights to “intellectual property” as defined in Section
+ 101(35A) of the Bankruptcy Code. Each Party will retain and may fully exercise all of its respective rights and elections under the Bankruptcy Code. The Parties agree that each Party, as licensee of such rights under this Agreement, will retain and
+ may fully exercise all of its rights and elections under the Bankruptcy Code or any other provisions of applicable Law outside the United States that provide similar protection for “intellectual property.”
+
+ 2.4 Transfer of Ocuphire Material and Know-How. Within thirty (30) days after the Effective Date, Ocuphire shall transition Ocuphire Know-How to Processa by
+ delivering to Processa, in Microsoft Word or PDF format, all documents related to the Compound required for Processa to Develop, Manufacture and Commercialize the Compound and Products in the Field in the Territory, including: pre-IND briefing
+ package, reports and documentation related to Clinical Trials, Manufacturing process documentation, reports of API and finished Product, all Ocuphire Patent Rights and documentation related to Ocuphire Know-How. Such transferred materials shall
+ include all information relevant to the Compound in the Field in the Territory in Ocuphire’s possession from Ocuphire’s Third-Party service providers, excluding any information related to the Excluded Territory; provided, that Ocuphire may redact
+ from such information any information not solely related to the Compound in the Territory. In addition, within ninety (90) days after the Effective Date, except to the extent Ocuphire is required to retain such documents or materials pursuant to the
+ Biosense Agreement, Ocuphire, will transfer to Processa the following materials related to the Compound in the Field in the Territory: (i) drug substance, (ii) drug product, and (iii) all documents related to the Product including all Regulatory
+ Approvals or clearances or submissions.
+
+ 12
+
+ ARTICLE III
+
+ DEVELOPMENT
+
+ 3.1 General. From the Effective Date, and subject to the terms of this Agreement, including the requirements of ARTICLE V, Processa (or its Affiliates or
+ Sublicensees) shall control and be solely responsible for the Development of and regulatory activities with respect to Compounds and Products in the Field in the Territory, including all costs and expenses relating thereto. If Processa requests
+ Ocuphire’s assistance with respect to any Development activities, and Ocuphire, in its sole discretion, agrees to provide such assistance, the Parties shall mutually agree in advance on a budget therefor, and Processa shall reimburse Ocuphire for any
+ expenses incurred by Ocuphire under this Section 3.1 within thirty (30) days after receiving an invoice therefor. For clarity, following the Effective Date, Ocuphire shall have no future obligations with regard to the Development of Products in the
+ Field in the Territory.
+
+ 3.2 Development Plans. Processa’s Development activities with respect to Compounds and Products in the Field in the Territory shall be conducted in accordance with a development plan
+ (the “Development Plan”), which shall set forth a summary of the planned Development activities to be conducted by or on behalf of Processa and its Affiliates and Sublicensees with respect to such Product in each country in the Territory
+ during the applicable Calendar Year. Since both Parties recognize that the development of the Product is an evolving process and requires sometimes immediate decisions or changes to the Development Plan that cannot be anticipated in the beginning of
+ the year, both Parties acknowledge that the plan will serve as a guide not a recipe or required steps that Processa must take in order to develop the product for regulatory approval. The initial Development Plan with respect to 2022 and 2023 shall be
+ delivered to Ocuphire within one hundred eighty (180) days after the Effective Date. Thereafter during the Term, Processa shall prepare and deliver to Ocuphire before May 1st of each Calendar Year an updated Development Plan for the
+ upcoming Calendar Year.
+
+ 3.3 Exchange of Information Regarding Development. At least once each Calendar Year, beginning in Calendar Year 2022 and ending on the date on which Processa meets
+ its diligence obligations set forth in Section 5.1 below, Processa shall provide Ocuphire with a reasonably detailed report describing Processa’s Development activities and the summary results thereof with respect to all Compounds and Products.
+
+ ARTICLE IV
+
+ COMMERCIALIZATION
+
+ 4.1 General. From the Effective Date, and subject to the terms of this Agreement, including the requirements of ARTICLE V, Processa (or its Affiliates or
+ Sublicensees) shall control and be solely responsible for the Commercialization of Products in the Field in the Territory, including all costs and expenses relating thereto. For clarity, following the Effective Date, Ocuphire shall have no future
+ obligations with regard to the Commercialization of Products in the Field in the Territory.
+
+ 13
+
+ 4.2 Commercialization Plans. During the Royalty Term with respect to each Product, at least thirty (30) days prior to the commencement of each Calendar Year,
+ Processa shall provide Ocuphire, for information purposes only, a summary of the planned Commercialization activities to be conducted by or on behalf of Processa and its Affiliates and Sublicensees with respect to such Product in each country in the
+ Territory during such Calendar Year (each such plan, a “Commercialization Plan”).
+
+ 4.3 Exchange of Information Regarding Commercialization. At least once each Calendar Year, beginning in the first Calendar Year during the Royalty Term and ending, on a
+ Product-by-Product basis, on the expiration of the applicable Royalty Term, Processa shall provide Ocuphire with a reasonably detailed report describing Processa’s Commercialization activities and the summary results thereof with respect to all
+ applicable Products.
+
+ ARTICLE V
+
+ DILIGENCE
+
+ 5.1 Commercially Reasonable Efforts. During the Term, Processa shall, directly or through its Affiliates or Sublicensees, use Commercially Reasonable Efforts, from
+ and after the Effective Date, to Develop and obtain Regulatory Approval for one (1) Product in the Field in the U.S., or one (1) other Major Market. Without limiting or derogating from the foregoing, Processa, by itself or through its Affiliates or
+ Sublicensees, shall meet each of the following milestones within the respective time periods set forth herein:
+
+ (a) Prior to the three (3) year anniversary of the Effective Date: first patient administered drug in a Clinical Trial of a Product; and
+
+ (b) Prior to the five (5) year anniversary of the Effective Date: first patient administered drug in a Pivotal Clinical Trial of a Product or first patient administered drug in a Clinical
+ Trial for a second Indication of a Product.
+
+ 5.2 Termination for Failure to Meet Diligence Obligation. If, at any time during the Term, Processa fails to timely achieve any of the foregoing milestones, or if
+ Ocuphire reasonably believes that Processa (itself and through its Affiliates and Sublicensees) has not complied with its obligations under Section 5.1 to use Commercially Reasonable Efforts to Develop and obtain Regulatory Approval for one (1)
+ Product in the Field in the U.S., or one (1) other Major Market, Ocuphire shall provide written notice to Processa specifying the nature of such reasonable belief, and Ocuphire may terminate this Agreement pursuant to Section 11.4.
+
+ ARTICLE VI
+
+ FINANCIAL PROVISIONS
+
+ 6.1 Upfront Fee.
+
+ (a) In partial consideration for the rights and licenses granted to Processa hereunder and for no additional consideration, within forty-five (45) Business Days following the Effective Date,
+ Processa shall issue to Ocuphire (i) 44,689 shares of Processa Common Stock, equal to $300,000 in value based on the price of $ 6.7131 per share and rounded to the closest whole share, which was determined using the volume weighted average price (“VWAP”)
+ for Processa Common Stock over the previous thirty (30) trading days up to and including June 15, 2021 as reported on the Nasdaq Capital Stock Market (the “Upfront Shares”) and (ii) USD $200,000 to be paid to Ocuphire, both of which together
+ shall be defined as the “Upfront Fee”.
+
+ 14
+
+ (b) Lock-Up Provision. The Upfront Shares will contain a restrictive legend that restricts the sale, transfer, or disposition of these shares for a period commencing on the date of
+ issuance and ending one (1) year thereafter (such period, the “Lock-up Period”). In addition, the Upfront Shares shall contain a customary restrictive legend that specifies that such shares of common stock have not been registered with the
+ Securities and Exchange Commission (“SEC”) until such time as Processa shall receive a satisfactory opinion of legal counsel that specifies that such restrictive legend is no longer required by law.
+
+ 6.2 Development Milestone Payments. Processa will notify Ocuphire within ten (10) days of the achievement by Processa, its Affiliates or Sublicensees of each
+ development milestone set forth in the table below (each, a “Development Milestone”). Within thirty (30) days of the first achievement of each Development Milestone with respect to a Product, Processa shall remit the applicable payment
+ corresponding to such Development Milestone (each, a “Development Milestone Payment”). Each Development Milestone Payment shall be made only one-time with respect to the first Product to achieve the corresponding Development Milestone. The
+ Development Milestone Payments shall be in the form of USD, as set forth in the table below.
+
+ Development Milestone
+
+ Development Milestone Payment
+
+ 1st Patient Dosed in 1st Pivotal Clinical Trial, 1st Indication
+
+ $
+
+ 750,000
+
+ Last Patient Dosed in 1st Pivotal Clinical Trial, 1st Indication
+
+ $
+
+ 750,000
+
+ 1st Patient Dosed in 1st Pivotal Clinical Trial, 2nd Indication
+
+ $
+
+ 375,000
+
+ Last Patient Dosed in 1st Pivotal Clinical Trial, 2nd Indication
+
+ $
+
+ 375,000
+
+ 1st Regulatory Approval in the U.S.
+
+ $
+
+ 7,000,000
+
+ 2nd Regulatory Approval in the U.S.
+
+ $
+
+ 5,000,000
+
+ 1st Regulatory Approval within Licensed Territory Outside the US
+
+ $
+
+ 4,000,000
+
+ 2nd Regulatory Approval within Licensed Territory Outside the US
+
+ $
+
+ 2,000,000
+
+ 6.3 Development and Commercialization Costs. For clarity, following the Effective Date, Processa shall be solely responsible for all costs it incurs in Developing
+ and Commercializing Compounds and Products, including all Manufacturing costs.
+
+ 6.4 Sales Milestone Payments. Processa will notify Ocuphire within ten (10) days of the achievement by Processa, its Affiliates or Sublicensees of each sales
+ milestone set forth in the table below (each, a “Sales Milestone”). Processa shall pay Ocuphire the one-time, non-refundable, non-creditable sales milestone payments set forth in the table below (each, a “Sales Milestone Payment”)
+ within thirty (30) days after the end of the first Calendar Quarter during which the worldwide annual accrued Net Sales first reach the applicable Sales Milestone. For clarity, the Sales Milestone Payment will be payable once and only once when the
+ applicable Sales Milestone is first achieved. Thereafter, such Sales Milestone Payment will no longer apply. In addition, only one Sales Milestone can be achieved in a given Calendar Year and if more than one Sales Milestone is achieved in a Calendar
+ Year, then the highest Sales Milestone achieved in the Calendar Year will be paid; provided that any additional Sales Milestones achieved during the same Calendar Year will remain payable upon achievement of the applicable Sales Milestone in any of
+ the following Calendar Years. For illustration purposes, if at a given year worldwide annual accrued Net Sales first reach $160,000,000 (without having reached $50M prior to such year); the Sales Milestone Payment for such year will be $5,000,000 (on
+ account of the $100M Sales Milestone). If in any subsequent year, worldwide annual accrued Net Sales reach $100,000,000, the Sales Milestone Payment for such year will be $2,500,000 (on account of the $50M Sales Milestone), and so on.
+
+ 15
+
+ Worldwide Annual Accrued Net Sales
+
+ Payment
+
+ ≥ $50 M
+
+ $
+
+ 2,500,000
+
+ ≥ $100 M
+
+ $
+
+ 5,000,000
+
+ ≥ $250 M
+
+ $
+
+ 12,500,000
+
+ ≥ $500 M
+
+ $
+
+ 25,000,000
+
+ ≥ $750 M
+
+ $
+
+ 37,500,000
+
+ ≥ $1 Billion
+
+ $
+
+ 50,000,000
+
+ ≥ $1.5 Billion
+
+ $
+
+ 75,000,000
+
+ 6.5 Product Royalties.
+
+ (a) Royalty Rate. Processa shall pay a seven percent (7.5%) royalty rate on the aggregate worldwide annual accrued Net Sales of Products in the Territory during each Calendar Year to
+ Ocuphire on a Product-by-Product basis, excluding all sales made by a Sublicensee in the event that Processa receives Sublicense Consideration on account of a specific Product in a specific Territory from such Sublicensee for which Processa is
+ required to pay Ocuphire the applicable percentage of the Sublicense Consideration as set forth in Section 6.6. During any period within the Royalty Term applicable to a Product in a country when there is no Regulatory Exclusivity and no Valid Claim
+ of the Ocuphire Patent Rights in such country, the royalty rate applicable to Net Sales of such Product in such country shall be reduced to fifty percent (50%) of the royalty rates described in this Section 6.5. Notwithstanding the foregoing, such
+ reduction shall not cause the royalty rate payable to Ocuphire, after giving effect to any other reductions contemplated by this Section 6.5, to be reduced to less than three percent (3%) of annual Net Sales for such Product. Upon the expiration of
+ the Royalty Term with respect to each Product in each country, the license granted to Processa in Section 2.1(a) shall become fully paid-up and irrevocable with respect to such Product in such country.
+
+ (b) Royalty Term and Adjustments. Processa’s royalty obligations to Ocuphire under this Section 6.5 shall commence on a country-by-country and Product-by-Product basis on the date of
+ First Commercial Sale of such Product in such country and shall expire on a country-by-country basis and Product-by-Product basis on the last to occur of (i) expiration or invalidation of the last Valid Claim Covering such Product in such country,
+ (ii) the tenth (10th) anniversary of the date of the First Commercial Sale of such Product in such country and (iii) the expiration of all Regulatory Exclusivities covering such Product in such country (the “Royalty Term”).
+
+ (c) Third-Party Payments. If, in the opinion of patent counsel mutually acceptable to both Processa and Ocuphire, in order to Develop, Manufacture, use or Commercialize a Product in
+ the Field in a country of the Territory without infringing any Third Party intellectual property rights relating to the Ocuphire Intellectual Property, Processa or its Affiliate or Sublicensee is obligated to obtain a license or comparable grant of
+ rights (e.g., a covenant not to sue) under any Patent Rights from a Third Party (“Third-Party Patent Licenses”) and pay a royalty under such Third-Party Patent License with respect to such Product in
+ such country, then, subject to Section 6.5, forty percent (40%) of such royalties actually paid by Processa, its Affiliates or Sublicensees shall be creditable against royalties payable to Ocuphire hereunder with respect to such Product in such
+ country; provided that, if Processa is obligated to enter into any Third-Party Patent License, Processa shall use Commercially Reasonable Efforts to minimize the royalties owed by Processa under such Third-Party Patent License.
+ Notwithstanding the foregoing, such credit shall not cause the royalty rate payable to Ocuphire, after giving effect to any other reductions contemplated by this Section 6.5, to be reduced to less than three percent (3%) on annual Net Sales for such
+ Product.
+
+ 16
+
+ 6.6 Sublicense Payments.
+
+ (a) If Processa enters into a sublicense agreement with a Sublicensee, Ocuphire shall receive 32% of any Sublicense Consideration (the “Sublicense Payments”). The percentages
+ described in this Section 6.6 shall apply to all Sublicense Consideration. Processa shall pay Ocuphire the Sublicense Payments within thirty (30) days after the receipt of the Sublicense Consideration.
+
+ (b) Notwithstanding the foregoing, achievement of a Development Milestone by a Sublicensee shall not require a Development Milestone Payment under Section 6.2 and, in the event that Processa
+ receives Sublicense Consideration on account of a specific Product in a specific Territory, then in such case Processa shall be required to pay Ocuphire the applicable Sublicense Payment, but such Sublicense Consideration shall not be taken into
+ account when calculating Sales Milestone Payments under Section 6.4 or royalties payable to Ocuphire under Section 6.5. Notwithstanding the foregoing, the Development Milestone Payments, Sales Milestone Payments and royalty will continue to be
+ payable for any Product and any country in the Territory that has not been sublicensed to a Sublicensee. To clarify, three example scenarios are presented for illustrative purposes only:
+
+ Example 1: If Processa Develops the Product and receives Regulatory Approval in multiple countries in the Territory and licenses out the commercial sales to Sublicensee in countries in the Territory
+ such that Processa does not sell such Product, the financial terms of ARTICLE VI with respect to such Product would then be the following: Section 6.2 and 6.3 would apply, Sections 6.4 and 6.5 would no longer apply. The Sublicense Payments set forth
+ in Section 6.6 would apply to all Sublicense Consideration received by Processa from the Sublicensee such as upfront fees, any milestones payments, and royalties.
+
+ 17
+
+ Example 2: If Processa Develops and Commercializes a Product in U.S. while Sublicensing the Product for Development and Commercialization in other countries in the Territory, the financial terms of
+ ARTICLE VI with respect to such Product would then be the following: Sections 6.2 through 6.5 would apply with respect to the Product Developed and Commercialized in the U.S. by Processa, and Sections 6.2 through 6.5 would not apply with respect to a
+ Product Developed and Commercialized by a Sublicensee. Instead, the Sublicense Payments set forth in Section 6.6 would apply to all Sublicense Consideration received by Processa from the Sublicensee such as upfront fees, any milestones payments, and
+ royalties.
+
+ Example 3: If Processa sublicenses a Product prior to the 1st patient dosed in the Pivotal Clinical Trial for the 1st Indication and Sublicensee completes Development, obtains
+ Regulatory Approval, and Commercializes such Product in all countries in the Territory, the financial terms of ARTICLE VI with respect to such Product would then be the following: for Section 6.2, Processa would pay for Development Milestones that
+ Processa has completed, the remaining Development Milestones not completed by Processa would no longer apply, Sections 6.4 through 6.5 with respect to Sales Milestones and royalties would no longer apply. The Sublicense Payments set forth in Section
+ 6.6 would apply to all Sublicense Consideration received by Processa from the Sublicensee such as upfront fees, any milestones payments, and royalties.
+
+ 6.7 Reports; Payments. Within thirty (30) days after the end of each Calendar Quarter commencing from the earlier of (a) the First Commercial Sale of a Product; or
+ (b) the receipt of Sublicense Consideration, Processa shall furnish Ocuphire with a quarterly report (“Periodic Report”) detailing, at a minimum, the following information for the applicable Calendar Quarter, each listed by Product and by
+ country of sale: (i) the total number of units of Product sold by Processa, its Affiliates and Sublicensees, including a breakdown of the number and type of Products sold, (ii) gross amounts received for all such sales, (iii) deductions by type taken
+ from Net Sales as specified herein, (iv) Net Sales, (v) Royalties and milestone payments owed to Ocuphire, listed by category, (vi) Sublicense Consideration received during the preceding Calendar Quarter and Sublicense Payments due to Ocuphire, (vii)
+ the currency in which the sales were made, including the computations for any applicable currency conversions, (viii) invoice dates and all other data enabling the royalties and Sublicense Payments payable to be calculated accurately and (ix) a
+ detailed summary of progress against each Development Milestone and Sales Milestone, and an estimate of the timing of the achievement of the next Development Milestone and Sales Milestone. Once the requirement to deliver Periodic Reports is
+ triggered, Periodic Reports shall be provided to Ocuphire whether or not royalties, milestone payments or Sublicense Payments are payable for a particular Calendar Quarter. In addition to the foregoing, upon Ocuphire’s reasonable request, Processa
+ will provide to Ocuphire such other information as may be reasonably requested by Ocuphire, and will otherwise cooperate with Ocuphire as reasonably necessary, to enable Ocuphire to verify Processa’s compliance with the payment and related
+ obligations under this Agreement, including verification of the calculation of amounts due to Ocuphire under this Agreement and of all financial information provided or required to be provided in the Periodic Reports. Concurrently with each such
+ Periodic Report, Processa shall pay to Ocuphire all amounts payable by it under Section 6.5 and 6.6.
+
+ 18
+
+ 6.8 Books and Records; Audit Rights. Processa shall keep and maintain for three (3) years complete and accurate records of the underlying revenue and expense data
+ relating to the calculations of Net Sales, Sublicense Consideration and payments required by this Article VI. Ocuphire shall have the right, once annually at its own expense, to have an independent, certified public accounting firm, selected by
+ Ocuphire and reasonably acceptable to Processa, review any such records of Processa in the location(s) where such records are maintained by Processa upon reasonable notice (which shall be no less than fourteen (14) days prior notice) and during
+ regular business hours and under obligations of confidentiality no less strict than as set forth in Article VIII, for the sole purpose of verifying the basis and accuracy of payments made under Section 6.8 within the thirty-six (36) month period
+ preceding the date of the request for review. The report of such accounting firm shall be limited to a certificate stating whether any report made or payment submitted by Processa during such period is accurate or inaccurate and the actual amounts of
+ Net Sales and Sublicense Consideration, and milestone payments, royalties and Sublicense Payments due, for such period. Processa shall receive a copy of each such report concurrently with receipt by Ocuphire. Should such inspection lead to the
+ discovery of a discrepancy to Ocuphire’s detriment, Processa shall pay within five (5) Business Days after its receipt from the accounting firm of the certificate the amount of the discrepancy plus interest calculated in accordance with Section 6.12.
+ Ocuphire shall pay the full cost of the review unless the underpayment of royalties, milestone payments or Sublicense Payments is greater than five percent (5%) of the amount due for the period being audited, in which case Processa shall pay the
+ reasonable cost charged by such accounting firm for such review. Any overpayment by Processa revealed by an examination shall be fully creditable against future payments.
+
+ 6.9 Tax Matters. Except as expressly provided below, no payments to be made to Ocuphire by Processa hereunder shall be reduced by or on account of any taxes,
+ levies, imposts, duties, charges, assessments or fees (collectively, “Taxes”). Notwithstanding the immediately preceding sentence, if any applicable Law requires (with due regard to any relief to which Ocuphire may be entitled) that Taxes be
+ deducted and withheld from any payment made to Ocuphire by Processa under this Agreement, Processa shall (a) deduct those Taxes, together with any interest and penalties properly assessed thereon, from such payment or from any other payment owed by
+ Processa hereunder; (b) transmit the amounts so deducted to the proper Governmental Authority; (c) send evidence of the requirement together with proof of due transmission of the amounts described in clause (b) to Ocuphire promptly following such
+ payment; and (d) remit to Ocuphire the net amount of such payment after taking account of such deduction. In determining whether to deduct any amount hereunder and prior to making such deduction, Processa shall contact Ocuphire and take due account
+ of all documentation supplied by Ocuphire, and of other facts known to Processa, supporting a reduction in any Tax otherwise required to be deducted, or a credit therefor or refund thereof. Processa will reasonably cooperate with Ocuphire in respect
+ of Tax matters relating to payments made by Processa to Ocuphire under this Agreement and any disputes with a Governmental Authority regarding such matters, including without limitation: (y) complying with reasonable requests from Ocuphire to change
+ the form, place or other circumstances of payments to be made to Ocuphire by Processa under this Agreement so as to reduce the incidence of Taxes on such payments or recover any Taxes imposed on such payments (any such recovery to be for the benefit
+ of Ocuphire); and (z) in connection with any official or unofficial audit or contest relating to such payments.
+
+ 19
+
+ 6.10 Payment Method and Currency Conversion. All Payments shall be made in U.S. dollars in immediately available funds via either a bank wire transfer, an ACH
+ (automated clearing house) mechanism, or any other means of electronic funds transfer, at Processa’s election, to Ocuphire’s bank account, or to such other bank account as Ocuphire shall designate in a notice at least ten (10) days before the payment
+ is due. For the purposes of determining the amount of any royalties or Sublicense Payments due for the relevant Calendar Quarter under Section 6.8, the amount of Net Sales or Sublicense Consideration in any foreign currency shall be converted into
+ U.S. dollars in accordance with the prevailing rates of exchange published in the Wall Street Journal for such currency on the last Business Day of the relevant Calendar Quarter.
+
+ 6.11 Blocked Payments. If by reason of applicable Laws in any country in the Territory, it becomes impossible or illegal for Processa or its Affiliates or
+ Sublicensees to transfer, or have transferred on its behalf royalties or other payments to Ocuphire, Processa shall promptly notify Ocuphire of the conditions preventing such transfer. To the extent any payments to Ocuphire cannot be transferred
+ pursuant to the preceding sentence, such amounts shall be deposited in local currency in the relevant country to the credit of Ocuphire in a recognized banking institution designated by Ocuphire or, if none is designated by Ocuphire within a period
+ of thirty (30) days, in a recognized banking institution selected by Processa or its Affiliate or Sublicensee, as the case may be, and identified in a notice given to Ocuphire. If so deposited in a foreign country, Processa shall provide, or cause
+ its Affiliate or Sublicensee to provide, reasonable cooperation to Ocuphire so as to allow Ocuphire to assume control over such deposit as promptly as practicable.
+
+ 6.12 Late Payments. If Processa shall fail to make a timely payment pursuant to the terms of this Agreement, interest shall accrue on the past due amount starting on
+ the date on which the applicable payment was due at the thirty (30) day U.S. dollar London Interbank Offered Rate effective for the date that payment was due (as published in the Wall Street Journal) plus five percent (5%) per annum, computed for the
+ actual number of days after the due date that the payment was past due.
+
+ ARTICLE VII
+
+ INTELLECTUAL PROPERTY OWNERSHIP, PROTECTION
+
+ AND RELATED MATTERS
+
+ 7.1 Ownership of Intellectual Property.
+
+ (a) Background Intellectual Property. Each Party retains all right, title, ownership and interest in and to any of its intellectual property rights, including all Know-How and Patent
+ Rights, that exists prior to the Effective Date and/or is developed by such Party independent of any use of the Ocuphire Intellectual Property.
+
+ (b) Sole Inventions. Each Party shall exclusively own all Inventions made solely by or on behalf of such Party, its employees, agents, and consultants (“Sole Inventions”). Sole
+ Inventions made solely by Processa, its employees, agents and consultants are referred to herein as “Processa Sole Inventions”. Sole Inventions made solely by Ocuphire, its employees, agents and consultants are referred to herein as “Ocuphire
+ Sole Inventions”.
+
+ 20
+
+ (c) Joint Inventions. The Parties shall jointly own all Inventions made jointly by employees, agents and consultants of Processa, on the one hand, and employees, agents and
+ consultants of Ocuphire, on the other hand (“Joint Inventions”), and all Know-How, Patent Rights and other intellectual property rights therein (the “Joint Intellectual Property”) on the basis of each Party having an undivided interest
+ in the whole. Joint Inventions may only be used in accordance with and subject to the terms and conditions of this Agreement.
+
+ (d) Inventorship. For purposes of determining whether an invention is a Processa Sole Invention, a Ocuphire Sole Invention or a Joint Invention, questions of inventorship shall be
+ resolved in accordance with United States patent Laws.
+
+ 7.2 Prosecution and Maintenance of Patent Rights.
+
+ (a) Prosecution of Ocuphire Patent Rights. With respect to Ocuphire Patent Rights, Processa shall be responsible for and control the prosecution and maintenance of Ocuphire Patent
+ Rights in the Territory. The out-of-pocket costs and expenses incurred by Processa after the Effective Date to obtain prosecute and maintain Ocuphire Patent Rights shall be borne one hundred percent (100%) by Processa. Processa shall file
+ international patent applications, or designate for national filing and file, in all countries in the Territory desired by Processa. Processa shall promptly deliver to Ocuphire copies of all official correspondence with the applicable patent and
+ trademark offices in the Territory relating to the Ocuphire Patent Rights and, after the Effective Date Processa shall promptly provide Ocuphire drafts of all proposed material filings and correspondence to any patent authority with respect to the
+ Ocuphire Patent Rights. Processa shall keep Ocuphire informed of the status of all pending patent applications that pertain to any Compound or Product. Processa shall not abandon any Ocuphire Patent Rights (the “Abandoned Patents”) without at
+ least ninety (90) days’ prior notice to Ocuphire. If Processa decides to abandon any Ocuphire Patent Rights, Ocuphire shall have the option to continue to prosecute and maintain the Abandoned Patents in Ocuphire’s name and at Ocuphire’s sole expense.
+
+ (b) Prosecution of Joint Patent Rights. Processa shall be responsible for obtaining, prosecuting, and/or maintaining patents and patent applications, in any countries in the Territory,
+ Covering Joint Inventions (“Joint Patent Rights”). Processa shall control such prosecution and maintenance of the Joint Patent Rights. The out-of-pocket costs and expenses incurred to obtain, prosecute and maintain Joint Patent Rights shall be
+ borne one-hundred percent (100%) by Processa. Processa shall keep Ocuphire informed of the status of all pending Joint Patent Rights, and shall use reasonable efforts to solicit Ocuphire’s comments on material prosecution matters related to the Joint
+ Patent Rights. Processa, its agents and attorneys shall not unreasonably decline to implement or incorporate any comments of Ocuphire regarding any aspect of such patent prosecutions. Processa shall not abandon any Joint Patent Right without at least
+ ninety (90) days’ prior notice to Ocuphire. If Processa decides to abandon any Joint Patent Right, Ocuphire shall have the option to continue to prosecute and maintain such Joint Patent Right in Ocuphire’s name, at Ocuphire’s sole expense.
+
+ 21
+
+ (c) Prosecution of Processa Patent Rights. Processa has the sole right, but not the responsibility, to obtain, prosecute, and/or maintain the Processa Patent Rights.
+
+ (d) Cooperation. Each Party agrees to cooperate fully in the preparation, filing, prosecution, and maintenance of Ocuphire Patent Rights, Joint Patent Rights, and Processa Patent
+ Rights, pursuant to this Section 7.2 and in the obtaining and maintenance of any patent term extensions, supplementary protection certificates, pediatric extensions, and their equivalent with respect thereto. Such cooperation includes: (i) executing
+ all papers and instruments, or requiring its employees or contractors, to execute such papers and instruments, so as enable the other Party to apply for and to prosecute patent applications in any country as permitted by this Section 7.2; and (ii)
+ promptly informing the other Party of any matters coming to such Party’s attention that may affect the preparation, filing, prosecution, or maintenance of any such patent applications.
+
+ 7.3 Third-Party Infringement.
+
+ (a) Notice. Each Party shall promptly report in writing to the other Party during the Term any known or suspected (i) infringement of any of the Ocuphire Patent Rights or Joint
+ Patent Rights in the Territory, or (ii) unauthorized use or misappropriation of any of the Ocuphire Know-How or Joint Inventions, in the case of either clause (i) or clause (ii), that could reasonably be expected to impact the (A) Development,
+ Manufacture, use or Commercialization of a Compound or Product in the Field in the Territory, or (B) scope of the rights licensed to Processa under ARTICLE II (an “Infringement Claim”), of which such Party becomes aware, and shall provide the
+ other Party with all available evidence supporting such Infringement Claim.
+
+ (b) Initial Right to Enforce.
+
+ (i) Subject to Section 7.3(c), Processa (itself or through its Affiliate or Sublicensee) shall have the first right, but not the obligation, to initiate a suit, or take other appropriate
+ action (an “Action”) that it believes is reasonably required to protect (i.e., prevent or abate actual or threatened infringement or misappropriation of) or otherwise enforce the Processa Intellectual
+ Property, Ocuphire Intellectual Property and Joint Intellectual Property with respect to an Infringement Claim; provided, however, that Processa shall (i) consult with Ocuphire in good faith with respect to any claim that any Ocuphire
+ Patent Right or Joint Patent Right is invalid or unenforceable and implement any reasonable comment from Ocuphire regarding any aspect of defending against any such claim, (ii) not take any position with respect to such Action in any way that is
+ reasonably likely to directly and adversely affect the scope, validity or enforceability of the Ocuphire Intellectual Property or Joint Intellectual Property; and (c) if Processa does not intend to prosecute or defend an Action, or ceases to
+ diligently pursue such an Action, in either case solely for an Infringement Claim, it shall promptly inform Ocuphire in such a manner that such Action will not be prejudiced and Section 7.3(b)(ii) shall apply. Any such Action by Processa shall be
+ brought either in the name of Ocuphire or its Affiliate, the name of Processa or its Affiliate, or the names of Processa, Ocuphire and their respective Affiliates, as may be required by the Law of the forum. For this purpose, Ocuphire shall execute
+ such legal papers and cooperate in the prosecution of such Action, including providing full access to documents, information and witnesses as reasonably requested by Processa in connection with such Action, as may be reasonably requested by Processa;
+ provided that Processa shall promptly reimburse all out-of-pocket expenses (including reasonable counsel fees and expenses) actually incurred by Ocuphire in connection with such cooperation.
+
+ 22
+
+ (ii) If (A) Processa informs Ocuphire that it does not intend to prosecute an Infringement Claim in respect of the Ocuphire Intellectual Property or Joint Intellectual Property, (B) within
+ ninety (90) days after notice of the Infringement Claim in respect of the Ocuphire Intellectual Property or Joint Intellectual Property Processa has not commenced any Action in respect of such intellectual property, or (C) if Processa thereafter
+ ceases to diligently pursue such Action, then Ocuphire shall have the right (but not the obligation), at its own expense, upon notice to Processa to take appropriate action to address such Infringement Claim, including by initiating its own Action or
+ taking over prosecution of any Action initiated by Processa. In such event, Ocuphire shall keep Processa fully informed about such Action and Processa shall provide all reasonable cooperation requested by Ocuphire in connection with such Action; provided
+ that Ocuphire shall promptly reimburse all out-of-pocket expenses (including reasonable counsel fees and expenses) actually incurred by Processa in connection with such cooperation. Ocuphire shall not take any position with respect to such Action in
+ any way that is reasonably likely to directly and adversely affect the scope, validity or enforceability of the Joint Intellectual Property. Ocuphire’s right to enforcement as described in this Section 7.3(b)(ii) with respect to an Infringement Claim
+ is applicable solely to the extent permitted by applicable Law.
+
+ (iii) For clarity, as between Ocuphire and Processa, (A) Ocuphire shall have the sole right, but not the obligation, to protect Ocuphire Intellectual Property against any suspected
+ misappropriation or infringement that does not constitute an Infringement Claim and (B) the Parties shall jointly determine by mutual agreement whether and how to protect Joint Intellectual Property against any suspected misappropriation or
+ infringement that does not constitute an Infringement Claim, and the provisions of this ARTICLE VII shall not apply with respect thereto.
+
+ (c) Conduct of Certain Actions; Costs. The Party initiating suit or taking other action with respect to an Infringement Claim shall have the sole and exclusive right to select
+ counsel for, and otherwise control, any suit or action initiated by it pursuant to Section 7.3(b). The initiating Party shall assume and pay all of its own out-of-pocket costs incurred in connection with any litigation or proceedings initiated by it
+ pursuant to Section 7.3(b), including the fees and expenses of the counsel selected by it. The other Party shall have the right to participate, but not control, and be represented in, any such suit by its own counsel at its own expense.
+
+ (d) Recoveries. Except as otherwise agreed by the Parties as part of a cost-sharing arrangement, any damages, settlements, accounts of profits, or other financial compensation
+ recovered from a Third Party by the Party that assumes control over enforcing any Infringement Claim shall be allocated between the Parties as follows:
+
+ (i) first, to reimburse the Parties’ actual out-of-pocket expenses (including reasonable counsel fees and expenses) incurred in pursuing such Infringement Claim; and
+
+ (ii) second, (x) if Processa controlled the assertion of the Infringement Claim any remaining amount that represents compensatory damages relating to any Compound or Product (including lost
+ sales or lost profits) shall be deemed Net Sales and paid to Processa, less an amount equal to royalty payments to Ocuphire on such deemed Net Sales in accordance with the royalty provisions of Section 6.5, which amount shall be paid to Ocuphire, and
+ any remaining amount that represents punitive damages shall be shared equally by the Parties and (y) if Ocuphire controlled the assertion of the Infringement Claim, any remaining recoveries shall be retained by Ocuphire.
+
+ 23
+
+ 7.4 Patent Invalidity Claim. Each of the Parties shall promptly notify the other in the event of any legal or administrative action by any Third Party against a
+ Ocuphire Patent Right or Joint Patent Right of which it becomes aware, including any nullity, revocation, reexamination or compulsory license proceeding. Ocuphire shall have the first right, but not the obligation, to defend against any such action
+ involving a Ocuphire Patent Right, and the costs of any such defense shall be at Ocuphire’s expense; provided, however, that, in the case of any inter partes review or similar post-grant
+ matter before the Patent Trial and Appeal Board or similar administrative body that is based on the same subject matter as any claim or counterclaim in any Infringement Claim, Processa shall have the first right, but not the obligation, to defend
+ against any such action involving a Ocuphire Patent Right, and the costs of any such defense shall be at Processa’s expense; provided, further that in the case of any Paragraph IV Claim, Section 7.8 shall apply. Processa shall have
+ the sole right, but not the obligation, to defend against any such action involving a Processa Patent Right and the first right, but not the obligation, to defend against any action involving a Joint Patent Right, and, in each case, the costs of any
+ such defense shall be at Processa’s expense. If the Party that has the first right to defend against any such action involving such Ocuphire Patent Right or Joint Patent Right does not do so within sixty (60) days of notice thereof, then the other
+ Party shall have the right, but not the obligation, to defend such action and any such defense shall be at such other Party’s expense. Upon request of the Party that defends against any such action involving a Ocuphire Patent Right, Processa Patent
+ Right or Joint Patent Right, the other Party agrees to join in any such action and to cooperate reasonably with the defending Party, including providing full access to documents, information and witnesses as reasonably requested by the defending
+ Party in connection with such action, provided that the defending Party shall promptly reimburse all out-of-pocket expenses (including reasonable counsel fees and expenses) actually incurred by the other Party in connection with such
+ cooperation.
+
+ 7.5 Claimed Infringement. If any action, suit or proceeding brought against a Party (or an Affiliate or Sublicensee of such Party) alleging that the Manufacture,
+ use or Commercialization of a Product infringes, or is suspected or alleged to infringe, the Know-How or Patent Rights of any Third Party in the Territory, such Party shall notify the other Party within thirty (30) days of the earlier of (a) receipt
+ of service of process in such action, suit or proceeding or (b) the date such Party becomes aware that such action, suit or proceeding has been instituted, and, thereafter, the Parties shall meet as soon as possible to discuss the overall strategy
+ for defense of such matter. Processa shall have the right to defend such action, suit or proceeding in the Territory at its sole cost and expense. Ocuphire shall have the right to separate counsel at its own expense in any such action, suit or
+ proceeding. The Parties shall cooperate with each other in all reasonable respects in any such action, suit or proceeding. Each Party shall promptly furnish the other Party with a copy of each communication relating to the alleged infringement that
+ is received by such Party, including all documents filed in any litigation.
+
+ 24
+
+ 7.6 Patent Term Extensions. Processa shall have the exclusive right and obligation to seek patent term extensions or supplemental patent protection, including
+ supplementary protection certificates, in each country in the Territory in relation to the Products at Processa’s expense. Ocuphire and Processa shall cooperate in connection with all such activities, and Processa, its agents and attorneys will give
+ due consideration to all timely suggestions and comments of Ocuphire regarding any such activities; provided that all final decisions shall be made by Processa.
+
+ 7.7 Patent Marking. Processa shall comply with the patent marking statutes in each country in the Territory in which any Product is sold by Processa, its
+ Affiliates, or its Sublicensees.
+
+ 7.8 Certification under Drug Price Competition and Patent Restoration Act.
+
+ (a) Notice. If a Party becomes aware of any certification filed pursuant to 21 U.S.C. § 355(b)(2)(A) or 355(j)(2)(A)(vii)(IV) or its successor provisions, or any similar provision in
+ any country in the Territory other than the U.S., claiming that any Ocuphire Patent Rights or Joint Patent Rights are invalid or otherwise unenforceable, or that infringement will not arise from the Manufacture, use, import or sale of a product by a
+ Third Party (a “Paragraph IV Claim”), such Party shall promptly notify the other Party in writing within five (5) Business Days after its receipt thereof.
+
+ (b) Control of Response; Recoveries. Processa shall have the first right, but not the obligation, to initiate and control patent infringement litigation for any Paragraph IV Claim; provided,
+ however, that Processa shall (i) consult with Ocuphire in good faith with respect to any claim that any Ocuphire Patent Right or Joint Patent Right is invalid or unenforceable and (ii) implement any comment from Ocuphire regarding any aspect
+ of defending against any such claim. Any suit by Processa shall be brought either in the name of Ocuphire or its Affiliate, the name of Processa or its Affiliate, or the names of Processa, Ocuphire, and their respective Affiliates, as may be required
+ by the Law of the forum. For this purpose, Ocuphire shall execute such legal papers and cooperate in the prosecution of such suit, including providing full access to documents, information and witnesses, as may be reasonably requested by Processa; provided
+ that Processa shall promptly reimburse all out-of-pocket expenses (including reasonable counsel fees and expenses) actually incurred by Ocuphire in connection with such cooperation. If Processa elects not to assume control over litigating any
+ Paragraph IV Claim, Processa shall notify Ocuphire as soon as practicable but in any event not later than ten (10) days before the first action required to litigate such Paragraph IV Claim so that Ocuphire may, but shall not be required to, assume
+ sole control over litigating such Paragraph IV Claim using counsel of its own choice. Any suit by Ocuphire shall be either in the name of Ocuphire or its Affiliate, the name of Processa or its Affiliate, or the names of Processa, Ocuphire, and their
+ respective Affiliates, as may be required by the Law of the forum. For this purpose, Processa shall execute such legal papers and cooperate in the prosecution of such suit, including providing full access to documents, information and witnesses, as
+ may be reasonably requested by Ocuphire; provided that Ocuphire shall promptly reimburse all out-of-pocket expenses (including reasonable counsel fees and expenses) actually incurred by Processa in connection with such cooperation. Any
+ compensation recovered as a result of such litigation shall be allocated as set forth in Section 7.3(d) above.
+
+ 7.9 Privileged Communications. In furtherance of this Agreement, it is expected that Processa and Ocuphire will, from time to time, disclose to one another
+ privileged communications with counsel, including opinions, memoranda, letters, and other written, electronic and verbal communications. Such disclosures are made with the understanding that they shall remain confidential, that they will not be
+ deemed to waive any applicable attorney-client or attorney work product or other privilege and that they are made in connection with the shared community of legal interests existing between Ocuphire and Processa, including the community of legal
+ interests in avoiding infringement of any valid, enforceable patents of Third Parties and maintaining the validity of Ocuphire Patent Rights, Processa Patent Rights and Joint Patent Rights.
+
+ 25
+
+ 7.10 Settlement. Neither Party shall unilaterally enter into any settlement or compromise of any suit, action or proceeding under this ARTICLE VII that would in any
+ manner alter, diminish, or be in derogation of the other Party’s rights under this Agreement without the prior written consent of such other Party, which shall not be unreasonably withheld or delayed.
+
+ ARTICLE VIII
+
+ CONFIDENTIAL INFORMATION
+
+ 8.1 Treatment of Confidential Information. During the Term and for five (5) years thereafter, each Party shall maintain Confidential Information (as defined in
+ Section 8.2) of the other Party in confidence, and shall not (a) disclose, divulge or otherwise communicate such Confidential Information of the other Party (except to agents, directors, officers, employees, consultants, subcontractors, licensees,
+ sublicensees, partners, Affiliates and advisors who have a need to know such Confidential Information to perform obligations or exercise rights on behalf of such Party (collectively, “Agents”) that are under written obligations of
+ confidentiality no less stringent than those set forth in this ARTICLE VIII) or (b) use such Confidential Information of the other Party for any purpose other than in connection with the Development, Manufacture, use or Commercialization of Compounds
+ or Products pursuant to this Agreement or otherwise to accomplish the purposes of this Agreement, including exercising its rights or performing its obligations hereunder. Each Party shall exercise Commercially Reasonable Efforts to prevent and
+ restrain the unauthorized disclosure of such Confidential Information by any of its Agents, which efforts shall be at least as diligent as those generally used by such Party in protecting its own confidential and proprietary information, and in any
+ event no less than reasonable efforts. Each Party will be responsible for any breach of this ARTICLE VIII by its Agents. Either receiving Party may disclose Confidential Information of the disclosing Party (including the existence and terms of this
+ Agreement) (i) to Governmental Authorities in order to comply with applicable Laws, respond to inquiries, requests or investigations by Governmental Authorities, including filing, prosecuting or maintaining Patent Rights and filings with Regulatory
+ Authorities, in each case as permitted by this Agreement; (ii) to comply with the regulations or requirements of any stock exchange; (iii) to the extent reasonably necessary in order to defend or prosecute litigation; and (iv) to potential and actual
+ bona fide investors, Acquirors and other financial or commercial partners solely for the purpose of evaluating or carrying out an actual or potential investment, Change of Control or collaboration; provided
+ that the receiving Party shall (x) promptly provide prior notice of such disclosure to the disclosing Party and use Commercially Reasonable Efforts to avoid or minimize the degree of such disclosure, (y) use reasonable efforts to secure confidential
+ treatment of such Confidential Information, and (z) obtain the same written confidentiality obligations from any Third Parties to which it discloses the Confidential Information of the disclosing Party as it obtains with respect to its own similar
+ types of confidential information, and in any event such obligations shall be no less stringent than those set forth in this ARTICLE VIII.
+
+ 26
+
+ 8.2 Confidential Information. “Confidential Information” means all trade secrets or other proprietary information, including any proprietary data and
+ materials (whether or not patentable or protectable as a trade secret), that is disclosed by a Party to the other Party. All information disclosed prior to the Effective Date by Ocuphire to Processa pursuant to the Amended and Restated Nondisclosure
+ Agreement dated December 17, 2020 by and between the Parties, as amended, through the Effective Date (the “Confidentiality Agreement”), shall be deemed “Confidential Information” of Ocuphire. The terms of this Agreement shall be the
+ Confidential Information of both Parties. Notwithstanding the foregoing, Confidential Information shall not include any information that:
+
+ (a) either before or after the date of the disclosure to the receiving Party is lawfully disclosed to the receiving Party by a Third Party without any violation of any obligation to the
+ other Party; or
+
+ (b) either before or after the date of the disclosure to the receiving Party, becomes published or generally known to the public through no fault or omission on the part of the receiving
+ Party or its Agents; or
+
+ (c) is independently developed by or for the receiving Party without reference to or reliance upon the disclosing Party’s Confidential Information as demonstrated by contemporaneous written
+ records of the receiving Party.
+
+ 8.3 Publications. The Parties recognize the desirability of publishing and publicly disclosing the results of Clinical Trials of pharmaceutical products.
+ Accordingly, subject to coordination through designated representatives of each Party, Processa shall be free to publicly disclose the results of Clinical Trials involving Compounds or Products, subject to prior review by Ocuphire for issues of
+ patentability and protection of its Confidential Information, in a manner consistent with all Laws applicable to Processa and best industry practices. In addition, if Processa intends to publish articles in scientific or medical journals or to make
+ presentations of the results of Clinical Trials involving Compounds or Products, Processa shall provide Ocuphire through the designated representatives of each Party at its earliest opportunity (but in any event no less than forty-five (45) days
+ prior to intended submission or presentation) with any proposed abstracts, manuscripts or summaries of presentations that cover the results of Development of any Compound or Product. Ocuphire shall respond promptly through its designated
+ representative, and in any event no later than thirty (30) days after receipt of such proposed publication or presentation, or such shorter period as may be required by the publication. If timely requested by Ocuphire, Processa agrees to allow a
+ reasonable period (not to exceed sixty (60) days) to permit filings for patent protection and to otherwise address issues of Confidential Information or related competitive harm to the reasonable satisfaction of Ocuphire. In addition, Processa will
+ consider in good faith any comments furnished by Ocuphire to Processa during such period. Processa shall be responsible to assure that its Affiliates and licensees agree to, and comply with, equivalent undertakings in favor of Ocuphire. Ocuphire and
+ its Affiliates may make any publication or public disclosure of any data concerning the Compounds or Products that existed as of the Effective Date, provided that Ocuphire provides Processa at least thirty (30) days (or such shorter period as
+ may be required by the publication) to review such publication or public disclosure, allows a reasonable period (not to exceed sixty (60) days) to permit filings for patent protection and to otherwise address issues of Confidential Information or
+ related competitive harm to the reasonable satisfaction of Processa, and reasonably considers any timely comments provided by Processa with respect to such publication or public disclosure. Ocuphire shall not, and shall cause each of its Affiliates,
+ licensees, and sublicensees not to, make any other publications or public disclosures regarding the Compounds or Products without Processa’s prior written consent. If Processa consents to Ocuphire making such publications, Ocuphire shall provide
+ Processa a reasonable opportunity to comment on any such publications and such comments shall not be unreasonably rejected. All publications involving Compounds or Products shall include appropriate acknowledgement consistent with standard scientific
+ practice of any contributions of each Party to the results being publicly disclosed.
+
+ 27
+
+ 8.4 Press Releases and Other Disclosures.
+
+ (a) The Parties recognize that each Party may from time to time desire to issue press releases and make other public statements or disclosures regarding the subject matter of this Agreement.
+ In such event, the Party desiring to issue a press release or make a public statement or disclosure shall provide the other Party with a copy of the proposed press release, public statement or disclosure for review at least twenty-four (24) hours
+ prior to release; provided, however, that a Party shall not be required to provide to the other Party for review any press releases, public statements, or public disclosures which only discuss the development and/or the marketing and sales of the
+ Product, including study design, study data, study results or potential market, as long as the other Party is not named or referenced. Neither Party shall have any obligation to disclose or approve the disclosure of Confidential Information except to
+ the extent required or permitted pursuant to this ARTICLE VIII. No other public statement or disclosure concerning the existence or terms of this Agreement shall be made, either directly or indirectly, by either Party, without first obtaining the
+ written approval of the other Party.
+
+ (b) Each party understands and agrees that this Agreement may be publicly filed with the Securities and Exchange Commission (or such other Government Authority) and all material terms of such
+ Agreement may be described in such Party’s filings with the Securities and Exchange Commission.
+
+ 8.5 Equitable Relief. Given the nature of the Confidential Information and the competitive damage that a Party would suffer upon unauthorized disclosure, use, or
+ transfer of its Confidential Information to any Third Party, the Parties agree that monetary damages would not be a sufficient remedy for any breach of this ARTICLE VIII. In addition to all other remedies, a Party shall be entitled to seek specific
+ performance and injunctive and other equitable relief as a remedy for any breach or threatened breach of this ARTICLE VIII.
+
+ ARTICLE IX
+
+ REPRESENTATIONS, WARRANTIES AND COVENANTS
+
+ 9.1 Ocuphire’s Representations. Ocuphire hereby represents and warrants as of the Effective Date as follows:
+
+ (a) Ocuphire has the corporate power and authority to execute and deliver this Agreement and to perform its obligations hereunder. The execution, delivery, and performance of this Agreement
+ has been duly and validly authorized and approved by all necessary corporate action on the part of Ocuphire. Ocuphire has taken all other action required by Law, its certificate of incorporation or by-laws, or any agreement to which it is a party or
+ by which it or its assets are bound, to authorize such execution, delivery, and performance. Assuming due authorization, execution, and delivery on the part of Processa, this Agreement constitutes a legal, valid, and binding obligation of Ocuphire,
+ enforceable against Ocuphire in accordance with its terms.
+
+ 28
+
+ (b) The execution and delivery of this Agreement by Ocuphire do not require Ocuphire to obtain any permit, authorization or consent from any Governmental Authority or from any other Person
+ which has not been obtained prior to the Effective Date, and such execution and delivery by Ocuphire will not result in the breach of or give rise to any termination of, rescission, renegotiation or acceleration under or trigger any other rights
+ under any agreement or contract to which Ocuphire may be a party that relates to the Ocuphire Patent Rights or the Ocuphire Know-How.
+
+ (c) Schedule 1.50 is a complete and correct list of all Patent Rights owned by Ocuphire as of the Effective Date that Cover any Compound or Product in the Territory. No Patent Right
+ that Covers any Compound or Product in the Territory has been licensed to Ocuphire.
+
+ (d) Ocuphire is the legal and beneficial owner of all Ocuphire Patent Rights, free and clear of any liens, mortgages, security interests or other similar encumbrances. All assignments to
+ Ocuphire of ownership rights relating to such Ocuphire Patent Rights are valid and enforceable. All of the Ocuphire Patent Rights that are issued patents are in full force and effect, and all applicable filing, maintenance and other fees required to
+ be paid to a patent office with respect to the Ocuphire Patent Rights have been timely paid, except as indicated on Schedule 1.50. Ocuphire has the right to grant the licenses granted by it in this Agreement and has not previously assigned,
+ transferred, conveyed or otherwise encumbered its right, title and interest in the Ocuphire Intellectual Property in the Territory in a manner that conflicts with any rights granted to Processa hereunder.
+
+ (e) To Ocuphire’s knowledge, there is no action, claim, demand, suit, proceeding, arbitration, grievance, citation, summons, subpoena, inquiry or investigation of any nature, civil,
+ criminal, regulatory or otherwise, in law or in equity, pending against Ocuphire in connection with the Compounds or Products or any Ocuphire Patent Rights, Ocuphire Know-How or against or relating to the transactions contemplated by this Agreement.
+ Ocuphire has not received any written notice from a Third Party that the Development of any Compound or Product conducted by Ocuphire has infringed, or that any Development or Commercialization of any Compound or Product will infringe, any Patent
+ Rights of any Third Party. The Ocuphire Know-How does not infringe upon, misappropriate, or otherwise violate the intellectual property rights of any Third Party.
+
+ (f) To Ocuphire’s knowledge, (i) no claim or action has been brought by any Third Party alleging that the Ocuphire Patent Rights are invalid or unenforceable, and (ii) no Ocuphire Patent
+ Rights are the subject of any litigation, interference, post-grant review, opposition, cancellation or other proceeding challenging the validity or enforceability of the Ocuphire Patent Rights.
+
+ 29
+
+ (g) Neither Ocuphire nor, to the knowledge of Ocuphire, any of its directors, officers, employees, agents or subcontractors has been convicted of any crime or engaged in any conduct that has
+ resulted in, or would reasonably be expected to result, in debarment by the FDA under 21 U.S.C. § 335a or any similar state or foreign Law.
+
+ (h) Ocuphire is in compliance with all of the material terms and conditions of the Biosense Agreement.
+
+ (i) Ocuphire has not licensed any rights, title or interest in the Compound to any Third Party other than Biosense.
+
+ (j) Ocuphire is as of the date hereof is an “accredited investor” as defined in Rule 501 under the Securities Act.
+
+ (k) The Upfront Shares are being acquired for investment for Ocuphire’s own account, not as a nominee or agent, and not with a view to the resale or distribution of any part thereof, and
+ as of the date hereof, Ocuphire has no present intention of selling, granting any participation or otherwise distributing the Upfront Shares. Ocuphire, either alone or together with its representatives, has such knowledge, sophistication and
+ experience in business and financial matters so as to be capable of evaluating the merits and risks of the prospective investment in the Upfront Shares, and has so evaluated the merits and risks of such investment. Ocuphire is able to bear the
+ economic risk of an investment in the Upfront Shares and, at the present time, is able to afford a complete loss of such investment.
+
+ (l) Ocuphire acknowledges that it has had the opportunity to review Processa’s filings with the SEC, including Processa’s most recent Annual Report on Form 10-K and subsequent Quarterly
+ Reports on Form 10-Q, and has been afforded, (i) the opportunity to ask such questions as it has deemed necessary of, and to receive answers from, representatives of Processa concerning the terms and conditions of the offering of the Upfront Shares
+ and the merits and risks of investing in the Upfront Shares; (ii) access to information about Processa and its financial condition, results of operations, business, properties, management and prospects sufficient to enable it to evaluate its
+ investment; and (iii) the opportunity to obtain such additional information that Processa possesses or can acquire without unreasonable effort or expense that is necessary to make an informed investment decision with respect to the investment.
+
+ (m) Ocuphire is not acquiring the Upfront Shares as a result of (a) any advertisement, article, notice or other communication published in any newspaper, magazine or similar media or
+ broadcast over television, radio or the Internet, in each case, relating to Processa, or (ii) any seminar or meeting whose attendees, including Ocuphire, have been invited by any general solicitation or general advertising related to Process.
+
+ (n) In addition to any other legend required by law, the book-entry or certificated form of the Upfront Shares shall bear any legend required by the “blue sky” laws of any state and a
+ restrictive legend in substantially the following form:
+
+ THESE SECURITIES HAVE NOT BEEN REGISTERED UNDER THE SECURITIES ACT OF 1933, AS AMENDED. THEY MAY NOT BE SOLD, OFFERED FOR SALE, PLEDGED OR HYPOTHECATED IN THE ABSENCE OF A
+ REGISTRATION STATEMENT IN EFFECT WITH RESPECT TO THE SECURITIES UNDER SUCH ACT OR AN OPINION OF COUNSEL SATISFACTORY TO THE ISSUER THAT SUCH REGISTRATION IS NOT REQUIRED OR UNLESS SOLD PURSUANT TO RULE 144 OF SUCH ACT.
+
+ 30
+
+ 9.2 Processa’s Representations. Processa hereby represents and warrants as of the Effective Date as follows:
+
+ (a) Processa has the corporate power and authority to execute and deliver this Agreement and to perform its obligations hereunder. The execution, delivery, and performance of this Agreement
+ has been duly and validly authorized and approved by all necessary corporate action on the part of Processa. Processa has taken all other action required by Law, its certificate of incorporation or by-laws or any agreement to which it is a party or
+ by which it or its assets are bound to authorize such execution, delivery and (subject to obtaining all necessary governmental approvals with respect to the Development, Manufacture, use and Commercialization of Compounds and Products) performance.
+ Assuming due authorization, execution, and delivery on the part of Ocuphire, this Agreement constitutes a legal, valid, and binding obligation of Processa, enforceable against Processa in accordance with its terms.
+
+ (b) The execution and delivery of this Agreement by Processa will not violate any U.S. Law or, to Processa’s knowledge, any Law of any Governmental Authority outside the U.S.
+
+ (c) There is no action, claim, demand, suit, proceeding, arbitration, grievance, citation, summons, subpoena, inquiry or investigation of any nature, civil, criminal, regulatory or otherwise,
+ in law or in equity, pending or, to the knowledge of Processa, threatened against Processa in connection with or relating to the transactions contemplated by this Agreement.
+
+ (d) The execution and delivery of this Agreement do not require Processa to obtain any permit, authorization or consent from any Governmental Authority or from any other Person, and such
+ execution and delivery by Processa will not result in the breach of or give rise to any termination of, rescission, renegotiation or acceleration under or trigger any other rights under any agreement or contract to which Processa may be a party that
+ relates to the Products, Processa Patent Rights or Processa Know-How.
+
+ (e) Neither Processa nor, to the knowledge of Processa, any of its directors, officers, employees, agents or subcontractors has been convicted of any crime or engaged in any conduct that has
+ resulted in, or would reasonably be expected to result, in debarment by the FDA under 21 U.S.C. § 335a or any similar state or foreign Law.
+
+ 9.3 Ocuphire Covenants. Ocuphire covenants and agrees that, subject to Processa’s, its Affiliates’ and Sublicensees’ performance of their obligations under this
+ Agreement:
+
+ (a) During the Term, Ocuphire shall not grant to any Third Party any rights that would be inconsistent or conflict with Processa’s rights hereunder.
+
+ 31
+
+ (b) Ocuphire shall not amend the terms of the Biosense Agreement without the prior written consent of Processa, which may be withheld in its sole and absolute discretion.
+
+ (c) Ocuphire shall remain in compliance with all of the material terms and conditions of the Biosense Agreement.
+
+ (d) During the Term and subject to Section 12.7, Ocuphire shall not assign, transfer, convey, or otherwise encumber its right, title, and interest in the Ocuphire Intellectual Property in a
+ manner that conflicts with any rights granted to Processa hereunder.
+
+ 9.4 Processa Covenants.
+
+ (a) Processa shall conduct, and shall ensure that its contractors and consultants-conduct, all of activities contemplated under this Agreement in accordance with all applicable Laws of the
+ country in which such activities are conducted, including applicable requirements of “good laboratory practices”, “good clinical practices” and “good Manufacturing practices”, as applicable, as defined by the FDA.
+
+ (b) All employees of Processa or its Affiliates or Sublicensees working under this Agreement shall be under obligation to assign all right, title and interest in and to their Inventions, if
+ any, to Processa as the sole owner thereof;
+
+ (c) Processa shall not employ (or use any subcontractor or consultant that employs) any individual or entity debarred by the FDA or any equivalent sanction instituted by a Regulatory Authority
+ other than the FDA, or an individual or entity who is the subject of an FDA debarment investigation or proceeding or any equivalent investigation or proceeding instituted by a Regulatory Authority other than the FDA, in the conduct of its activities
+ under the Development Plan or Commercialization Plan.
+
+ (d) Subject to Section 12.7, Processa shall not assign, transfer, convey, or otherwise encumber its right, title, and interest in the intellectual property rights (including Processa
+ Intellectual Property, Ocuphire Intellectual Property and Joint Intellectual Property) it Controls in a manner that conflicts with or interferes with any of the rights granted hereunder to Ocuphire, including upon termination.
+
+ (e) Processa shall not, in the performance of its obligations under this Agreement, directly or indirectly, offer, pay, promise to pay or authorize the giving of money or anything of value to
+ any official or employee of any government or any department, agency or instrumentality thereof (including any health or medical providers owned or controlled by the government), to any political party or official thereof, or to any candidate for
+ political office, or to any other person, for the purpose of:
+
+ (i) Inappropriately influencing any act or decisions of such person, official, political party, party official, or candidate in, if applicable, its official capacity, including a decision to
+ fail to perform official functions;
+
+ (ii) Inducing such person, official, political party, party official, or candidate to use influence with the government, any instrumentality thereof, or any other entity to affect or
+ influence any act or decision of such government or instrumentality, or entity, in order to assist Processa in obtaining or retaining business for or with, or directing business to, any Affiliate or Third Party; or
+
+ 32
+
+ (iii) Otherwise inappropriately influencing any decisions favorable to Processa or its Affiliates and the business resulting therefrom in contravention of the Anti-Bribery Laws applicable to
+ the activities of Processa under this Agreement.
+
+ (f) Processa shall have reasonably necessary procedures in place to prevent bribery and corrupt conduct by itself and each of its Affiliates and to comply with all applicable Anti-Bribery
+ Laws.
+
+ 9.5 No Warranty. EXCEPT AS OTHERWISE EXPRESSLY SET FORTH IN THIS AGREEMENT, NEITHER PARTY MAKES ANY REPRESENTATION OR EXTENDS ANY WARRANTY OF ANY KIND, EITHER EXPRESS
+ OR IMPLIED. IN PARTICULAR, BUT WITHOUT LIMITATION, EXCEPT AS OTHERWISE EXPRESSLY SET FORTH IN THIS AGREEMENT, NEITHER PARTY MAKES ANY REPRESENTATION OR EXTENDS ANY WARRANTY CONCERNING WHETHER ANY OF THE COMPOUNDS OR PRODUCTS ARE FIT FOR ANY
+ PARTICULAR PURPOSE OR SAFE FOR HUMAN CONSUMPTION.
+
+ ARTICLE X
+
+ INDEMNIFICATION
+
+ 10.1 Indemnification in Favor of Ocuphire. Processa shall indemnify, defend and hold harmless Ocuphire, its Affiliates and their respective agents, directors,
+ officers, licensees, sublicensees and employees (collectively, the “Ocuphire Parties”) from and against any and all Losses incurred, suffered or sustained by any of the Ocuphire Parties or to which any of the Ocuphire Parties becomes subject
+ as a result of any Third-Party claim, action, suit, proceeding, liability or obligation (collectively, “Third-Party Claims”) arising out of, relating to or resulting from:
+
+ (a) any misrepresentation or breach of any representation, warranty, covenant or agreement made by Processa in this Agreement;
+
+ (b) the Development, Manufacture, use or Commercialization of Compounds or Products by Processa, its Affiliates or Sublicensees, including all Third-Party Claims involving death or bodily
+ injury caused or allegedly caused by the use of such a Compound or Product, and even if such a Compound or Product is altered for use for a purpose not intended (any and all such Third-Party Claims “Product Liability Claims”);
+
+ (c) any actual or alleged infringement of any trademark, Patent Right or other intellectual property right, or misappropriation of any trade secret, of any Third Party as a result of the
+ Development, Manufacture, use or Commercialization of Compounds or Products by Processa, its Affiliates or Sublicensees; or
+
+ (d) the negligence, recklessness or wrongful intentional acts or omissions of any of the Processa Parties (as hereinafter defined) in connection with Processa’s performance of its obligations
+ or exercises of its rights under this Agreement.
+
+ 33
+
+ The indemnification obligations set forth in this Section 10.1 shall not apply to the extent that any Loss is the result of (i) a breach of any representation, warranty, covenant, or agreement made
+ by Ocuphire in this Agreement or (ii) the negligence, recklessness or wrongful intentional acts or omissions of any applicable Ocuphire Party.
+
+ 10.2 Indemnification in Favor of Processa. Ocuphire shall indemnify, defend and hold harmless Processa its Affiliates and their respective agents, directors,
+ officers, licensees, Sublicensees and employees (collectively, the “Processa Parties”) from and against any and all Losses incurred, suffered or sustained by any of the Processa Parties or to which any of the Processa Parties becomes subject
+ as a result of any Third-Party Claim arising out of, relating to or resulting from:
+
+ (a) any misrepresentation or breach of any representation, warranty, covenant or agreement made by Ocuphire in this Agreement;
+
+ (b) the Development, Manufacture, use or Commercialization of Compounds or Products by Ocuphire, its Affiliates, licensees (excluding Processa) or sublicensees prior to the Effective Date [or
+ after any termination of this Agreement for any reason other than by Processa under Section 11.3 or 11.5], including all Product Liability Claims arising out of any such pre-Effective Date, post-termination Development, Manufacture or
+ Commercialization by Ocuphire, its Affiliates, licensees (excluding Processa) or sublicensees; or
+
+ (c) any actual or alleged infringement of any trademark, Patent Right or other intellectual property right, or misappropriation of any trade secret, of any Third Party as a result of the
+ Development, Manufacture, use or Commercialization of Compounds or Products by Ocuphire, its Affiliates, licensees (excluding Processa) or sublicensees prior to the Effective Date [or after any termination of this Agreement for any reason other than
+ by Processa under Section 11.3 or 11.5]; or
+
+ (d) the negligence, recklessness or wrongful intentional acts or omissions of any of the Ocuphire Parties in connection with Ocuphire’s performance of its obligations or exercises of its rights
+ under this Agreement; or
+
+ (e) any claims for damages, money, property, royalties, license payments, fees, compensation or intellectual property or any other claims or demands or injunctions made by the shareholders of
+ Ocuphire or any other holders of any rights (including but not limited to contingent value rights) to be issued in connection with the Agreement and Plan of Merger and Reorganization, dated June 17, 2020, with Ocuphire Pharma, Inc. (“Ocuphire”),
+ or Ocuphire and its shareholders in connection with the Merger Agreement, not related to this Agreement.
+
+ The indemnification obligations set forth in this Section 10.2 shall not apply to the extent that any Loss is the result of (i) a breach of any representation, warranty, covenant, or agreement made
+ by Processa in this Agreement, or (ii) the negligence, recklessness or wrongful intentional acts or omissions of any applicable Processa Party.
+
+ 34
+
+ 10.3 General Indemnification Procedures.
+
+ (a) A Ocuphire Party or Processa Party seeking indemnification pursuant to this ARTICLE X (an “Indemnified Party”) shall (a) give prompt notice to the Party from which such
+ indemnification is sought (the “Indemnifying Party”) of the commencement or assertion of any Third-Party Claim in respect of which indemnity may be sought hereunder, (b) give the Indemnifying Party such information with respect to any
+ indemnified matter as the Indemnifying Party may reasonably request, and (b) not make any admission concerning any Third-Party Claim, unless such admission is required by applicable Law or legal process, including in response to questions presented
+ in depositions or interrogatories. Any admission made by the Indemnified Party or the failure to give such notice shall relieve the Indemnifying Party of any liability hereunder only to the extent that the ability of the Indemnifying Party to defend
+ such Third-Party Claim is prejudiced thereby (and no admission required by applicable Law or legal process shall be deemed to result in prejudice). The Indemnifying Party shall assume and conduct the defense of such Third-Party Claim, with counsel
+ selected by the Indemnifying Party and reasonably acceptable to the Indemnified Party. Subject to the initial and continuing satisfaction of the terms and conditions of this ARTICLE X by the Indemnifying Party, the Indemnifying Party shall have full
+ control of such Third-Party Claim, including settlement negotiations and any legal proceedings. If the Indemnifying Party does not assume the defense of such Third-Party Claim in accordance with this Section 10.3, the Indemnified Party may defend the
+ Third-Party Claim. If both Parties are Indemnifying Parties with respect to the same Third-Party Claim, the Parties shall determine by mutual agreement, within twenty (20) days following their receipt of notice of commencement or assertion of such
+ Third-Party Claim (or such lesser period of time as may be required to respond properly to such claim), which Party shall assume the lead role in the defense thereof. Should the Indemnifying Parties be unable to mutually agree on which of them shall
+ assume the lead role in the defense of such Third-Party Claim, both Indemnifying Parties shall be entitled to participate in such defense through counsel of their respective choosing.
+
+ (b) Any Indemnified Party or Indemnifying Party not managing the defense of a Third-Party Claim shall have the right to participate in (but not control), at its own expense (subject to the
+ immediately succeeding sentence), the defense. The Indemnifying Party managing the defense shall not be liable for any litigation cost or expense incurred, without its consent, by the Indemnified Party where the action or proceeding is under the
+ control of such Indemnifying Party; provided, however, that, if the Indemnifying Party managing the defense fails to take reasonable steps necessary to defend such Third-Party Claim, the Indemnified Party may assume its own defense,
+ and the Indemnifying Party managing the defense will be liable for all reasonable costs or expenses paid or incurred in connection therewith.
+
+ (c) The Indemnifying Party shall not, except with the consent of the Indemnified Party, consent to a settlement of, or the entry of any judgment against, an Indemnified Party arising from any
+ Third-Party Claim to the extent such settlement or judgment involves equitable or other non-monetary relief from the Indemnified Party. No Party shall, without the prior written consent of the other Party or the Indemnified Party, enter into any
+ compromise or settlement that commits the other Party or the Indemnified Party to take, or to forbear to take, any action.
+
+ 35
+
+ (d) The Parties shall cooperate in the defense or prosecution of any Third-Party Claim and shall furnish such records, information and testimony, and attend such conferences, discovery
+ proceedings, hearings, trials and appeals, as may be reasonably requested in connection therewith; provided, however, that the Indemnifying Party shall reimburse the Indemnified Party for any out-of-pocket expenses actually and
+ reasonably incurred in connection with any such cooperation.
+
+ (e) Any indemnification hereunder shall be made net of any insurance proceeds or amounts actually recovered by the Indemnified Party from unaffiliated Third Parties; provided, however,
+ that if, following the payment to the Indemnified Party of any amount under this ARTICLE X, such Indemnified Party recovers any such insurance proceeds in respect of the claim for which such indemnification payment was made, the Indemnified Party
+ shall promptly pay an amount equal to the amount of such proceeds (but not exceeding the amount of such net indemnification payment) to the Indemnifying Party.
+
+ 10.4 Insurance. During the Term, for so long as a Third-Party Claim may be brought for which Processa must indemnify Ocuphire pursuant to Section 10.1, Processa
+ shall obtain and maintain, at its sole cost and expense, product liability insurance in amounts that are reasonable and customary in the pharmaceutical industry, but in no event less than five million dollars ($5,000,000) per occurrence or claim, and
+ ten million dollars ($10,000,000) in the aggregate, or a comparable program of self-insurance. Such product liability insurance shall insure against all liability, including product liability and property damage arising out of the Development, use or
+ Commercialization of Compounds and Products by Processa, its Affiliates, or Sublicensees in the Territory. Without limiting the generality of the foregoing, Processa shall maintain comprehensive general liability insurance, including product
+ liability insurance, to cover its activities and, unless its Affiliates and Sublicensees maintain comparable coverage, the activities of its Affiliates and Sublicensees, with respect to Compounds and Products.
+
+ 10.5 No Consequential or Punitive Damages. NEITHER PARTY WILL BE LIABLE FOR INDIRECT, INCIDENTAL, CONSEQUENTIAL, SPECIAL, EXEMPLARY, OR PUNITIVE DAMAGES, INCLUDING
+ LOST PROFITS, ARISING FROM OR RELATING TO THIS AGREEMENT, REGARDLESS OF ANY NOTICE OF SUCH DAMAGES. NOTHING IN THIS SECTION 10.5 IS INTENDED TO LIMIT OR RESTRICT (A) THE INDEMNIFICATION RIGHTS OR OBLIGATIONS OF EITHER PARTY UNDER THIS AGREEMENT WITH
+ RESPECT TO THIRD-PARTY CLAIMS, OR (B) DAMAGES TO WHICH A PARTY MAY BE ENTITLED FOR BREACH OF CONFIDENTIALITY AND LIMITATION ON USE OBLIGATIONS SET FORTH IN THIS AGREEMENT, OR (C) DAMAGES TO WHICH A PARTY MAY BE ENTITLED FOR THE WILLFUL MISCONDUCT,
+ INTENTIONAL BREACH OR FRAUD OF THE OTHER PARTY.
+
+ ARTICLE XI
+
+ TERM AND TERMINATION
+
+ 11.1 Term; Expiration. The term of this Agreement (the “Term”) shall commence on the Effective Date and, unless earlier terminated as provided in this
+ ARTICLE XI, shall continue in full force and effect until and expire upon the expiration of the last Royalty Term. On a country-by-country and Product-by-Product basis, upon the expiration of the Royalty Term in such country with respect to such
+ Product, Processa shall have a fully paid-up, perpetual, irrevocable license under the Ocuphire Intellectual Property and Ocuphire’s interest in the Joint Intellectual Property with respect to such Product in such country.
+
+ 36
+
+ 11.2 Termination for Convenience. Processa shall have the right upon one hundred twenty (120) days prior written notice to Ocuphire to terminate this Agreement in
+ its entirety for any reason.
+
+ 11.3 Termination for Cause. In the event of a material breach of this Agreement by a Party, the other Party may give the Party in default notice requiring it to cure
+ such default, which notice shall specify the nature of the breach. If such material breach is not cured within one-hundred twenty (120) days after receipt of such notice (or within fifteen (15) days in the case of a payment breach), the notifying
+ Party shall be entitled (without prejudice to any other rights conferred on it by this Agreement or under applicable Law) to terminate this Agreement by giving written notice to the defaulting Party. The right of either Party to terminate this
+ Agreement as set forth in this Section 11.3 shall not be affected in any way by its waiver of, or failure to take action with respect to, any previous default.
+
+ 11.4 Additional Termination by Ocuphire. In the event that Ocuphire has provided written notice to Processa pursuant to Section 5.2, if Processa does not respond to
+ Ocuphire in writing within ninety (90) days of receipt of such notice from Ocuphire and reasonably demonstrate in such response compliance with Processa’s obligations under Section 5.1, Ocuphire shall be entitled (without prejudice to any other
+ rights conferred on it by this Agreement or under applicable Law) to terminate this Agreement by giving written notice to Processa.
+
+ 11.5 Termination for Insolvency. This Agreement may be terminated by a Party upon written notice to the other Party if (a) the other Party shall make an assignment
+ for the benefit of its creditors, file a petition in bankruptcy, petition or apply to any tribunal for the appointment of a custodian, receiver or trustee for it or a substantial part of its assets, or shall commence any proceeding under any
+bankruptcy, reorganization, readjustment of debt, dissolution or liquidation law or statute of any jurisdiction, whether now or hereafter in effect; or (b) if there shall have been
+filed against the other Party any such bona fide petition or application, or any such proceeding shall have been commenced against it, in which an order for relief is entered or
+that remains undismissed or unstayed for a period of ninety (90) days or more; or (c) if the
+ other Party by any act or omission shall consent to, approve of or acquiesce in any such petition, application or proceeding or order for relief or the appointment of a custodian, receiver or trustee for it or any substantial part of its assets, or
+ shall suffer any such custodianship, receivership or trusteeship to continue undischarged or unstayed for a period of ninety (90) days or more. Termination shall be effective upon the date specified in such notice.
+
+ 11.6 Termination for Challenge of Patent Rights. If a Processa or any of Processa’s Affiliates or Sublicensees commences an action in any court or tribunal of
+ competent jurisdiction that challenges, opposes or disputes the validity, enforceability or patentability of any of the Ocuphire Patent Rights or Joint Patent Rights that are the subject of this Agreement, or any of the claims thereof, or supports or
+ assists any Third Party that commences such an action in any such court or tribunal, the Ocuphire shall have the right to terminate this Agreement upon notice to Processa; provided, however, that the Ocuphire shall not have a right to
+ terminate if the challenge is brought by a Sublicensee, either directly or indirectly through any Third Party, and Processa or its Affiliate, as the case may be, terminates such Sublicensee’s sublicense rights hereunder within thirty (30) days after
+ becoming aware of such challenge.
+
+ 37
+
+ 11.7 Consequences of Termination. From and after the effective date of termination of this Agreement, the following clause (a) shall apply and, in the event of
+ termination by Ocuphire pursuant to Section 11.3, 11.4, 11.5 or 11.6, the following clauses (b) through (f) shall apply:
+
+ (a) Ocuphire Intellectual Property and Products. All rights and licenses granted by Ocuphire to Processa under this Agreement will terminate. Processa and its Affiliates and
+ Sublicensees (except as set forth in subsection (b) below) will cease all use of the Ocuphire Intellectual Property and all Development, use and Commercialization of Products, except to the extent necessary for Processa to perform its obligations
+ under this Section 11.7.
+
+ (b) Sublicenses. Ocuphire hereby grants, effective automatically upon any termination of this Agreement for any reason, a direct license to each then-existing Sublicensee, provided
+ that (i) such Sublicensee is not in breach under the applicable sublicense, (ii) such Sublicensee’s failure to comply with the terms of its sublicense or other actions or omissions were not a basis for such termination, and (iii) such Sublicensee
+ continues to satisfy all obligations under this Agreement applicable to such sublicense, including the diligence obligations set forth in ARTICLE V and all payments under the then-existing Sublicensee agreement, from and after the effective date of
+ termination of this Agreement. For clarity, Ocuphire shall not be bound to any responsibility or liability of Processa under its sublicense agreements that has already accrued at the time of such termination of this Agreement by Ocuphire pursuant to
+ this ARTICLE XI, or that is attributable to a period prior to such termination.
+
+ (c) Regulatory Matters. Processa shall promptly transfer to Ocuphire ownership of all filings with Regulatory Authorities in the Territory relating to Compounds and Products and
+ Regulatory Approvals relating to Compounds and Products held Processa or its Affiliates or applicable Sublicensees, including related correspondence with Regulatory Authorities, and Processa shall provide copies thereof to Ocuphire.
+
+ (d) Pre-clinical and Clinical Matters. Processa shall transfer to Ocuphire all pre-clinical and clinical data, including pharmacology and biology data, within the Processa Know-How
+ and applicable Sublicensee Intellectual Property;
+
+ (e) Manufacturing Matters. Processa shall promptly provide to Ocuphire copies of all agreements relating to the Manufacture of Product in the Territory. At Ocuphire’s option, to be
+ exercised no later than the later of (x) thirty (30) days after the effective date of termination or (y) thirty (30) days after Ocuphire’s receipt of the applicable Manufacturing agreements, Processa shall (or shall cause its Affiliates or
+ Sublicensees to):
+
+ (i) use Commercially Reasonable Efforts to effect the assignment of each Manufacturing agreement specific and exclusive to Compounds or Products to Ocuphire, if such agreement is then in
+ effect and such assignment is permitted under such agreement or by the applicable Third Party; provided that Processa and its applicable Affiliates and applicable Sublicensees shall be released (to the extent the applicable Third Party will
+ permit) from any obligation arising out of such agreement following such assignment and Ocuphire shall execute such documentation reasonably satisfactory to Processa to effectuate such agreement; provided further that if any such agreement is
+ specific but not exclusive to Compounds or Products, or is not assigned to Ocuphire for any reason, Processa will discuss in good faith with Ocuphire terms upon which Processa and its Affiliates and applicable Sublicensees shall use Commercially
+ Reasonable Efforts to provide Ocuphire with the benefits of such agreement to the extent it relates to Compounds or Products for a limited period of time (not to exceed six (6) months) and upon payment of a reasonably acceptable fee to Processa;
+
+ 38
+
+ (ii) for a period of up to six (6) months following the effective date of termination, (A) cooperate with Ocuphire in reasonable respects to transfer Manufacturing documents and materials
+ within the Processa Know-How and applicable Sublicensee Intellectual Property that are used (at the time of the termination) by Processa or its Affiliates or applicable Sublicensees in the Manufacture of Compounds and Products to the extent such
+ Manufacturing documents and materials are not obtained by Ocuphire pursuant to the assignment of agreements pursuant to paragraph (i) above, and (B) cooperate with Ocuphire to provide Ocuphire with access to and right to use such Manufacturing
+ documents and materials in Processa’s or its Affiliates’ or applicable Sublicensees’ possession or Control to the extent they relate to, but are not used in, the Manufacture of Compounds and Products, subject to appropriate confidentiality and
+ limitation on use protections applicable to for Manufacturing documents and materials;
+
+ (iii) for a period of up to six (6) months following the effective date of termination, (A) cooperate with Ocuphire in reasonable respects to transfer Manufacturing technologies within the
+ Processa Intellectual Property and applicable Sublicensee Intellectual Property that are used (at the time of the termination) by Processa or its Affiliates or applicable Sublicensees exclusively in the Manufacture of Compounds and Products, and (B)
+ cooperate with Ocuphire to provide Ocuphire with reasonable access to and right to use such Manufacturing technologies Controlled by Processa or its Affiliates (other than Processa Excluded Affiliates) or applicable Sublicensees to the extent they
+ relate to, but are not used exclusively in, the Manufacture of Compounds and Products and that Processa or such Affiliates or Sublicensees are permitted to provide such access to Ocuphire; provided that Ocuphire shall reimburse Processa for
+ Processa’s reasonable out-of-pocket expenses to provide such requested assistance, to the extent such Manufacturing technologies are not obtained by Ocuphire pursuant to the assignment of agreements pursuant to paragraph (i) above.
+
+ (f) Inventory. At Ocuphire’s request within thirty (30) days after the effective date of termination, Processa shall (i) sell to Ocuphire all of Processa’s or its Affiliates’ or
+ applicable Sublicensees’ then-existing inventory of Compounds and Products to Ocuphire, at Processa’s or its applicable Affiliates’ or applicable Sublicensees’ cost of Manufacture, but only if the following conditions have been met: (A) such
+ Compounds and Products meet the applicable release specifications; and (B) Processa does not reasonably believe the continued use of such Compounds and Products causes safety concerns; and (ii) discard any remaining inventory of Compounds and
+ Products that do not meet the requirements set forth in clauses (A) and (B).
+
+ 11.8 Effect of Termination or Expiration; Accrued Rights and Obligations. Termination or expiration of this Agreement for any reason shall not release either Party
+ from any liability that, at the time of such termination or expiration, has already accrued or that is attributable to a period prior to such termination (including payment obligations accrued prior to the Effective Date of termination or expiration
+ pursuant to ARTICLE VI) nor preclude either Party from pursuing any right or remedy it may have hereunder or at Law or in equity with respect to any breach of this Agreement.
+
+ 39
+
+ 11.9 Survival. The rights and obligations set forth in this Agreement shall extend beyond the Term or termination or expiration of this Agreement only to the extent
+ expressly provided for in this Agreement or to the extent required to give effect to a termination or expiration of this Agreement or the consequences of a termination or expiration of this Agreement as expressly provided for in this Agreement.
+ Without limiting the generality of the foregoing, it is agreed that the provisions of ARTICLE I, Sections 2.2, 2.3, 6.8 (only for thirty-six (36) months after expiration or termination), 6.9, 6.10, 6.11, 6.12, 7.1, 7.9, 8.1, 8.2, 8.5, 9.5, ARTICLE X,
+ and Sections 11.1 (last sentence as to any such license that became perpetual and irrevocable prior to expiration or termination), 7, 11.8, and 11.9, and ARTICLE XII shall survive expiration or termination of this Agreement for any reason.
+
+ ARTICLE XII
+
+ MISCELLANEOUS
+
+ 12.1 Governing Law; Jurisdiction. This Agreement shall be governed by and interpreted in accordance with the laws of the state of Maryland without regard to its
+ conflicts of laws rules. Each Party (a) irrevocably submits to the exclusive jurisdiction in the state court sitting in Maryland (collectively, the “Courts”), for purposes of any action, suit or other proceeding arising out of this Agreement,
+ and (b) agrees not to raise any objection at any time to the laying or maintaining of the venue of any such action, suit or proceeding in any of the Courts, irrevocably waives any claim that such action, suit or other proceeding has been brought in
+ an inconvenient forum and further irrevocably waives the right to object, with respect to such action, suit or other proceeding, that such Court does not have any jurisdiction over such Party. Either Party may serve any process required by such
+ Courts by way of notice under this Agreement. Notwithstanding anything to the contrary in this Section 12.1, each Party shall have the right to institute judicial proceedings against the other Party or anyone acting by, through, or under such other
+ Party, in any court of competent jurisdiction, in order to enforce the instituting Party’s rights hereunder through reformation of contract, specific performance, injunction, or similar equitable relief.
+
+ 12.2 Dispute Resolution. In the event of a dispute arising out of or relating to this Agreement, either Party shall provide written notice of the dispute to the
+ other, in which event the dispute shall be referred to the Senior Executives of each Party, for attempted resolution by good faith negotiations within twenty (20) days after such notice is received. In the event the Senior Executives do not resolve
+ such dispute within the allotted twenty (20) days, either Party may, after the expiration of the twenty (20) day period, seek to resolve the dispute in accordance with Section 12.1.
+
+ 12.3 Waiver. Waiver by a Party of a breach hereunder by the other Party shall not be construed as a waiver of any succeeding breach of the same or any other
+ provision. No delay or omission by a Party to exercise or avail itself of any right, power, or privilege that it has or may have hereunder shall operate as a waiver of any right, power, or privilege by such Party. No waiver shall be effective unless
+ made in writing with specific reference to the relevant provision(s) of this Agreement and signed by a duly authorized representative of the Party granting the waiver.
+
+ 40
+
+ 12.4 Notices. All notices, instructions and other communications hereunder or in connection herewith shall be in writing, shall be sent to the address specified in
+ this Section 12.4 and shall be: (a) delivered personally; (b) sent by registered or certified mail, return receipt requested, postage prepaid; (c) sent via a reputable nationwide overnight courier service; or (d) sent by electronic mail. Any such
+ notice, instruction or communication shall be deemed to have been delivered upon receipt if delivered by hand, three (3) Business Days after it is sent by registered or certified mail, return receipt requested, postage prepaid, one (1) Business Day
+ after it is sent via a reputable nationwide overnight courier service, or when transmitted with confirmation of receipt, if transmitted by electronic mail (if such transmission is on a Business Day; otherwise, on the next Business Day following such
+ transmission).
+
+ Notices to Processa shall be addressed to:
+
+ Processa Pharmaceuticals, Inc.
+
+ 7380 Coca Cola Drive, Suite 106
+
+ Hanover, MD 21076
+
+ Attn: Wendy Guy, Chief Administrative Officer
+
+ Email: wguy@processapharmaceuticals.com
+
+ Notices to Ocuphire shall be addressed to:
+
+ Ocuphire Pharmaceuticals, Inc.
+
+ 37000 Grand River Avenue, Suite 120
+
+ Farmington Hills, MI 48335
+
+ Attn: Mina Sooch, Chief Executive Officer
+
+ Email: msooch@ocuphire.com
+
+ Either Party may change its address by giving notice to the other Party in the manner provided above.
+
+ 12.5 Entire Agreement. This Agreement (including Schedules) contains the complete understanding of the Parties with respect to the subject matter of this Agreement
+ and supersedes all prior understandings and writings between the Parties relating to such subject matter, including the Confidentiality Agreement.
+
+ 12.6 Severability. If any provision of this Agreement is held unenforceable by a court or tribunal of competent jurisdiction because it is invalid or conflicts with
+ any Law of any relevant jurisdiction, the validity of the remaining provisions shall not be affected. In such event, the Parties shall negotiate a substitute provision that, to the extent possible, accomplishes the original business purpose.
+
+ 12.7 Assignment. Neither this Agreement nor any right or obligation hereunder may be assigned or otherwise transferred by any Party without the consent of the other
+ Party; provided, however, that any Party may, without such consent, assign this Agreement, in whole or in part: (a) to any of its respective Affiliates, provided that such Affiliate has acknowledged and confirmed in writing
+ that effective as of such assignment, such Affiliate shall be bound by this Agreement to the identical extent applicable to the assigning Party; or (b) to any successor in interest by way of a Change of Control or other merger, acquisition or sale of
+ all or substantially all of its business or assets relating to the subject matter of this Agreement, provided that such successor (if the applicable Party is not the surviving entity in such transaction) agrees in writing to be bound by the
+ terms of this Agreement to the identical extent applicable to the assigning Party. Any purported assignment in violation of this Section 12.7 shall be void. Any permitted assignee shall assume all obligations of its assignor under this Agreement.
+
+ 41
+
+ 12.8 Counterparts; Exchange by PDF. This Agreement may be executed in two or more counterparts, each of which shall be deemed an original and that together shall
+ constitute one and the same instrument. Such counterparts may be exchanged by PDF (provided that each executed counterpart is transmitted in one complete transmission or electronic mail message). Where there is an exchange of executed
+ counterparts by PDF, each Party shall be bound by the Agreement notwithstanding that original copies of the Agreement may not be exchanged.
+
+ 12.9 Force Majeure. No Party shall be liable for failure of or delay in performing obligations set forth in this Agreement, and no Party shall be deemed in breach of
+ its obligations, if such failure or delay is due to a natural disaster, pandemic, explosion, fire, flood, tornadoes, thunderstorms, earthquake, war, terrorism, riots, embargo, losses or shortages of power, labor stoppage, or any injunction, Laws,
+ order, proclamation, demand or requirement of any Governmental Authority, provided that such Party uses Commercially Reasonable Efforts to overcome the difficulties created by such force majeure event and to resume performance of its
+ obligations as soon as practicable.
+
+ 12.10 Third-Party Beneficiaries. None of the provisions of this Agreement shall be for the benefit of or enforceable by any Third Party other than a Ocuphire Party or
+ a Processa Party, as applicable, that is an Indemnified Party under ARTICLE X, and no Third Party shall obtain any right under any provision of this Agreement or shall by reason of any such provision make any claim in respect of any debt, liability
+ or obligation (or otherwise) against either Party.
+
+ 12.11 Relationship of the Parties. Each Party shall bear its own costs incurred in the performance of its obligations hereunder without charge or expense to the
+ other, except as expressly provided in this Agreement. Neither Party shall have any responsibility for the hiring, termination or compensation of the other Party’s employees or for any employee compensation or benefits of the other Party’s employees.
+ No employee or representative of a Party shall have any authority to bind or obligate the other Party for any sum or in any manner whatsoever, or to create or impose any contractual or other liability on the other Party without said other Party’s
+ approval. For all purposes and notwithstanding any other provision of this Agreement to the contrary, the legal relationship under this Agreement of each Party to the other Party shall be that of independent contractor. Nothing in this Agreement
+ shall be construed to establish a relationship of partners or joint venturers between the Parties.
+
+ 12.12 Performance by Affiliates. To the extent that this Agreement imposes obligations on Affiliates of a Party, such Party agrees to cause its Affiliates to perform
+ such obligations.
+
+ [Signature page follows]
+
+ 42
+
+ IN WITNESS WHEREOF, the Parties have signed this Agreement as of the Effective Date.
+
+ PROCESSA PHARMACEUTICALS, INC.
+
+ OCUPHIRE PHARMA, INC.
+
+ By:
+
+ /s/ David Young
+
+ By:
+
+ /s/ Mina Sooch
+
+ Name:
+
+ David Young
+
+ Name:
+
+ Mina Sooch
+
+ Title:
+
+ CEO
+
+ Title:
+
+ CEO
+
+ Exhibit A
+
+ Initial Development Plan
+
+ Pursuant to Section 3.2, the initial Development Plan is to be delivered within one-hundred eighty (180) days from the Effective Date.
+
+ Schedule 1.49
+
+ Ocuphire Know-How
+
+ The Ocuphire Know-How consists of information regarding:
+
+ ●
+
+ Preclinical studies
+
+ ○
+
+ Biomarker Studies
+
+ ○
+
+ Toxicology and safety
+
+ ○
+
+ ADME Studies
+
+ ○
+
+ In Vitro Studies
+
+ ○
+
+ In Vivo Studies
+
+ ●
+
+ Regulatory
+
+ ○
+
+ IND Filing
+
+ ○
+
+ FDA Correspondence
+
+ ○
+
+ Investigator’s Brochure
+
+ ○
+
+ Orphan Drug Designation
+
+ ●
+
+ Clinical
+
+ ●
+
+ CMC
+
+ that is presently collected in a digital data room, and any other previously extant information relevant to the Compound that is discovered to be in Ocuphire’s possession.
+
+ Schedule 1.50
+
+ Ocuphire Patent Rights
+
+ [See following pages]
+
+ RX-3117 Related Patents and Applications

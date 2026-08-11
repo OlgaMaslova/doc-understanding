@@ -1,0 +1,129 @@
+{
+  "type": "object",
+  "description": "Structured extraction of an annual report on Form 10-K, written to cover the questions an analyst typically asks before seeing any specific question.",
+  "properties": {
+    "company_name": { "type": "string" },
+    "fiscal_year": { "type": "string" },
+    "fiscal_year_end_date": { "type": "string" },
+    "state_of_incorporation": { "type": "string" },
+    "business_description": { "type": "string" },
+    "segments": {
+      "type": "array",
+      "description": "Reportable segments. Include the current year and the prior comparative year for each figure the filing gives, so year-over-year questions can be answered.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "revenue_current_year": { "type": "string" },
+          "revenue_prior_year": { "type": "string" },
+          "operating_income_current_year": { "type": "string" },
+          "operating_income_prior_year": { "type": "string" },
+          "units": { "type": "string", "description": "e.g. millions of USD" }
+        },
+        "required": ["name"],
+        "additionalProperties": false
+      }
+    },
+    "income_statement": {
+      "type": "object",
+      "properties": {
+        "total_revenue_current_year": { "type": "string" },
+        "total_revenue_prior_year": { "type": "string" },
+        "cost_of_revenue_current_year": { "type": "string" },
+        "gross_profit_current_year": { "type": "string" },
+        "operating_income_current_year": { "type": "string" },
+        "operating_income_prior_year": { "type": "string" },
+        "net_income_current_year": { "type": "string" },
+        "net_income_prior_year": { "type": "string" },
+        "diluted_eps_current_year": { "type": "string" },
+        "units": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "balance_sheet": {
+      "type": "object",
+      "properties": {
+        "total_assets": { "type": "string" },
+        "total_liabilities": { "type": "string" },
+        "total_equity": { "type": "string" },
+        "cash_and_equivalents": { "type": "string" },
+        "total_debt": { "type": "string" },
+        "units": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "cash_flow": {
+      "type": "object",
+      "properties": {
+        "operating_cash_flow": { "type": "string" },
+        "capital_expenditures": { "type": "string" },
+        "free_cash_flow": { "type": "string" },
+        "share_repurchases": { "type": "string" },
+        "dividends_paid": { "type": "string" },
+        "units": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "geographic_revenue": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "region": { "type": "string" },
+          "revenue_current_year": { "type": "string" },
+          "revenue_prior_year": { "type": "string" }
+        },
+        "required": ["region"],
+        "additionalProperties": false
+      }
+    },
+    "risk_factors": {
+      "type": "array",
+      "description": "Every distinct risk factor heading from Item 1A. One entry per risk.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "heading": { "type": "string" },
+          "category": {
+            "type": "string",
+            "description": "e.g. operational, regulatory, financial, competitive, cybersecurity"
+          },
+          "summary": { "type": "string" }
+        },
+        "required": ["heading"],
+        "additionalProperties": false
+      }
+    },
+    "legal_proceedings": { "type": "array", "items": { "type": "string" } },
+    "mdna_highlights": {
+      "type": "array",
+      "description": "Management's stated drivers of the year's results.",
+      "items": { "type": "string" }
+    },
+    "critical_accounting_estimates": { "type": "array", "items": { "type": "string" } },
+    "employees": { "type": "string" },
+    "properties_and_facilities": { "type": "string" },
+    "competition": { "type": "string" },
+    "forward_looking_statements": {
+      "type": "string",
+      "description": "The filing's stated position on forward-looking statements and their limits."
+    },
+    "auditor": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "opinion": { "type": "string" },
+        "internal_control_opinion": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "item_index": {
+      "type": "array",
+      "description": "Form 10-K item headings in order, so structural questions can be answered.",
+      "items": { "type": "string" }
+    }
+  },
+  "required": ["company_name", "fiscal_year", "segments", "risk_factors"],
+  "additionalProperties": false
+}
