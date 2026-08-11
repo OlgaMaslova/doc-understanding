@@ -18,6 +18,7 @@ from __future__ import annotations
 import argparse
 import json
 from dataclasses import dataclass
+from typing import Any
 
 from . import arms as arms_pkg
 from .chunking import CHUNK_TOKENS, chunk_document
@@ -237,6 +238,14 @@ def main() -> None:
     # that will run it. Indexing is skipped for unselected arms, exactly as the
     # real run skips it.
     ap.add_argument("--arm", action="append", help="Arm id; repeatable. Default: all.")
+    ap.add_argument(
+        "--json",
+        action="store_true",
+        help=(
+            "Emit the projection as JSON instead of a table. The web app's run "
+            "panel prices a scope through this, so the cost model lives here only."
+        ),
+    )
     args = ap.parse_args()
 
     for arm in args.arm or []:
@@ -252,6 +261,38 @@ def main() -> None:
         raise SystemExit(
             "No documents fetched yet — run `python -m docrace.documents` first."
         )
+
+    if args.json:
+        payload: dict[str, Any] = {"documents": [], "total_usd": 0.0}
+        for doc_id in doc_ids:
+            projections = project(doc_id, args.questions)
+            if args.arm:
+                projections = [p for p in projections if p.arm in set(args.arm)]
+            judge = judge_cost(args.questions, arms=len(projections))
+            subtotal = sum(p.total_usd for p in projections)
+            payload["documents"].append(
+                {
+                    "doc_id": doc_id,
+                    "tokens": doc_tokens(doc_id),
+                    "questions": args.questions,
+                    "arms": [
+                        {
+                            "arm": p.arm,
+                            "indexing_usd": round(p.fixed_usd, 6),
+                            "per_query_usd": round(p.per_query_usd, 6),
+                            "total_usd": round(p.total_usd, 6),
+                        }
+                        for p in projections
+                    ],
+                    "grading_usd": round(judge, 6),
+                    "total_usd": round(subtotal + judge, 6),
+                }
+            )
+            payload["total_usd"] += subtotal + judge
+        payload["total_usd"] = round(payload["total_usd"], 6)
+        payload["assumptions"] = ASSUMPTIONS
+        print(json.dumps(payload, indent=2))
+        return
 
     grand = 0.0
     for doc_id in doc_ids:

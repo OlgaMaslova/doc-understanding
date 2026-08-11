@@ -76,6 +76,31 @@ class DocAssets:
         return self.extraction
 
 
+
+# ---------------------------------------------------------------------------
+# Structured progress
+#
+# The web app spawns this module and needs to follow a run without scraping
+# human-readable stdout. `--json` writes one JSON object per line to stderr,
+# leaving stdout exactly as it was — so the CLI experience does not change and a
+# parser never has to guess which lines are data.
+# ---------------------------------------------------------------------------
+
+_EMIT_JSON = False
+
+
+def set_json_events(enabled: bool) -> None:
+    global _EMIT_JSON
+    _EMIT_JSON = enabled
+
+
+def emit(kind: str, **fields: Any) -> None:
+    if not _EMIT_JSON:
+        return
+    sys.stderr.write(json.dumps({"event": kind, **fields}) + "\n")
+    sys.stderr.flush()
+
+
 def _cache_path(doc_id: str, name: str):
     INDEX_CACHE.mkdir(parents=True, exist_ok=True)
     return INDEX_CACHE / f"{doc_id}.{name}.pkl"
@@ -118,6 +143,7 @@ def build_assets(
     text = load_text(doc_id)
     meta = load_meta(doc_id)
     print(f"\n{doc_id}: {meta['tokens']:,} tokens, {meta['chars']:,} chars")
+    emit("doc_start", doc=doc_id, tokens=meta["tokens"], chars=meta["chars"])
 
     naive_index: Index | None = None
     contextual_index: Index | None = None
@@ -173,7 +199,9 @@ def build_assets(
     if skipped:
         print(f"  skipped indexing for unselected arms: {', '.join(skipped)}")
     for arm, usage in fixed_usage.items():
-        print(f"  fixed cost {arm}: ${price(usage, ARM_MODEL).total:.4f}")
+        cost = price(usage, ARM_MODEL).total
+        print(f"  fixed cost {arm}: ${cost:.4f}")
+        emit("indexing_done", doc=doc_id, arm=arm, cost_usd=round(cost, 6))
 
     return DocAssets(
         doc_id=doc_id,
@@ -322,10 +350,43 @@ def results_path(doc_id: str):
 
 
 def load_existing(doc_id: str) -> dict[str, Any]:
+    """Prior results for this document, if any are worth resuming onto.
+
+    Fixture results are deliberately discarded rather than resumed. They occupy
+    every cell, so treating them as completed work would make a real run appear to
+    do nothing — and worse, a partial real run would merge measured cells into a
+    file of invented ones and stamp the result `fixture: false`. A file that is
+    half measurement and half fabrication, labelled as measurement, is the exact
+    outcome the provenance stamps exist to prevent.
+    """
     path = results_path(doc_id)
-    if path.exists():
-        return json.loads(path.read_text())
-    return {}
+    if not path.exists():
+        return {}
+    existing = json.loads(path.read_text())
+
+    # Two layers, because the top-level flag is not enough on its own. A partial
+    # run over a fixture file rewrites that flag to False while leaving the cells
+    # it did not reach untouched — so a file can claim to be real while most of it
+    # is invented. Checking each cell's own marker catches that and self-heals a
+    # file already in that state.
+    cells = existing.get("cells") or {}
+    synthetic = [
+        key
+        for key, cell in cells.items()
+        if (cell.get("notes") or {}).get("fixture")
+    ]
+    if existing.get("fixture") or synthetic:
+        kept = {k: v for k, v in cells.items() if k not in synthetic}
+        print(
+            f"  discarding {len(synthetic) or len(cells)} fixture cell(s) for "
+            f"{doc_id}; they will be re-run"
+        )
+        emit("fixtures_discarded", doc=doc_id, cells=len(synthetic) or len(cells))
+        if not kept:
+            return {}
+        # Keep genuinely measured cells from an earlier real run, drop the rest.
+        return {**existing, "cells": kept}
+    return existing
 
 
 def write_results(doc_id: str, payload: dict[str, Any]) -> None:
@@ -358,8 +419,24 @@ def precompute_doc(
     if not questions:
         raise SystemExit(f"{doc_id}: no questions selected")
 
+    # Loaded once: it reads a file and may report discarded fixture cells, so
+    # calling it per cell would re-read the file and repeat the report.
     existing = load_existing(doc_id)
     cells: dict[str, Any] = existing.get("cells", {})
+
+    pending = [
+        (arm, q)
+        for arm in selected_arms
+        for q in questions
+        if force or f"{arm}::{q.id}" not in cells
+    ]
+    emit(
+        "doc_planned",
+        doc=doc_id,
+        arms=selected_arms,
+        questions=[q.id for q in questions],
+        cells_pending=len(pending),
+    )
 
     # A scoped run does not rebuild indexes for unselected arms, so their fixed
     # usage is absent from `assets`. Carry forward whatever a previous run
@@ -382,11 +459,13 @@ def precompute_doc(
                 continue
             label = f"{arm} / {q.id} ({q.type})"
             print(f"  running {label} ... ", end="", flush=True)
+            emit("cell_start", doc=doc_id, arm=arm, question=q.id, type=q.type)
             started = time.perf_counter()
             try:
                 result = run_arm(arm, assets, q)
             except Exception as exc:  # noqa: BLE001 — one cell must not sink the run
                 print(f"FAILED after {time.perf_counter() - started:.1f}s: {exc}")
+                emit("cell_error", doc=doc_id, arm=arm, question=q.id, error=str(exc))
                 cells[key] = {"error": str(exc), "arm": arm, "question_id": q.id}
                 write_results(doc_id, {**existing, "cells": cells})
                 continue
@@ -398,6 +477,16 @@ def precompute_doc(
             print(
                 f"{result.latency_ms / 1000:.1f}s, "
                 f"${result.cost.total:.4f}, {grade.grade}"
+            )
+            emit(
+                "cell_done",
+                doc=doc_id,
+                arm=arm,
+                question=q.id,
+                latency_ms=result.latency_ms,
+                cost_usd=round(result.cost.total, 6),
+                grade=grade.grade,
+                cache_read_tokens=result.usage.cache_read_tokens,
             )
             # Write after every cell so an interrupted run loses at most one.
             existing = {**existing, "cells": cells}
@@ -521,7 +610,16 @@ def main() -> None:
     ap.add_argument(
         "--manifest-only", action="store_true", help="Only regenerate the manifest."
     )
+    ap.add_argument(
+        "--json",
+        action="store_true",
+        help=(
+            "Also write one JSON progress event per line to stderr. Used by the "
+            "web app's run panel; stdout is unchanged."
+        ),
+    )
     args = ap.parse_args()
+    set_json_events(args.json)
 
     if args.manifest_only:
         write_manifest()
@@ -541,7 +639,19 @@ def main() -> None:
         )
 
     write_manifest()
+    emit("run_done")
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except SystemExit as exc:
+        # SystemExit carries our own actionable messages. Mirror them as an event
+        # so a consumer reading the event stream sees the reason rather than
+        # inferring it from a non-zero exit code.
+        if exc.code not in (0, None):
+            emit("run_error", error=str(exc.code))
+        raise
+    except Exception as exc:  # noqa: BLE001 — surface then re-raise for the traceback
+        emit("run_error", error=f"{type(exc).__name__}: {exc}")
+        raise

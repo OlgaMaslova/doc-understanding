@@ -1,9 +1,13 @@
 /**
- * Server-side access to the committed results.
+ * Server-side access to the precomputed results.
  *
  * Replay mode is the whole reason the deployed site is cheap and instant: these
- * files are read from disk, never regenerated at request time. Reads are cached
- * for the process lifetime because the files are immutable between deploys.
+ * files are read from disk, never regenerated at request time.
+ *
+ * Reads are cached, but not for the process lifetime — a local run started from
+ * the run panel rewrites these files underneath us, and a cache that outlived
+ * that would show stale numbers next to a finished run log. `invalidate()` is
+ * called when a run completes.
  */
 
 import { readFile } from "node:fs/promises";
@@ -31,6 +35,16 @@ export type LeanDoc = Omit<DocResults, "cells"> & {
 const RESULTS_DIR = path.join(process.cwd(), "..", "results");
 
 const cache = new Map<string, unknown>();
+
+/**
+ * Drop cached reads so the next request sees what a run just wrote.
+ *
+ * Called by the run route rather than on a timer: the only thing that changes
+ * these files is a run, so invalidating on that event is both precise and cheap.
+ */
+export function invalidate(): void {
+  cache.clear();
+}
 
 async function readJson<T>(file: string): Promise<T> {
   const hit = cache.get(file);

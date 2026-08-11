@@ -48,6 +48,18 @@ Resumable: indexes, contextual prefixes, and extractions are cached under
 `pipeline/.index-cache/`, and cells already present here are skipped unless
 `--force` is passed. An interrupted run costs nothing to resume.
 
+### From the browser
+
+In a local clone you can also run it from the UI:
+
+```sh
+cd web && DOCRACE_ENABLE_RUNS=1 npm run dev
+```
+
+The run panel prices a scope, asks for confirmation, and streams progress. It
+refuses scopes over $5 and prints the CLI command instead. See the README for the
+gates involved.
+
 ## What lands here
 
 | File | |

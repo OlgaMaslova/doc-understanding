@@ -8,14 +8,17 @@
  * Six strategies, seven measured arms: caching is one strategy run at both cache
  * lifetimes, because the TTL is the thing that breaks it.
  */
-export type ArmId =
-  | "full_context"
-  | "cached_context_5m"
-  | "cached_context_1h"
-  | "naive_rag"
-  | "hybrid_rag"
-  | "agentic"
-  | "extract";
+export const ARM_IDS = [
+  "full_context",
+  "cached_context_5m",
+  "cached_context_1h",
+  "naive_rag",
+  "hybrid_rag",
+  "agentic",
+  "extract",
+] as const;
+
+export type ArmId = (typeof ARM_IDS)[number];
 
 export type QuestionType =
   | "needle"

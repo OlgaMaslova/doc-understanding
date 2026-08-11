@@ -1,10 +1,12 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { ArmCard, type ArmRunState } from "./ArmCard";
 import { CostChart } from "./CostChart";
 import { Heatmap } from "./Heatmap";
+import { RunPanel } from "./RunPanel";
 import { ARM_COLOR, seconds, tokens, usd } from "@/lib/format";
 import type { LeanDoc } from "@/lib/results";
 import type { ArmId, Manifest, Question, QuestionType } from "@/lib/types";
@@ -23,6 +25,7 @@ function blankStates(arms: ArmId[]): States {
 }
 
 export function RaceView({ manifest, docs }: Props) {
+  const router = useRouter();
   const armIds = useMemo(() => manifest.arms.map((a) => a.id), [manifest.arms]);
 
   const [docId, setDocId] = useState(docs[0].doc_id);
@@ -496,6 +499,12 @@ export function RaceView({ manifest, docs }: Props) {
           </table>
         </div>
       </section>
+
+      {/* Last, deliberately. The page's argument is the charts; this is the
+          "now do it yourself" step, and putting it up top would make a demo look
+          like a control panel. router.refresh() re-runs the server components so
+          the charts pick up whatever the run just wrote. */}
+      <RunPanel manifest={manifest} docId={docId} onComplete={() => router.refresh()} />
     </div>
   );
 }

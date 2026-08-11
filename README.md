@@ -359,6 +359,43 @@ Useful flags: `--doc` / `--arm` / `--question` to narrow, `--force` to re-run
 completed cells, `--rebuild-index` to regenerate indexes and extractions (this
 costs money), `--manifest-only` to just refresh `results/manifest.json`.
 
+### Reproducing the results from the browser
+
+Everything on the page came out of the pipeline in this repository, and you can
+regenerate it with your own keys — including from the UI, in a local clone:
+
+```sh
+cd web && DOCRACE_ENABLE_RUNS=1 npm run dev
+```
+
+The panel at the bottom of the page lets you pick arms and a question count, shows
+what that scope would cost, and requires a second click before spending anything.
+Progress streams per cell as it runs.
+
+Three gates have to pass before a single token is spent, and a hosted copy of this
+site fails all three:
+
+| Gate | Why |
+|---|---|
+`DOCRACE_ENABLE_RUNS=1` | Opt-in, so a deployed instance can never spend. Off by default. |
+`pipeline/.venv` exists | Runs need the Python pipeline; a serverless host has no Python. |
+A key in the environment or `.env` | Read server-side, never sent to the browser, never logged. |
+
+A **$5 ceiling** applies to runs started from the browser. Above that the request
+is refused with the equivalent CLI command, so a stray click cannot start the $71
+matrix. The ceiling constrains the button, not the pipeline — the terminal has no
+limit. The server re-prices every scope itself, so the number shown in the panel is
+information rather than a security boundary.
+
+There is deliberately **no bring-your-own-key path**. Accepting a visitor's
+credential over HTTP means owning the handling of somebody else's secret, and this
+project has no need to. Live mode with BYO keys is the roadmap's v1 item and needs
+a rate limit before it exists.
+
+Note that a run **discards fixture cells rather than resuming onto them**. Synthetic
+and measured cells merged into one file, stamped as measurement, is the outcome all
+the provenance marking exists to prevent.
+
 ### Web
 
 ```sh
