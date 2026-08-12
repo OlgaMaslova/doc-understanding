@@ -31,7 +31,7 @@ const MECHANISM: Record<string, { how: string; bill: string }> = {
     bill: "One cache write up front, then cheap reads — until the cache expires and the write is paid again.",
   },
   naive_rag: {
-    how: "Splits the document into fixed-size chunks, embeds them, and retrieves the five closest to your question. The model only ever sees those five. This is the version most teams ship first: no reranking, no query rewriting.",
+    how: "Splits the document into fixed-size chunks of 500 tokens with a 50-token overlap, embeds them, and retrieves the five closest to your question. The model only ever sees those five. This is the version most teams ship first: no reranking, no query rewriting.",
     bill: "One embedding pass up front, then five chunks per question — flat, regardless of how big the document is.",
   },
   hybrid_rag: {
@@ -43,7 +43,7 @@ const MECHANISM: Record<string, { how: string; bill: string }> = {
     bill: "Nothing up front, but each question costs whatever that question's search happened to need — the one approach whose per-query cost is unpredictable.",
   },
   extract: {
-    how: "Reads the document once, in overlapping windows, pulling everything into a predefined schema — then throws the document away. Questions are answered from the extracted record. The schemas were written before the question set, not fitted to it.",
+    how: "Reads the document once, in overlapping windows, pulling everything into a predefined schema — then throws the document away. Questions are answered from the extracted record. The schema is hand-written per document type — segments and financial statements for a 10-K, parties and termination rights for a contract, methods and results for a paper — encoding what an analyst would ask before seeing any actual question. It was written before the question set, not fitted to it, so the arm can only answer what the schema anticipated: when a question falls outside it, the answer says so rather than guessing.",
     bill: "The most expensive up-front pass here, then almost nothing per question.",
   },
 };

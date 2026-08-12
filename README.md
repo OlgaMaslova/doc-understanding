@@ -1,6 +1,9 @@
-# DocRace
+# Document Understanding, Measured
 
 **Everyone has an opinion about RAG vs. long context. This one you can run.**
+
+(The repository and the Python package are called `docrace` — that name survives
+in the CLI commands and env vars below.)
 
 Ask a question of a document, watch six extraction strategies answer it side by
 side, and see exactly what each one cost you.
@@ -28,7 +31,7 @@ spending — or drive it from the terminal. Details in [Running it](#running-it)
 ## This is not a benchmark
 
 Three documents cannot tell you which strategy is better in general, and nothing
-here claims to. DocRace is a **decision tool**. The "RAG vs. long context"
+here claims to. This is a **decision tool**. The "RAG vs. long context"
 question has been answered a hundred times in prose and zero times in a form you
 can poke: everyone writes the decision table, nobody lets you watch the crossover
 move when you swap a 15-page paper for a 200-page 10-K. That gap is the whole
