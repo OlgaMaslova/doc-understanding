@@ -15,8 +15,10 @@ move when you swap a 15-page paper for a 200-page 10-K. That gap is the whole
 product.
 
 The numbers are real measurements on these three documents with these questions.
-Read them as measurements, not as a ranking. (A fresh clone ships no results at
-all — see [results/README.md](results/README.md).)
+Read them as measurements, not as a ranking. (A fresh clone ships the arXiv
+paper's full matrix, measured with `claude-sonnet-5`; the other two documents
+have no results until someone runs them — see
+[results/README.md](results/README.md).)
 
 ## The two findings the demo is built around
 
@@ -91,12 +93,12 @@ and where the real differentiation lives.
  pipeline/  (Python, offline)          results/  (generated JSON)      web/  (Next.js)
  ─────────────────────────────         ─────────────────────────      ───────────────
  documents  → normalize, count    ─→   <doc>.json   per q x arm  ─→   /api/comparison  SSE
- chunking   → 500/50 token chunks       manifest.json                  replays recorded
- retrieval  → numpy vectors, BM25                                      deltas at their
- contextual → LLM chunk prefixes                                       original pacing
- arms/      → the six strategies                                            │
- grading    → judge vs ground truth                                        ▼
- precompute → CLI, resumable                                     race view + 2 charts
+ chunking   → 500/50 token chunks       manifest.json                  serves recorded
+ retrieval  → numpy vectors, BM25                                      answers, instantly
+ contextual → LLM chunk prefixes                                            │
+ arms/      → the six strategies                                            ▼
+ grading    → judge vs ground truth                              comparison view,
+ precompute → CLI, resumable                                     scoreboard + 2 charts
 ```
 
 **The single most important engineering decision: precompute everything.** Every
@@ -125,9 +127,12 @@ it's written down rather than left in the code.
 
 ### Model and pricing
 
-All arms run on `claude-opus-5` with default adaptive thinking. Streaming is used
-throughout, both because non-streaming requests at these `max_tokens` risk HTTP
-timeouts and because the delta arrival times are what replay mode replays.
+All arms answer with one model per run — `DOCRACE_MODEL`, default
+`claude-opus-5`; the committed results were measured with `claude-sonnet-5`, and
+the results page names the model behind whatever it is showing. Indexing and
+grading stay on `claude-opus-5` whichever answering model is picked. Streaming is
+used throughout, both because non-streaming requests at these `max_tokens` risk
+HTTP timeouts and because the delta arrival times are recorded into the results.
 
 Prices live in exactly one place, [`data/pricing.json`](data/pricing.json), and
 every result is stamped with that file's `snapshot_date`, which the UI displays.
@@ -308,14 +313,16 @@ changes with the document:
 | Contract (~41k) | 1.13× | About parity — where the cost argument for retrieval stops working |
 | 10-K (~173k) | 3.64× | The crossover has been passed; retrieval starts earning its accuracy cost |
 
-Every pairwise crossing is still marked with a dot, but leaving the one that
-matters to be found among twenty dots buried it.
+Crossings are marked with dots on the line you hover — drawing all of them at
+once buried the one that matters among twenty, so that one is also stated in
+words below the chart.
 
 ## Running it
 
-`results/` is **empty in a fresh clone** — the precomputed JSON is generated, not
-committed, and there is no synthetic mode to fill it with. Every number the site
-shows was measured, so seeing anything requires a run; the cheapest useful one is
+A fresh clone ships with the arXiv paper fully measured (`claude-sonnet-5`), so
+the site has something to show before you spend anything. The other two documents
+have no results until someone runs them, and there is no synthetic mode to fill
+them in — every number the site shows was measured. The cheapest useful run is
 about **$0.42**. See [results/README.md](results/README.md) for the sequence and
 [LICENSE](LICENSE) for the source documents' terms.
 
@@ -461,8 +468,9 @@ npm install
 npm run dev
 ```
 
-The app reads `results/` from disk and will refuse to start without it, naming the
-commands that produce it. There is deliberately no way to populate it without
+The app reads `results/` from disk; a fresh clone includes the committed
+measurements, and if the files are missing entirely the app names the commands
+that produce them. There is deliberately no way to populate `results/` without
 spending: a fixture generator existed while the interface was being built and was
 removed, because every header it wrote was a claim about work that never happened —
 which model produced the answers, when they were computed — and its hardcoded token

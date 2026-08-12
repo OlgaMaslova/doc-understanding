@@ -1,11 +1,14 @@
 # results/
 
-This directory holds the precomputed comparison data the site serves. It is **empty
-in a fresh clone** — the JSON is generated, not committed (see `.gitignore`).
+This directory holds the precomputed comparison data the site serves. The
+committed files are real measurements — currently the arXiv paper's full matrix
+(7 arms × 15 questions), answered with `claude-sonnet-5`. The other documents'
+files appear when someone runs them; one results file holds one model's
+measurements, and the pipeline refuses to mix models within a file.
 
-Nothing here calls an API at request time. The deployed site reads these files and
-replays recorded answer streams, which is what makes it instant, deterministic, and
-free to visit regardless of traffic.
+Nothing here calls an API at request time. The deployed site reads these files
+and serves the recorded answers, which is what makes it instant, deterministic,
+and free to visit regardless of traffic.
 
 **There is no synthetic mode.** Every number in these files is measured. A fixture
 generator existed while the interface was being built and was removed: each file it
