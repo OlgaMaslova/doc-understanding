@@ -22,7 +22,7 @@ import { loadManifestIfPresent } from "@/lib/results";
  * someone is most likely to be reading it.
  */
 export const metadata = {
-  title: "How DocRace works",
+  title: "How it works — Document Understanding, Measured",
   description:
     "The seven approaches, how answers are graded, and how to run the pipeline yourself.",
 };
@@ -44,7 +44,7 @@ export default async function HowItWorksPage() {
           href="/"
           className="text-sm text-text-faint underline decoration-dotted hover:text-text-dim"
         >
-          ← DocRace
+          ← Back to the comparison
         </Link>
         <h1 className="text-2xl font-medium leading-snug text-text sm:text-3xl">
           How it works

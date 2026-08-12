@@ -74,7 +74,9 @@ export default async function Home() {
   return (
     <main className="mx-auto max-w-7xl px-5 py-10 sm:px-8">
       <header className="max-w-3xl space-y-4">
-        <p className="text-xs uppercase tracking-[0.18em] text-accent">DocRace</p>
+        <p className="text-xs uppercase tracking-[0.18em] text-accent">
+          Document Understanding, Measured
+        </p>
         <h1 className="text-2xl font-medium leading-snug text-text sm:text-3xl">
           Everyone has an opinion about RAG vs. long context. This one you can run.
         </h1>
