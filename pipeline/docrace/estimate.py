@@ -25,7 +25,8 @@ from .chunking import CHUNK_TOKENS, chunk_document
 from .contextual import BATCH as CONTEXT_BATCH
 from .documents import BY_ID, load_text
 from .paths import DOCS
-from .pricing import ARM_MODEL, Usage, price
+from .grading import JUDGE_MODEL
+from .pricing import ARM_MODEL, INDEX_MODEL, Usage, price
 
 # Output tokens per query. This has to include thinking, not just the visible
 # answer: thinking is on by default on this model and is billed at the output
@@ -88,6 +89,12 @@ def project(doc_id: str, questions: int) -> list[Projection]:
     def cost(usage: Usage) -> float:
         return price(usage, ARM_MODEL).total
 
+    def index_cost(usage: Usage) -> float:
+        # Indexing work (contextual prefixes, extraction windows) always runs on
+        # INDEX_MODEL, whatever DOCRACE_MODEL says — see pricing.py for why. Pricing
+        # it at ARM_MODEL would skew every fixed-cost intercept when they differ.
+        return price(usage, INDEX_MODEL).total
+
     out: list[Projection] = []
 
     out.append(
@@ -144,7 +151,7 @@ def project(doc_id: str, questions: int) -> list[Projection]:
     out.append(
         Projection(
             "hybrid_rag",
-            cost(
+            index_cost(
                 Usage(
                     cache_write_1h_tokens=tokens,
                     cache_read_tokens=tokens * max(0, batches - 1),
@@ -194,7 +201,7 @@ def project(doc_id: str, questions: int) -> list[Projection]:
         Projection(
             "extract",
             # The extraction pass, plus warming the cache over the record once.
-            cost(
+            index_cost(
                 Usage(
                     input_tokens=tokens + 400 * windows,
                     output_tokens=EXTRACTION_OUTPUT_TOKENS * windows,
@@ -218,9 +225,13 @@ def project(doc_id: str, questions: int) -> list[Projection]:
 
 
 def judge_cost(questions: int, *, arms: int | None = None) -> float:
-    """One judge call per cell — every selected arm, every selected question."""
+    """One judge call per cell — every selected arm, every selected question.
+
+    Priced at the judge's own model: the judge stays on JUDGE_MODEL whatever the
+    arms run on, so an estimate for a cheap arm model must not discount grading.
+    """
     per_call = price(
-        Usage(input_tokens=1_500, output_tokens=150), ARM_MODEL
+        Usage(input_tokens=1_500, output_tokens=150), JUDGE_MODEL
     ).total
     return per_call * questions * (arms if arms is not None else len(arms_pkg.ARM_ORDER))
 

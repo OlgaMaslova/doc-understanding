@@ -7,19 +7,59 @@ the snapshot in that file, so a price change is one edit plus a re-run.
 from __future__ import annotations
 
 import json
+import os
 from dataclasses import asdict, dataclass
 from functools import lru_cache
 from typing import Any
 
+from .env import load_env
 from .paths import PRICING_FILE
 
-ARM_MODEL = "claude-opus-5"
+DEFAULT_ARM_MODEL = "claude-opus-5"
+
+# Fixed on purpose, not configurable alongside ARM_MODEL:
+#
+#   INDEX_MODEL — contextual prefixes and extractions are cached on disk keyed by
+#   document only, so a model switch would silently reuse artifacts written by a
+#   different model, or pay to regenerate them without saying why. And keeping the
+#   index constant isolates the variable: a run compares *answering* models, not
+#   answering-plus-indexing bundles.
+#
+#   JUDGE_MODEL (in grading.py) — the answer key is only comparable across arms and
+#   models if the same judge graded everything. A cheaper judge for a cheaper arm
+#   model would make the accuracy axis mean different things per column.
 INDEX_MODEL = "claude-opus-5"
 
 
 @lru_cache(maxsize=1)
 def pricing() -> dict[str, Any]:
     return json.loads(PRICING_FILE.read_text())
+
+
+def _resolve_arm_model() -> str:
+    """The model the arms answer with, from `DOCRACE_MODEL`.
+
+    An environment variable rather than a CLI flag because the model is baked into
+    default arguments and module constants at import time — by the time argparse
+    runs, every `def run(..., model=ARM_MODEL)` has already bound. The env var is
+    read once, here, before anything imports it.
+
+    Validated against the rate card, not just accepted: a run on a model this file
+    cannot price would produce cells with silently wrong economics, which is worse
+    than refusing to start.
+    """
+    load_env()  # so DOCRACE_MODEL in the repo .env works regardless of import order
+    model = (os.environ.get("DOCRACE_MODEL") or "").strip() or DEFAULT_ARM_MODEL
+    known = pricing()["models"]
+    if model not in known:
+        raise SystemExit(
+            f"DOCRACE_MODEL={model!r} has no entry in {PRICING_FILE.name}. "
+            f"Known models: {', '.join(known)}. Add a rate-card entry before running it."
+        )
+    return model
+
+
+ARM_MODEL = _resolve_arm_model()
 
 
 def snapshot_date() -> str:

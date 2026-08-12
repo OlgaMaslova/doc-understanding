@@ -7,7 +7,12 @@ import os
 
 import anthropic
 
+from .env import load_env
 from .pricing import ARM_MODEL
+
+# Import-time so every entry point benefits — the CLI, the module invoked by the
+# web app's run panel, and the scripts. Values already in the environment win.
+load_env()
 
 
 class MissingCredentials(RuntimeError):
@@ -26,7 +31,9 @@ def anthropic_client() -> anthropic.Anthropic:
         ))
     ):
         raise MissingCredentials(
-            "No Anthropic credentials found. Export ANTHROPIC_API_KEY or run `ant auth login`."
+            "No Anthropic credentials found. Either copy .env.example to .env at "
+            "the repo root and fill it in, export ANTHROPIC_API_KEY, or run "
+            "`ant auth login`."
         )
     return anthropic.Anthropic()
 
@@ -48,6 +55,7 @@ def voyage_api_key() -> str:
     key = os.environ.get("VOYAGE_API_KEY")
     if not key:
         raise MissingCredentials(
-            "VOYAGE_API_KEY is not set; arms 3 and 4 need Voyage embeddings and reranking."
+            "VOYAGE_API_KEY is not set; arms 3 and 4 need Voyage embeddings and "
+            "reranking. Add it to .env at the repo root or export it."
         )
     return key

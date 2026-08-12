@@ -61,7 +61,9 @@ ARM_META: dict[str, dict[str, str]] = {
     cached_context.ARMS["1h"]: {
         "label": "Full context + cache (1 hour)",
         "short": "Same tokens, cached for an hour",
-        "wins": "Arm 1's accuracy at roughly a tenth of the marginal cost",
+        # No "arm 1" — this string is rendered in the UI, which calls these
+        # approaches and numbers them differently, so it has to name the thing.
+        "wins": "Full context's accuracy at roughly a tenth of the marginal cost",
         "breaks": "Write costs 2x input, not 1.25x; still scales with document size",
     },
     naive_rag.ARM: {

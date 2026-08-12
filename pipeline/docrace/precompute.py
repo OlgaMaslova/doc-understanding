@@ -35,7 +35,7 @@ from .contextual import build_contextual_chunks
 from .documents import BY_ID, load_meta, load_text
 from .grading import CREDIT, GRADE_META, grade_answer
 from .paths import INDEX_CACHE, RESULTS
-from .pricing import ARM_MODEL, Cost, Usage, price, snapshot_date
+from .pricing import ARM_MODEL, INDEX_MODEL, Cost, Usage, price, snapshot_date
 from .questions import Question, TYPE_META, load_questions
 from .retrieval import Index
 
@@ -58,7 +58,9 @@ class DocAssets:
     fixed_usage: dict[str, Usage]
 
     def fixed_cost(self, arm: str) -> Cost:
-        return price(self.fixed_usage.get(arm, Usage()), ARM_MODEL)
+        # Indexing always runs on INDEX_MODEL regardless of DOCRACE_MODEL (see
+        # pricing.py), so its usage is priced at that model's rates.
+        return price(self.fixed_usage.get(arm, Usage()), INDEX_MODEL)
 
     def require_naive_index(self) -> Index:
         if self.naive_index is None:
@@ -199,7 +201,7 @@ def build_assets(
     if skipped:
         print(f"  skipped indexing for unselected arms: {', '.join(skipped)}")
     for arm, usage in fixed_usage.items():
-        cost = price(usage, ARM_MODEL).total
+        cost = price(usage, INDEX_MODEL).total
         print(f"  fixed cost {arm}: ${cost:.4f}")
         emit("indexing_done", doc=doc_id, arm=arm, cost_usd=round(cost, 6))
 
@@ -350,43 +352,11 @@ def results_path(doc_id: str):
 
 
 def load_existing(doc_id: str) -> dict[str, Any]:
-    """Prior results for this document, if any are worth resuming onto.
-
-    Fixture results are deliberately discarded rather than resumed. They occupy
-    every cell, so treating them as completed work would make a real run appear to
-    do nothing — and worse, a partial real run would merge measured cells into a
-    file of invented ones and stamp the result `fixture: false`. A file that is
-    half measurement and half fabrication, labelled as measurement, is the exact
-    outcome the provenance stamps exist to prevent.
-    """
+    """Prior results for this document, so a run can resume rather than repeat."""
     path = results_path(doc_id)
     if not path.exists():
         return {}
-    existing = json.loads(path.read_text())
-
-    # Two layers, because the top-level flag is not enough on its own. A partial
-    # run over a fixture file rewrites that flag to False while leaving the cells
-    # it did not reach untouched — so a file can claim to be real while most of it
-    # is invented. Checking each cell's own marker catches that and self-heals a
-    # file already in that state.
-    cells = existing.get("cells") or {}
-    synthetic = [
-        key
-        for key, cell in cells.items()
-        if (cell.get("notes") or {}).get("fixture")
-    ]
-    if existing.get("fixture") or synthetic:
-        kept = {k: v for k, v in cells.items() if k not in synthetic}
-        print(
-            f"  discarding {len(synthetic) or len(cells)} fixture cell(s) for "
-            f"{doc_id}; they will be re-run"
-        )
-        emit("fixtures_discarded", doc=doc_id, cells=len(synthetic) or len(cells))
-        if not kept:
-            return {}
-        # Keep genuinely measured cells from an earlier real run, drop the rest.
-        return {**existing, "cells": kept}
-    return existing
+    return json.loads(path.read_text())
 
 
 def write_results(doc_id: str, payload: dict[str, Any]) -> None:
@@ -419,10 +389,23 @@ def precompute_doc(
     if not questions:
         raise SystemExit(f"{doc_id}: no questions selected")
 
-    # Loaded once: it reads a file and may report discarded fixture cells, so
-    # calling it per cell would re-read the file and repeat the report.
+    # Loaded once rather than per cell, to avoid re-reading the file.
     existing = load_existing(doc_id)
     cells: dict[str, Any] = existing.get("cells", {})
+
+    # One results file holds one model's measurements. Resume skips completed
+    # cells, so running a different model against an existing file would leave
+    # the old model's cells in place while the header claims the new one — every
+    # aggregate would silently mix two models' answers. Refuse rather than
+    # misattribute; a fresh model comparison wants a fresh file.
+    prior_model = existing.get("model")
+    if cells and prior_model and prior_model != ARM_MODEL:
+        raise SystemExit(
+            f"{doc_id}: results/{doc_id}.json holds measurements made with "
+            f"{prior_model}, but this run uses {ARM_MODEL}. Mixing models in one "
+            f"file would misattribute results. Delete or move results/{doc_id}.json "
+            f"to measure this document with {ARM_MODEL}."
+        )
 
     pending = [
         (arm, q)
@@ -504,10 +487,6 @@ def precompute_doc(
         "model": ARM_MODEL,
         "pricing_snapshot": snapshot_date(),
         "computed_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
-        # Real measurements. The fixture generator writes True here, so the
-        # provenance is unambiguous at the top of the file rather than only on
-        # individual docs and cells.
-        "fixture": False,
         "chunking": {"chunk_tokens": CHUNK_TOKENS, "overlap_tokens": OVERLAP_TOKENS},
         "fixed_costs": {
             arm: {
@@ -532,6 +511,24 @@ def precompute_doc(
     )
 
 
+
+def provenance_of(data: dict[str, Any], arms: int, questions: int) -> dict[str, Any]:
+    """Whether one document's matrix is complete.
+
+    Scoped runs make an incomplete matrix normal: two questions on one document
+    leaves the rest unrun, and that document's accuracy and cost aggregates then
+    rest on a couple of cells. Real but sparse is a different claim from real and
+    complete, so each document says which it is and the UI repeats it.
+    """
+    cells = data.get("cells") or {}
+    expected = arms * questions
+    return {
+        "provenance_state": "measured" if cells and len(cells) >= expected else "partial",
+        "cells": len(cells),
+        "cells_expected": expected,
+    }
+
+
 def write_manifest() -> None:
     """One small file the web app reads first, listing docs in token order."""
     docs = []
@@ -539,6 +536,7 @@ def write_manifest() -> None:
         if path.name == "manifest.json":
             continue
         data = json.loads(path.read_text())
+        questions = len(data.get("questions") or [])
         docs.append(
             {
                 "doc_id": data["doc_id"],
@@ -548,9 +546,17 @@ def write_manifest() -> None:
                 "source_url": data.get("source_url", ""),
                 "license": data.get("license", ""),
                 "provenance": data.get("provenance", ""),
+                # Held under a scratch key and popped before writing: the per-doc
+                # model is only needed to derive the manifest-level field.
+                "_model": data.get("model", ""),
+                **provenance_of(data, len(arms_pkg.ARM_ORDER), questions),
             }
         )
     docs.sort(key=lambda d: d["tokens"])
+    # Derived from the files rather than from this run's ARM_MODEL: two documents
+    # measured with different models are both real, and the manifest describes
+    # what is on disk. One model reads as itself; a mix names every contributor.
+    doc_models = sorted({m for m in (d.pop("_model", None) for d in docs) if m})
     manifest = {
         "docs": docs,
         "arms": [
@@ -569,13 +575,12 @@ def write_manifest() -> None:
         ],
         "grades": [{"id": g, **GRADE_META[g]} for g in GRADE_META],
         "credit": CREDIT,
-        "model": ARM_MODEL,
+        "model": ", ".join(doc_models) if doc_models else ARM_MODEL,
         "pricing_snapshot": snapshot_date(),
         "computed_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
-        # Real measurements. The fixture generator writes True here, so the
-        # provenance is unambiguous at the top of the file rather than only on
-        # individual docs and cells.
-        "fixture": False,
+        # Derived, never asserted: a document is complete or it is not, and the
+        # manifest reports what the files actually contain.
+        "partial": any(d["provenance_state"] == "partial" for d in docs),
     }
     (RESULTS / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
     print(f"manifest: {len(docs)} document(s)")
