@@ -7,7 +7,7 @@ import type { ArmId, GradeId, Manifest, Question, QuestionType } from "@/lib/typ
 import type { LeanCell } from "@/lib/results";
 
 /**
- * Accuracy by strategy and question type.
+ * Accuracy by approach and question type.
  *
  * This is where the third finding lives: retrieval fails least often on the
  * questions people test it with and most often on the ones they ship. The needle
@@ -53,13 +53,42 @@ function summarize(
 }
 
 /** Interpolate between a muted failure red and the pass green by score. */
+const FAIL_RGB = [0.55, 0.18, 0.15];
+const PASS_RGB = [0.25, 0.66, 0.48];
+
+function scoreMix(score: number): number[] {
+  return FAIL_RGB.map((f, i) => f + (PASS_RGB[i] - f) * score);
+}
+
 function scoreColor(score: number): string {
-  const fail = [0.55, 0.18, 0.15];
-  const pass = [0.25, 0.66, 0.48];
-  const mix = fail.map((f, i) => f + (pass[i] - f) * score);
   const to255 = (v: number) => Math.round(v * 255);
+  const mix = scoreMix(score);
   return `rgb(${to255(mix[0])} ${to255(mix[1])} ${to255(mix[2])})`;
 }
+
+/**
+ * Ink for a cell's percentage, chosen against that cell's own fill.
+ *
+ * White was hardcoded, which is right at the failing end (8.3:1 on the red) and
+ * wrong at the passing end: on a full-credit green it falls to 3.0:1, so the
+ * cells a reader most wants to read were the least readable ones. Deriving the
+ * ink from relative luminance rather than a score threshold means it stays
+ * correct if the scale is ever retuned.
+ */
+function scoreInk(score: number): string {
+  const [r, g, b] = scoreMix(score);
+  const channel = (c: number) =>
+    c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+  const luminance =
+    0.2126 * channel(r) + 0.7152 * channel(g) + 0.0722 * channel(b);
+  const onWhite = 1.05 / (luminance + 0.05);
+  const onInk = (luminance + 0.05) / (INK_LUMINANCE + 0.05);
+  return onWhite >= onInk ? "#ffffff" : INK;
+}
+
+/** The dark ink and its relative luminance, kept together so they cannot drift. */
+const INK = "#15181d";
+const INK_LUMINANCE = 0.009;
 
 export function Heatmap({
   arms,
@@ -88,13 +117,13 @@ export function Heatmap({
         aria-describedby={captionId}
       >
         <caption id={captionId} className="sr-only">
-          Accuracy of each strategy on each question type. Each cell aggregates
+          Accuracy of each approach on each question type. Each cell aggregates
           the questions of that type for this document.
         </caption>
         <thead>
           <tr>
             <th className="w-44 border-b border-border p-2 text-left font-medium text-text-dim">
-              Strategy
+              Approach
             </th>
             {types.map((t) => (
               <th
@@ -142,9 +171,12 @@ export function Heatmap({
                             ? "2px solid var(--text)"
                             : "1px solid rgb(0 0 0 / 0.25)",
                         }}
-                        title={`${arm.label} on ${typeMeta(t)?.label ?? t} — click to race one of these questions`}
+                        title={`${arm.label} on ${typeMeta(t)?.label ?? t} — click to compare one of these questions`}
                       >
-                        <span className="tnum text-xs font-medium text-white">
+                        <span
+                          className="tnum text-xs font-medium"
+                          style={{ color: scoreInk(summary.score) }}
+                        >
                           {percent(summary.score)}
                         </span>
                         <span className="flex gap-[3px]">
@@ -152,7 +184,14 @@ export function Heatmap({
                             <span
                               key={g.questionId}
                               className="h-3 w-[5px] rounded-sm"
-                              style={{ background: GRADE_COLOR[g.grade] }}
+                              // A hairline keeps each grade tick legible against
+                              // whichever cell colour it lands on: a red tick on a
+                              // red cell is otherwise nearly invisible, and that
+                              // tick is the one carrying the bad news.
+                              style={{
+                                background: GRADE_COLOR[g.grade],
+                                boxShadow: "0 0 0 1px rgb(0 0 0 / 0.45)",
+                              }}
                             />
                           ))}
                         </span>

@@ -60,7 +60,6 @@ const NOTE_LABEL: Record<string, string> = {
   cache_breakpoints: "cache breakpoints",
   extraction_chars: "record size (chars)",
   truncated: "answer truncated",
-  fixture: "fixture data",
 };
 
 const NOTE_ORDER = Object.keys(NOTE_LABEL);
@@ -117,7 +116,7 @@ export function ArmCard({ arm, state, place }: Props) {
         {state.status === "done" && place ? (
           <span
             className="tnum shrink-0 rounded bg-bg-inset px-1.5 py-0.5 text-xs text-text-dim"
-            title="Finish order in this race"
+            title="Finish order in this comparison"
           >
             #{place}
           </span>
@@ -199,7 +198,7 @@ export function ArmCard({ arm, state, place }: Props) {
         ) : null}
 
         {/* Collapsed by default — this is the "why did it answer that" layer, and
-            it should be one click away without crowding the race. */}
+            it should be one click away without crowding the comparison. */}
         {state.notes && Object.keys(state.notes).length ? (
           <details className="mt-2 text-[11px]">
             <summary className="cursor-pointer text-text-faint marker:text-text-faint hover:text-text-dim">

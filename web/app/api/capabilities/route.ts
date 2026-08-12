@@ -7,14 +7,10 @@
  */
 
 import { capabilities } from "@/lib/runner";
-import { MAX_LIMIT } from "@/lib/scope";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
   const caps = await capabilities();
-  return Response.json(
-    { ...caps, maxLimit: MAX_LIMIT },
-    { headers: { "cache-control": "no-store" } },
-  );
+  return Response.json(caps, { headers: { "cache-control": "no-store" } });
 }

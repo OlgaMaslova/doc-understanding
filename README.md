@@ -90,7 +90,7 @@ and where the real differentiation lives.
 ```
  pipeline/  (Python, offline)          results/  (generated JSON)      web/  (Next.js)
  ─────────────────────────────         ─────────────────────────      ───────────────
- documents  → normalize, count    ─→   <doc>.json   per q x arm  ─→   /api/race  SSE
+ documents  → normalize, count    ─→   <doc>.json   per q x arm  ─→   /api/comparison  SSE
  chunking   → 500/50 token chunks       manifest.json                  replays recorded
  retrieval  → numpy vectors, BM25                                      deltas at their
  contextual → LLM chunk prefixes                                       original pacing
@@ -314,8 +314,9 @@ matters to be found among twenty dots buried it.
 ## Running it
 
 `results/` is **empty in a fresh clone** — the precomputed JSON is generated, not
-committed. Populate it with fixtures (free, synthetic) or a real run (costs money);
-see [results/README.md](results/README.md) for the difference and
+committed, and there is no synthetic mode to fill it with. Every number the site
+shows was measured, so seeing anything requires a run; the cheapest useful one is
+about **$0.42**. See [results/README.md](results/README.md) for the sequence and
 [LICENSE](LICENSE) for the source documents' terms.
 
 ### Prerequisites
@@ -355,46 +356,102 @@ python3 -m venv .venv && .venv/bin/pip install -e .
 .venv/bin/python -m docrace.precompute
 ```
 
+The model the approaches answer with is `DOCRACE_MODEL` (default `claude-opus-5`;
+any model with a rate-card entry in `data/pricing.json` — the UI offers the same
+list as a dropdown). Indexing and grading stay on `claude-opus-5` whichever you
+pick, so a run compares answering models and nothing else, and one results file
+holds one model's measurements — the pipeline refuses to mix them.
+
+```sh
+DOCRACE_MODEL=claude-haiku-4-5 .venv/bin/python -m docrace.precompute --doc arxiv-paper
+```
+
 Useful flags: `--doc` / `--arm` / `--question` to narrow, `--force` to re-run
 completed cells, `--rebuild-index` to regenerate indexes and extractions (this
 costs money), `--manifest-only` to just refresh `results/manifest.json`.
 
-### Reproducing the results from the browser
+### Running the evals from the browser
 
 Everything on the page came out of the pipeline in this repository, and you can
-regenerate it with your own keys — including from the UI, in a local clone:
+regenerate it with your own keys — including from the UI, in a local clone, with no
+flag to set:
 
 ```sh
-cd web && DOCRACE_ENABLE_RUNS=1 npm run dev
+cd web && npm run dev
 ```
 
-The panel at the bottom of the page lets you pick arms and a question count, shows
-what that scope would cost, and requires a second click before spending anything.
-Progress streams per cell as it runs.
+The page forks after the approach guide: **run the evals**, or **load the results**
+already on disk. The two want opposite screens — one is a control panel, the other is
+a finding — so the choice is made once and everything below belongs to the branch you
+took. A run ends by handing you its results, because that is why you ran it.
 
-Three gates have to pass before a single token is spent, and a hosted copy of this
-site fails all three:
+The run branch is the pipeline with a face on it. Pick a document, tick the
+approaches, see what that scope would cost, then confirm. Progress streams per cell
+as a live approach × question grid, coloured by grade, and the charts rewrite
+themselves when it finishes. The front end holds no keys and calls no model API: it
+POSTs a scope, the route re-prices it and shells out to `docrace.precompute`, and the
+browser renders the event stream.
+
+A run asks **every** question in the set. There is no question picker, because a
+partial question set produces a partial accuracy score and the taxonomy is the
+argument — a heatmap with three of five types filled in invites exactly the
+misreading this project exists to prevent. Which document, and which approaches, is
+the decision worth offering.
+
+Every fetched document is selectable, measured or not. `docrace.presets` supplies the
+approach and question metadata that used to arrive only in a run's manifest, so a
+fresh clone can name the seven approaches and count a document's questions before it
+has measured anything.
+
+Cells that already have results are skipped, as they are from the CLI, so a scope you
+have already run costs nothing to re-open. The panel marks them and prices the full
+selection anyway, which over-states rather than under-states the bill; tick **re-run**
+to measure them again.
+
+Two gates have to pass before a single token is spent, and a hosted copy of this
+site fails both:
 
 | Gate | Why |
 |---|---|
-`DOCRACE_ENABLE_RUNS=1` | Opt-in, so a deployed instance can never spend. Off by default. |
 `pipeline/.venv` exists | Runs need the Python pipeline; a serverless host has no Python. |
 A key in the environment or `.env` | Read server-side, never sent to the browser, never logged. |
 
-A **$5 ceiling** applies to runs started from the browser. Above that the request
-is refused with the equivalent CLI command, so a stray click cannot start the $71
-matrix. The ceiling constrains the button, not the pipeline — the terminal has no
-limit. The server re-prices every scope itself, so the number shown in the panel is
-information rather than a security boundary.
+Runs used to also require `DOCRACE_ENABLE_RUNS=1`. That flag is gone: it made the
+honest answer to "can I run this from the page?" be "no, restart your dev server
+first", and it was never what kept a deployment safe — the two gates above are.
+`DOCRACE_DISABLE_RUNS=1` remains as a kill switch for the one deployment that has
+both, a checkout on a VM, where they would otherwise pass.
+
+A **$25 ceiling** applies to runs started from the browser, overridable with
+`DOCRACE_MAX_RUN_USD`. Above it the request is refused with the equivalent CLI
+command. The number is chosen against the real projections rather than for
+roundness — every approach on the paper is $15 and on the contract $19, so the runs
+you are likely to want go through; every approach on the 10-K is $46 and does not,
+because the most expensive thing this UI can ask for should take a deliberate act
+rather than a click.
+
+The ceiling constrains the button, not the pipeline — the terminal has no limit. The
+server re-prices every scope itself, so the number shown in the panel is information
+rather than a security boundary. What stops *you* overspending is that price sitting
+in the confirm button; what the ceiling stops is the scope nobody meant to ask for,
+and it can only do that while it sits below the biggest thing on the menu.
+
+| Per-document projection | all 7 approaches × 15 questions |
+|---|---|
+| arxiv paper, 25k tokens | $15.20 |
+| EDGAR contract, 53k tokens | $19.32 |
+| 10-K filing, 223k tokens | $46.32 |
 
 There is deliberately **no bring-your-own-key path**. Accepting a visitor's
 credential over HTTP means owning the handling of somebody else's secret, and this
 project has no need to. Live mode with BYO keys is the roadmap's v1 item and needs
 a rate limit before it exists.
 
-Note that a run **discards fixture cells rather than resuming onto them**. Synthetic
-and measured cells merged into one file, stamped as measurement, is the outcome all
-the provenance marking exists to prevent.
+A scoped run leaves an **incomplete matrix**, which the site labels rather than
+hides: each document records its cell count and completeness state, and a
+partially-run document is marked on the picker, under its title, and in a banner.
+The figures are real either way — what a two-cell run cannot support is an
+aggregate, so the page calls its heatmap a spot check instead of a result.
 
 ### Web
 
@@ -404,9 +461,13 @@ npm install
 npm run dev
 ```
 
-The app reads `results/` from disk. To review the UI without spending anything,
-`pipeline/scripts/make_fixtures.py` writes plausible fake results in the same
-shape; a real precompute run overwrites them.
+The app reads `results/` from disk and will refuse to start without it, naming the
+commands that produce it. There is deliberately no way to populate it without
+spending: a fixture generator existed while the interface was being built and was
+removed, because every header it wrote was a claim about work that never happened —
+which model produced the answers, when they were computed — and its hardcoded token
+counts eventually drifted 30–50% from the real documents and surfaced in the
+document picker, where no warning covered them.
 
 ## Source documents
 

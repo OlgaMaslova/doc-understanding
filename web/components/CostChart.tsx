@@ -11,7 +11,7 @@ import type { ArmEconomics, ArmId, Manifest } from "@/lib/types";
  * Each arm is a straight line: the y-intercept is what it cost before the first
  * query (indexing, extraction, one cache write) and the slope is what each
  * additional query costs. That decomposition is the entire argument. Where two
- * lines cross is the query volume at which one strategy becomes cheaper than the
+ * lines cross is the query volume at which one approach becomes cheaper than the
  * other, and switching documents moves those crossings — which is the thing
  * everybody writes about and nobody lets you watch.
  *
@@ -49,6 +49,18 @@ function costAt(e: ArmEconomics, queries: number): number {
   return e.fixed_cost_usd + e.marginal_cost_usd * queries;
 }
 
+/**
+ * Quantise a coordinate before it reaches an SVG attribute.
+ *
+ * `Math.log10` is implementation-approximated, so Node and the browser can
+ * disagree in the last bit — 84.38294785115717 against 84.38294785115718. React
+ * compares the serialised attribute strings, so that one bit is a hydration
+ * mismatch. Two decimals is far below a pixel in a 760x400 viewBox.
+ */
+function px(n: number): number {
+  return Math.round(n * 100) / 100;
+}
+
 export function CostChart({ economics, arms, maxQueries = 10_000 }: Props) {
   const titleId = useId();
   const [hovered, setHovered] = useState<ArmId | null>(null);
@@ -68,20 +80,22 @@ export function CostChart({ economics, arms, maxQueries = 10_000 }: Props) {
     const lo = positives.length ? Math.min(...positives) : 0.0001;
     const hi = Math.max(...values, lo * 10);
     // Round to decade boundaries so the gridlines land on readable numbers.
+    // `1e${n}` rather than Math.pow, which is another approximated function and
+    // would put engine-dependent noise into the tick labels.
     return {
-      yMin: Math.pow(10, Math.floor(Math.log10(lo))),
-      yMax: Math.pow(10, Math.ceil(Math.log10(hi))),
+      yMin: Number(`1e${Math.floor(Math.log10(lo))}`),
+      yMax: Number(`1e${Math.ceil(Math.log10(hi))}`),
     };
   }, [present, economics, maxQueries]);
 
   const x = (queries: number) =>
-    PAD.left + (Math.log10(queries) / Math.log10(maxQueries)) * PLOT_W;
+    px(PAD.left + (Math.log10(queries) / Math.log10(maxQueries)) * PLOT_W);
   const y = (cost: number) => {
     const clamped = Math.max(cost, yMin);
     const t =
       (Math.log10(clamped) - Math.log10(yMin)) /
       (Math.log10(yMax) - Math.log10(yMin));
-    return PAD.top + PLOT_H - t * PLOT_H;
+    return px(PAD.top + PLOT_H - t * PLOT_H);
   };
 
   const yTicks = useMemo(() => {
@@ -205,7 +219,7 @@ export function CostChart({ economics, arms, maxQueries = 10_000 }: Props) {
           className="block h-auto w-full min-w-[640px]"
         >
           <title id={titleId}>
-            Total cost against number of queries, one line per strategy. Fixed
+            Total cost against number of queries, one line per measured run. Fixed
             indexing costs are the starting height of each line; the slope is the
             cost of each additional query.
           </title>
@@ -344,13 +358,13 @@ export function CostChart({ economics, arms, maxQueries = 10_000 }: Props) {
         </svg>
       </div>
 
-      {/* Which strategy is cheapest at each volume is the decision the chart is
+      {/* Which approach is cheapest at each volume is the decision the chart is
           for, and it is easier to read as a row of answers than as a list of
           crossing points. Switching documents changes this row, which is the
           finding the whole project is built around. */}
       <figcaption className="mt-4">
         <div className="mb-2 text-xs uppercase tracking-wide text-text-faint">
-          Cheapest at, among strategies scoring{" "}
+          Cheapest at, among approaches scoring{" "}
           <span className="tnum">{Math.round(SCORE_FLOOR * 100)}%</span> or better
         </div>
         <dl className="grid grid-cols-2 gap-x-4 gap-y-2 sm:grid-cols-5">

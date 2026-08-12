@@ -5,8 +5,11 @@
  */
 
 /**
- * Six strategies, seven measured arms: caching is one strategy run at both cache
+ * Six approaches, seven measured arms: caching is one approach run at both cache
  * lifetimes, because the TTL is the thing that breaks it.
+ *
+ * "Arm" is the pipeline's word and the JSON is keyed by it, so it stays in these
+ * types. The UI says "approach"; `lib/approaches.ts` translates.
  */
 export const ARM_IDS = [
   "full_context",
@@ -137,14 +140,20 @@ export interface DocResults {
   model: string;
   pricing_snapshot: string;
   computed_at: string;
-  /** See `Manifest.fixture`. */
-  fixture: boolean;
   chunking: { chunk_tokens: number; overlap_tokens: number };
   fixed_costs: Record<ArmId, { usage: UsageBreakdown; cost: CostBreakdown }>;
   questions: Question[];
   economics: Partial<Record<ArmId, ArmEconomics>>;
   cells: Record<string, Cell | FailedCell>;
 }
+
+/**
+ * Whether a document's matrix is complete.
+ *
+ * `partial` — measured, but not every arm x question cell has been run, so its
+ * aggregates rest on few data points. `measured` — the full matrix.
+ */
+export type ProvenanceState = "partial" | "measured";
 
 export interface Manifest {
   docs: {
@@ -155,6 +164,9 @@ export interface Manifest {
     source_url: string;
     license: string;
     provenance: string;
+    provenance_state: ProvenanceState;
+    cells: number;
+    cells_expected: number;
   }[];
   arms: {
     id: ArmId;
@@ -162,7 +174,7 @@ export interface Manifest {
     short: string;
     wins: string;
     breaks: string;
-    /** Non-null when this arm is one variant of a strategy measured twice. */
+    /** Non-null when this arm is one variant of an approach measured twice. */
     variant_of: string | null;
   }[];
   question_types: { id: QuestionType; label: string; why: string }[];
@@ -172,12 +184,13 @@ export interface Manifest {
   pricing_snapshot: string;
   computed_at: string;
   /**
-   * True when these results came from `make_fixtures.py` rather than a real
-   * precompute run. The page shows a banner when set — synthetic numbers reaching
-   * a reader as though they were measurements is the worst outcome this project
-   * could produce, so the provenance travels with the data.
+   * True when any document's matrix is incomplete.
+   *
+   * Derived from the per-document states rather than asserted — a scoped run
+   * leaves an incomplete matrix, and the page has to say so rather than presenting
+   * a two-cell aggregate as a result.
    */
-  fixture: boolean;
+  partial: boolean;
 }
 
 export function isFailed(cell: Cell | FailedCell): cell is FailedCell {

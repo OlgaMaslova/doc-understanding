@@ -58,9 +58,13 @@ async function readJson<T>(file: string): Promise<T> {
     // repo, so say what to run instead.
     throw new Error(
       `No results found at results/${file}.\n\n` +
-        `results/ is generated, not committed. Populate it with either:\n` +
-        `  cd pipeline && .venv/bin/python scripts/make_fixtures.py   # free, synthetic\n` +
-        `  cd pipeline && .venv/bin/python -m docrace.precompute      # real, needs API keys\n\n` +
+        `results/ is generated, not committed. Produce it with:\n\n` +
+        `  cd pipeline\n` +
+        `  .venv/bin/python -m docrace.documents --meta-only   # free, counts tokens\n` +
+        `  .venv/bin/python -m docrace.estimate               # what a run would cost\n` +
+        `  .venv/bin/python -m docrace.precompute --doc arxiv-paper --limit 2 \\\n` +
+        `      --arm naive_rag --arm cached_context_1h        # ~$0.42\n\n` +
+        `Every number this site shows is measured; there is no synthetic mode.\n` +
         `See "Running it" in README.md.`,
       { cause },
     );
@@ -72,6 +76,27 @@ async function readJson<T>(file: string): Promise<T> {
 
 export async function loadManifest(): Promise<Manifest> {
   return readJson<Manifest>("manifest.json");
+}
+
+/**
+ * The manifest, or null when no run has happened yet.
+ *
+ * An empty `results/` is the expected state of a fresh clone, not a fault, and
+ * throwing for it gives a red runtime-error overlay with a truncated stack — the
+ * worst possible first thirty seconds with this repo. The page renders a first-run
+ * screen instead.
+ *
+ * Only a *missing* file returns null. A file that exists and will not parse is a
+ * real bug and still throws, because silently treating corruption as "no data" is
+ * how a broken run gets mistaken for an un-run one.
+ */
+export async function loadManifestIfPresent(): Promise<Manifest | null> {
+  try {
+    await readFile(path.join(RESULTS_DIR, "manifest.json"), "utf8");
+  } catch {
+    return null;
+  }
+  return loadManifest();
 }
 
 export async function loadDoc(docId: string): Promise<DocResults> {
@@ -101,7 +126,7 @@ export async function loadCell(
  * them reorders the chart instantly — that reordering is the eight seconds the
  * whole demo exists for, and a server round-trip would put a stutter in the
  * middle of it. Answers and delta streams are the bulk of the payload and
- * neither is needed for that: the charts run on numbers, and the race cards
+ * neither is needed for that: the charts run on numbers, and the comparison cards
  * receive their text over SSE.
  */
 export async function loadDocLean(docId: string): Promise<LeanDoc> {

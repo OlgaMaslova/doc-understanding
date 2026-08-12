@@ -1,0 +1,11 @@
+{
+  "doc_id": "arxiv-paper",
+  "domain": "scientific",
+  "title": "Mamba: Linear-Time Sequence Modeling with Selective State Spaces",
+  "url": "https://arxiv.org/html/2312.00752v2",
+  "provenance": "arXiv:2312.00752v2 (Gu and Dao, 2023)",
+  "license": "CC BY 4.0 (verified on the arXiv abstract page)",
+  "tokens": 25061,
+  "chars": 62611,
+  "lines": 1741
+}

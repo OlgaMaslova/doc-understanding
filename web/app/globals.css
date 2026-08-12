@@ -2,20 +2,59 @@
 
 /*
  * A single committed dark palette. This is a telemetry view — seven streams
- * racing, two charts, a lot of numbers — and the dark ground keeps the arm
- * colours legible against each other, which is the only thing the palette
- * really has to do.
+ * compared, two charts, a lot of numbers — and a dark ground keeps the arm
+ * colours legible against each other, which is the main thing the palette has
+ * to do.
+ *
+ * The ground is deliberately a slate rather than near-black: the original
+ * #0e1013 was dark enough that the page read as a void with text floating on
+ * it. These are ~2.6x its luminance, which is still unambiguously a dark theme
+ * but gives the cards and the chart something to sit on.
+ *
+ * Contrast ratios below are measured against --bg-raised, the lightest ground
+ * text sits on and therefore the one that decides legibility:
+ *
+ *   --text          12.2   headings, answers
+ *   --text-dim       7.0   body copy — clears AAA (7:1)
+ *   --text-faint     4.6   11px labels, captions, table detail — clears AA (4.5:1)
+ *   --border-strong  3.1   focus rings and plot furniture — clears SC 1.4.11
+ *   --border         1.8   card and cell edges, purely decorative
+ *   --accent         6.6
+ *
+ * Two rules if you retune this. Lightening the ground costs contrast on every
+ * foreground, so raise the grounds and the inks together or the small text goes
+ * first — --text-faint was 3.1 against the old ground, which fails AA at any
+ * size and was being used for 11px labels. And the arm colours in
+ * `lib/format.ts` are solved against --bg-raised as well; they are text, not
+ * just fills.
  */
 :root {
-  --bg: #0e1013;
-  --bg-raised: #16191e;
-  --bg-inset: #0a0c0f;
-  --border: #262b33;
-  --border-strong: #3a414c;
+  --bg: #1b1f25;
+  --bg-raised: #24282f;
+  --bg-inset: #15181d;
+  --border: #464e5c;
+  --border-strong: #677388;
   --text: #e6e9ee;
-  --text-dim: #98a1af;
-  --text-faint: #5f6875;
+  --text-dim: #abb3c0;
+  --text-faint: #88919e;
   --accent: #d9a441;
+}
+
+/*
+ * Airier text, set once here rather than as leading-* classes on every element.
+ *
+ * Tailwind's font-size utilities ship their own line-heights (text-sm is 1.25rem
+ * on a 0.875rem font, which is tight for prose), and this page is mostly prose at
+ * text-sm explaining numbers. Overriding the scale's line-heights loosens all of
+ * it at once, and anything that genuinely needs to be tight — a table cell, a
+ * streaming answer — can still say leading-none locally.
+ */
+@theme {
+  --text-xs--line-height: 1.6;
+  --text-sm--line-height: 1.7;
+  --text-base--line-height: 1.75;
+  --text-2xl--line-height: 1.3;
+  --text-3xl--line-height: 1.25;
 }
 
 @theme inline {
@@ -41,6 +80,18 @@ body {
     ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial,
     sans-serif;
   -webkit-font-smoothing: antialiased;
+  /* A touch of tracking. Letter-spacing cascades where line-height does not, so
+     this reaches every size on the page including the ones Tailwind sets. */
+  letter-spacing: 0.012em;
+  line-height: 1.7;
+}
+
+/* Headings get the opposite treatment — large type needs less tracking, not
+   more, or it starts to look spaced out rather than spacious. */
+h1,
+h2,
+h3 {
+  letter-spacing: -0.004em;
 }
 
 /* Numbers are the content here; tabular figures keep columns from jittering

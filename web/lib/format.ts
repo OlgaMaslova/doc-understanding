@@ -29,23 +29,38 @@ export function percent(fraction: number): string {
  * The three full-context arms share one hue at three values, because they send
  * identical tokens and differ only in what those tokens cost. The palette should
  * say that before the copy does — and it makes the two cache lifetimes read as
- * one strategy measured twice rather than two unrelated strategies.
+ * one approach measured twice rather than two unrelated approaches.
+ *
+ * Every value here clears 4.5:1 against --bg-raised, because these are not only
+ * fills: they colour the chart's 11px series labels, the "cheapest at" row, and
+ * the arm named in the chart caption. The two retrieval blues are separated by
+ * lightness rather than hue for the same reason — the accessible version of the
+ * old #1f6f97 sat almost on top of naive RAG's blue, so naive RAG moved lighter
+ * to keep the two series tellable apart in the chart. Both constraints bind: if
+ * you retune these, check contrast *and* that no two arms collapse together.
  */
 export const ARM_COLOR: Record<ArmId, string> = {
-  full_context: "#e0533d",
+  full_context: "#e46b58",
   cached_context_5m: "#eb8368",
   cached_context_1h: "#f5b8a4",
-  naive_rag: "#4a9ecb",
-  hybrid_rag: "#1f6f97",
-  agentic: "#8a6cc4",
+  naive_rag: "#7cb9d9",
+  hybrid_rag: "#2b99d0",
+  agentic: "#9c83cd",
   extract: "#3fa87a",
 };
 
+/**
+ * Grade colours. These are swatches — dots and ticks — not text, so they are held
+ * to SC 1.4.11's 3:1 for meaningful non-text content rather than 4.5:1. The two
+ * failing grades are deliberately the dark, muted end of the scale; `incorrect`
+ * was lifted just enough to clear 3:1 on --bg-raised without becoming a second
+ * `hallucinated` red.
+ */
 export const GRADE_COLOR: Record<GradeId, string> = {
   correct: "#3fa87a",
   correctly_refused: "#5bbf94",
   partial: "#d9a441",
-  incorrect: "#a3564a",
+  incorrect: "#ac5b4e",
   hallucinated: "#d1382a",
 };
 

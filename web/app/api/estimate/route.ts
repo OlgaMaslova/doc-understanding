@@ -6,7 +6,8 @@
  * a liability regardless of what it costs. Same gates, same refusal.
  */
 
-import { loadManifest } from "@/lib/results";
+import { loadCatalogue } from "@/lib/catalogue";
+import { loadPresets, questionCount } from "@/lib/presets";
 import { capabilities, estimateScope, MAX_RUN_USD } from "@/lib/runner";
 import { isScopeError, parseScope } from "@/lib/scope";
 
@@ -25,19 +26,30 @@ export async function POST(request: Request) {
     return Response.json({ error: "Invalid JSON body." }, { status: 400 });
   }
 
-  const manifest = await loadManifest();
+  const catalogue = await loadCatalogue();
+  const presets = await loadPresets();
   const scope = parseScope(
     body,
-    manifest.docs.map((d) => d.doc_id),
+    catalogue.map((d) => d.doc_id),
+    presets.models.map((m) => m.id),
   );
   if (isScopeError(scope)) {
     return Response.json({ error: scope.error }, { status: 400 });
   }
 
+  const questions = questionCount(presets, scope.doc);
+  if (questions === 0) {
+    return Response.json(
+      { error: `No questions are defined for ${scope.doc} in data/questions.yaml.` },
+      { status: 400 },
+    );
+  }
+
   try {
-    const estimate = await estimateScope(scope);
+    const estimate = await estimateScope(scope, questions);
     return Response.json({
       ...estimate,
+      questions,
       max_run_usd: MAX_RUN_USD,
       // Reported rather than enforced here: this endpoint only prices. The run
       // route re-derives it, so a client cannot talk its way past the ceiling by

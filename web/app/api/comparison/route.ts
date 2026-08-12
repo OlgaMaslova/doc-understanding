@@ -1,9 +1,9 @@
 /**
- * Replay a recorded race as Server-Sent Events.
+ * Replay a recorded comparison as Server-Sent Events.
  *
  * Every arm's answer was streamed once, offline, with each text fragment stamped
  * with its arrival time. This route replays every stream concurrently on
- * their original timings, so the race the visitor watches is the race that
+ * their original timings, so the comparison the visitor watches is the one that
  * actually happened — at zero marginal cost and with no API key involved.
  *
  * Wall-clock timings are compressed: agentic search genuinely takes a minute on

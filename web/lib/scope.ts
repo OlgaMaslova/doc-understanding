@@ -6,13 +6,15 @@
  * `spawn` is given an argv array — but an id that merely *looks* wrong should be
  * rejected at the edge with a clear message rather than becoming a confusing
  * pipeline error several seconds later.
+ *
+ * The document allowlist is the *catalogue*, not the manifest. A run's whole
+ * purpose can be to measure a document for the first time, so restricting it to
+ * documents that already have results would refuse every first run — the state a
+ * fresh clone is entirely made of.
  */
 
 import { ARM_IDS, type ArmId } from "./types";
 import type { Scope } from "./runner";
-
-/** Upper bound on questions per run from the UI; the full set is 15. */
-export const MAX_LIMIT = 15;
 
 export interface ScopeError {
   error: string;
@@ -21,21 +23,34 @@ export interface ScopeError {
 export function parseScope(
   body: unknown,
   knownDocs: string[],
+  knownModels: string[],
 ): Scope | ScopeError {
   if (typeof body !== "object" || body === null) {
-    return { error: "Expected a JSON object with doc, arms and limit." };
+    return { error: "Expected a JSON object with doc and arms." };
   }
   const raw = body as Record<string, unknown>;
+
+  // The model reaches the subprocess as an environment variable, so it is checked
+  // against the rate card's closed list like everything else — and the pipeline
+  // re-validates on its side, so this is the polite refusal, not the boundary.
+  const model = raw.model ?? knownModels[0];
+  if (typeof model !== "string" || !knownModels.includes(model)) {
+    return {
+      error: `Unknown model ${JSON.stringify(raw.model)}. Known: ${knownModels.join(", ")}.`,
+    };
+  }
 
   const doc = raw.doc;
   if (typeof doc !== "string" || !knownDocs.includes(doc)) {
     return {
-      error: `Unknown document ${JSON.stringify(doc)}. Known: ${knownDocs.join(", ")}.`,
+      error: knownDocs.length
+        ? `Unknown document ${JSON.stringify(doc)}. Known: ${knownDocs.join(", ")}.`
+        : "No documents have been fetched yet. Run python -m docrace.documents first.",
     };
   }
 
   if (!Array.isArray(raw.arms) || raw.arms.length === 0) {
-    return { error: "Select at least one arm." };
+    return { error: "Select at least one approach." };
   }
   const arms: ArmId[] = [];
   for (const arm of raw.arms) {
@@ -48,15 +63,11 @@ export function parseScope(
     if (!arms.includes(arm as ArmId)) arms.push(arm as ArmId);
   }
 
-  const limit = raw.limit;
-  if (typeof limit !== "number" || !Number.isInteger(limit) || limit < 1) {
-    return { error: "limit must be a positive integer." };
-  }
-  if (limit > MAX_LIMIT) {
-    return { error: `limit must be at most ${MAX_LIMIT}.` };
-  }
+  // Sent in canonical order rather than click order, so two identical selections
+  // produce the same argv and the same cache behaviour.
+  arms.sort((a, b) => ARM_IDS.indexOf(a) - ARM_IDS.indexOf(b));
 
-  return { doc, arms, limit };
+  return { doc, arms, model, force: raw.force === true };
 }
 
 export function isScopeError(v: Scope | ScopeError): v is ScopeError {

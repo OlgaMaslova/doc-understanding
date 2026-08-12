@@ -65,7 +65,7 @@ Every preset question carries a type tag. This is the second axis of the heatmap
 
 ```
  ┌──────────────┐     ┌─────────────────────────┐     ┌──────────────┐
- │  Next.js UI  │◄────┤  /api/race  (SSE)       │◄────┤  Arm runners │
+ │  Next.js UI  │◄────┤  /api/comparison (SSE)  │◄────┤  Arm runners │
  │  race view   │     │  fan-out, stream deltas │     │  (Python)    │
  └──────────────┘     └─────────────────────────┘     └──────────────┘
         │                        │                            │
