@@ -44,20 +44,22 @@ absence ("what's the escalation cap" — there isn't one) are where it quietly
 breaks, because retrieval always returns *something*, and something is what gets
 hallucinated from.
 
-## The six arms
+## The six approaches
+
+The code calls these **arms**, in the experimental-trial sense — the `--arm` flag, [`pipeline/docrace/arms/`](pipeline/docrace/arms/), the ids in the results JSON. The UI and this README say *approach*; they are the same seven things.
 
 Caching is **not** a retrieval strategy. It is a cost transform on the
-full-context arm with essentially identical accuracy, because the prompt is
+full-context approach with essentially identical accuracy, because the prompt is
 byte-identical. Presenting it as a peer strategy would be wrong; presenting it as
 the same tokens at a different price is both correct and more interesting.
 
-Six strategies, seven measured arms: arm 2 runs at both cache lifetimes. The two
+Six strategies, seven measured approaches: approach 2 runs at both cache lifetimes. The two
 variants share a colour in the UI and a `variant_of` field in the results, so they
 read as one strategy measured twice rather than two unrelated strategies. Their
 accuracy rows in the heatmap should be identical, since the prompts are — and if
 they aren't, that's model nondeterminism, not a difference between strategies.
 
-| # | Arm | What it does | Where it wins | Where it breaks |
+| # | Approach | What it does | Where it wins | Where it breaks |
 |---|-----|--------------|---------------|-----------------|
 | 1 | **Full context** | Whole document in the prompt, every query | Accuracy ceiling; the reference the others are read against | Cost scales linearly with queries × document size |
 | 2 | **Full context + cache** | Same tokens, cached across queries. Measured at **both** cache lifetimes: 5 minutes and 1 hour | Same accuracy as #1 at ~1/10 the marginal cost | Cache TTL; still scales with document size |
@@ -66,11 +68,11 @@ they aren't, that's model nondeterminism, not a difference between strategies.
 | 5 | **Agentic search** | Model gets grep/read tools over the document, iterates | Multi-hop; doesn't need the whole document in context | Slowest by far, and cost varies per query |
 | 6 | **Extract then query** | One map-reduce pass into a schema; queries hit the structured output | Near-zero marginal cost; unbeatable on aggregation | Answers only what the schema anticipated |
 
-**Arm 4 is not optional.** A strawman RAG arm would make the whole project
+**Approach 4 is not optional.** A strawman RAG approach would make the whole project
 suspect — of course full context wins if the retrieval is undertuned. Its
 parameters are documented below so the tuning is auditable.
 
-**Arm 6 is the sleeper.** It reframes the question from "which strategy is best"
+**Approach 6 is the sleeper.** It reframes the question from "which strategy is best"
 to "do you know your questions in advance?" — which is the decision most teams
 are actually facing.
 
@@ -102,7 +104,7 @@ and where the real differentiation lives.
 ```
 
 **The single most important engineering decision: precompute everything.** Every
-preset question × arm result is computed once, offline, and written to `results/` as JSON —
+preset question × approach result is computed once, offline, and written to `results/` as JSON —
 answer text, delta timings, token counts, latency, cost, grade. The deployed site
 runs in **replay mode**: instant, deterministic, and free to visit. Without it,
 one post to the front page empties the account in an afternoon.
@@ -127,7 +129,7 @@ it's written down rather than left in the code.
 
 ### Model and pricing
 
-All arms answer with one model per run — `DOCRACE_MODEL`, default
+All approaches answer with one model per run — `DOCRACE_MODEL`, default
 `claude-opus-5`; the committed results were measured with `claude-sonnet-5`, and
 the results page names the model behind whatever it is showing. Indexing and
 grading stay on `claude-opus-5` whichever answering model is picked. Streaming is
@@ -139,19 +141,19 @@ every result is stamped with that file's `snapshot_date`, which the UI displays.
 Model prices change often enough that hardcoded numbers rot; when they change,
 edit that file and re-run.
 
-### Chunking (arms 3 and 4)
+### Chunking (approaches 3 and 4)
 
 ~500-token chunks with ~50 tokens of overlap. Chunks are split at paragraph
 boundaries first and sentence boundaries second, so a chunk rarely severs a
-sentence or a table row. Arms 3 and 4 share the same segmentation, so the only
+sentence or a table row. Approaches 3 and 4 share the same segmentation, so the only
 difference between them is retrieval quality.
 
-### Arm 3 — naive chunk RAG
+### Approach 3 — naive chunk RAG
 
 Voyage embeddings over the raw chunks, cosine similarity, top 5. No reranking, no
 query rewriting. This is deliberately the thing most people actually ship first.
 
-### Arm 4 — hybrid retrieval with contextual prefixes
+### Approach 4 — hybrid retrieval with contextual prefixes
 
 1. **Contextual prefixes at index time.** For each chunk, a `claude-opus-5` call
    writes one or two sentences situating it within the document, with the full
@@ -168,9 +170,9 @@ query rewriting. This is deliberately the thing most people actually ship first.
    prompt.
 
 The prefix generation is a real indexing bill that scales with document size. It
-shows up as arm 4's y-intercept on the cost chart, not as a footnote.
+shows up as approach 4's y-intercept on the cost chart, not as a footnote.
 
-### Arm 5 — agentic search
+### Approach 5 — agentic search
 
 Two tools over the raw document: `grep(pattern)` (case-insensitive regex,
 returning numbered lines, capped at 40 matches) and `read_lines(start, end)`
@@ -178,26 +180,26 @@ returning numbered lines, capped at 40 matches) and `read_lines(start, end)`
 loop, and the per-question call count is recorded — cost variance per query is a
 finding, not noise to average away.
 
-### Arm 6 — extract then query
+### Approach 6 — extract then query
 
 One map-reduce pass: the document is split into ~120k-character windows with 4k
 of overlap, each extracted into the domain schema via structured outputs, then
 merged in a final call. Queries afterwards see only the merged record.
 
-The schemas in [`data/schemas/`](data/schemas/) are the crux of this arm's
+The schemas in [`data/schemas/`](data/schemas/) are the crux of this approach's
 honesty. They were written as what a competent engineer would build *before*
 seeing the question set — the fields cover what a contracts reviewer, an analyst,
 or a paper reader normally wants — and were **not** reverse-engineered from the
-questions. If they had been, arm 6 would win everything and mean nothing.
+questions. If they had been, approach 6 would win everything and mean nothing.
 
 ### Caching
 
-Caching is applied to **every arm that has a stable prefix worth caching**, not
-only to arm 2. This matters for the same reason arm 4 has to be properly tuned: if
-one arm gets the cost transform and the others don't, arm 2's advantage is an
-artifact of selective effort rather than a finding. Where each arm stands:
+Caching is applied to **every approach that has a stable prefix worth caching**, not
+only to approach 2. This matters for the same reason approach 4 has to be properly tuned: if
+one approach gets the cost transform and the others don't, approach 2's advantage is an
+artifact of selective effort rather than a finding. Where each approach stands:
 
-| Arm | Cached prefix | TTL | Warm is |
+| Approach | Cached prefix | TTL | Warm is |
 |---|---|---|---|
 | 1 Full context | none, by definition | — | — |
 | 2 Full context + cache | the document | 5m **and** 1h, measured separately | one-time |
@@ -209,37 +211,37 @@ artifact of selective effort rather than a finding. Where each arm stands:
 Two details are load-bearing.
 
 **Where the breakpoint goes.** Caching is a prefix match, so anything that varies
-must come after the breakpoint. In arm 2 the document sits in `system` behind the
+must come after the breakpoint. In approach 2 the document sits in `system` behind the
 breakpoint and the question goes in `messages`, which renders after it — so the
 cached prefix is byte-identical across all fifteen questions. There is no maximum
 size behind a single breakpoint, so even the 10-K needs exactly one; splitting
-would only create entries at prefix lengths nothing ever requests. Arm 6 needed
+would only create entries at prefix lengths nothing ever requests. Approach 6 needed
 the record and the question in **separate content blocks**, because concatenated
 into one string there is nowhere to put a breakpoint and the record gets re-billed
 at full price on every question.
 
-**Arm 5's warm is marginal, not fixed.** The other cached arms share one warm
-across every question, so it belongs in the cost chart's intercept. Arm 5 starts a
+**Approach 5's warm is marginal, not fixed.** The other cached approaches share one warm
+across every question, so it belongs in the cost chart's intercept. Approach 5 starts a
 fresh conversation per question, so it warms its own cache every time and the cost
 belongs in the slope. Folding it into the intercept would make agentic search look
 several times cheaper per query than it is. `ARM_CACHE_SHARED_ACROSS_QUERIES` in
 [`arms/__init__.py`](pipeline/docrace/arms/__init__.py) is what encodes that
 distinction, and `cache_write_shared` in the results records which reading applies.
 
-Arm 5 also uses **two** breakpoints rather than one. A single trailing breakpoint
+Approach 5 also uses **two** breakpoints rather than one. A single trailing breakpoint
 is enough in the normal case — a turn adds three or four content blocks and the
 lookback walks back twenty positions to find the previous turn's write — but it
 stops being enough when the model issues a burst of parallel tool calls, since
 each contributes both a `tool_use` and a `tool_result` block. The second sits a
 turn further back as insurance and costs nothing extra, because that position is
-already cached. Breakpoints go only on `tool_result` blocks, which the arm
+already cached. Breakpoints go only on `tool_result` blocks, which the approach
 constructs itself; assistant turns are echoed back verbatim because thinking
 blocks must not be edited.
 
-### Why arm 2 is measured at both TTLs
+### Why approach 2 is measured at both TTLs
 
-The spec names "Cache TTL" as where arm 2 breaks, and a footnote is a weak way to
-say so. So the arm runs twice — identical prompts, differing only in the `ttl` on
+The spec names "Cache TTL" as where approach 2 breaks, and a footnote is a weak way to
+say so. So the approach runs twice — identical prompts, differing only in the `ttl` on
 the breakpoint — and the results record what each lifetime actually cost.
 
 The 5-minute cache writes at 1.25× input, the 1-hour at 2×, so the cheaper write
@@ -251,7 +253,7 @@ so the entire difference is how often you pay to warm.
 
 That's now visible rather than asserted: `cache_write_count` in the results says
 how many times each variant warmed during its fifteen-question run, and the
-summary table marks any arm that warmed more than once. If the 5-minute variant
+summary table marks any approach that warmed more than once. If the 5-minute variant
 re-writes mid-run, that is the finding, not a glitch — and it's the reason the rest
 of the pipeline uses the 1-hour cache, where a slow run can't quietly corrupt the
 marginal-cost figure.
@@ -260,9 +262,9 @@ marginal-cost figure.
 
 A `claude-opus-5` judge compares each answer to committed ground truth with a
 five-value vocabulary: correct, partial, incorrect, hallucinated, and correctly
-refused. The last two matter most. An arm that says "the document does not
+refused. The last two matter most. An approach that says "the document does not
 address this" when the document indeed does not is doing the right thing, and an
-arm that produces a confident number instead is doing the single worst thing;
+approach that produces a confident number instead is doing the single worst thing;
 collapsing those into "incorrect" would hide the finding.
 
 Judge rationales are kept in the results JSON, so a wrong call is visible and can
@@ -281,30 +283,30 @@ see immediately who is right. The quotes are checked verbatim against the source
 text by `check_questions.py` before any run, so the answer key is auditable too,
 not just the answers.
 
-Each arm's card also carries a **"How it got there"** disclosure showing what that
-arm actually did: which chunks retrieval returned, how many grep/read iterations
-the agentic arm took, whether the cache was hit. When a retrieval arm gets an
+Each approach's card also carries a **"How it got there"** disclosure showing what that
+approach actually did: which chunks retrieval returned, how many grep/read iterations
+the agentic approach took, whether the cache was hit. When a retrieval approach gets an
 aggregation question wrong, the chunks it retrieved *are* the explanation, and
 without them the heatmap is a scoreboard rather than something you can interrogate.
 
 ### The cost chart applies an accuracy floor
 
-The "cheapest at N queries" row only recommends arms scoring **80% or better**,
+The "cheapest at N queries" row only recommends approaches scoring **80% or better**,
 and says so in the label.
 
-Ranking on cost alone crowns whichever arm is most willing to be wrong — on the
+Ranking on cost alone crowns whichever approach is most willing to be wrong — on the
 10-K that is naive chunk RAG, which would be printed as the answer while scoring
 57%, directly contradicting the heatmap immediately below it. Where the floor
-changes the answer, the row also names the cheaper arm it passed over and that
-arm's score, so the trade is visible rather than quietly made on the reader's
-behalf. Every arm's true cost is still drawn on the chart; the floor governs the
+changes the answer, the row also names the cheaper approach it passed over and that
+approach's score, so the trade is visible rather than quietly made on the reader's
+behalf. Every approach's true cost is still drawn on the chart; the floor governs the
 recommendation, not the data.
 
 The floor of 0.8 is a judgement call, not a standard, which is why the number is
 on screen.
 
 Below the row, the chart states the comparison the project exists to make in
-words — cached full context against the cheapest retrieval arm, per query — and it
+words — cached full context against the cheapest retrieval approach, per query — and it
 changes with the document:
 
 | Document | Ratio | What the chart says |
@@ -332,8 +334,8 @@ about **$0.42**. See [results/README.md](results/README.md) for the sequence and
 cp .env.example .env   # then fill in both keys
 ```
 
-`ANTHROPIC_API_KEY` (or `ant auth login`) drives every arm and the judge;
-`VOYAGE_API_KEY` covers embeddings and reranking for arms 3 and 4. Only the
+`ANTHROPIC_API_KEY` (or `ant auth login`) drives every approach and the judge;
+`VOYAGE_API_KEY` covers embeddings and reranking for approaches 3 and 4. Only the
 offline pipeline reads them — the site itself is replay-only and needs no keys.
 
 ### Pipeline
@@ -345,7 +347,7 @@ python3 -m venv .venv && .venv/bin/pip install -e .
 # Fetch and normalize the three source documents.
 .venv/bin/python -m docrace.documents
 
-# Exercise every arm against a stubbed API. Spends nothing, and catches the
+# Exercise every approach against a stubbed API. Spends nothing, and catches the
 # plumbing bugs — a malformed request, a tool loop that doesn't terminate, usage
 # that fails to accumulate, an invalid schema — that would otherwise surface
 # partway through a paid run. Also validates the extraction schemas.
@@ -354,7 +356,7 @@ python3 -m venv .venv && .venv/bin/pip install -e .
 # Project what the run will cost, with the assumptions printed alongside.
 .venv/bin/python -m docrace.estimate
 
-# Then one real arm on the smallest document, to check the shape and the cost
+# Then one real approach on the smallest document, to check the shape and the cost
 # before committing to the full run.
 .venv/bin/python -m docrace.precompute --doc arxiv-paper --arm full_context
 
@@ -519,39 +521,39 @@ complexity:
   `xtx_{t}`, which is noise in the prompt and poison for BM25.
 - **Long lines are wrapped at 180 characters.** Stripping a 10-K's layout markup
   leaves a few lines over a hundred thousand characters long. That breaks the
-  agentic arm specifically — a `grep` hit is only useful if the line it returns is
+  agentic approach specifically — a `grep` hit is only useful if the line it returns is
   readable.
 
 Table structure survives imperfectly, which is what a regex stripper over 10-K
 HTML gets you. Every figure survives and rows stay intact; column alignment is
-approximate. All arms read the same text, so the comparison stays fair.
+approximate. All approaches read the same text, so the comparison stays fair.
 
 ## Roadmap
 
-- **v0** — 3 documents, 6 arms, replay mode, race view and both charts. The
+- **v0** — 3 documents, 6 approaches, replay mode, race view and both charts. The
   shippable core. ← *this*
 - **v1** — Live mode with bring-your-own key, custom questions, LLM-judge
   grading. Do not deploy live mode without a rate limit.
-- **v2** — Upload your own document; the tool estimates cost per arm before you
+- **v2** — Upload your own document; the tool estimates cost per approach before you
   spend anything. *This is the version people actually use,* and the estimator is
   the part with standalone utility.
 - **v3** — Model matrix: swap the underlying model, watch the crossover move
   again. Cheap to add, high demo value.
-- **v4** — Plugin API for contributed arms, CI that reruns the matrix when a new
+- **v4** — Plugin API for contributed approaches, CI that reruns the matrix when a new
   model ships.
 
 ## Risks, named honestly
 
 - **"This is just a benchmark with n=3."** Correct, which is why it never claims
   to be one. The caveat is above the fold, not in a footnote.
-- **Weak RAG arms would invalidate everything.** Arm 4 is tuned properly and its
+- **Weak RAG approaches would invalidate everything.** Approach 4 is tuned properly and its
   parameters are documented above so the tuning is auditable.
 - **Public cost.** Replay mode solves this. Do not deploy live mode without a
   rate limit.
 - **Pricing drifts.** One config file, results stamped with its date, date shown
   in the UI.
 - **Scope creep into a RAG framework.** The product is the comparison, not the
-  retrieval library. If arm 4 starts growing a plugin system before v4, that's
+  retrieval library. If approach 4 starts growing a plugin system before v4, that's
   the failure mode.
 
 ## The question set
@@ -570,7 +572,7 @@ them:
   is genuinely missing from the document.
 
 The second one is the important one. A question that claims the document is
-silent, when it is not, would invert the grade for every arm at once — an
+silent, when it is not, would invert the grade for every approach at once — an
 error that grading cannot catch, because the judge only sees the answer key.
 Absence is therefore verified mechanically rather than asserted. That check has
 already earned its keep: one draft absence claim turned out to be wrong.
