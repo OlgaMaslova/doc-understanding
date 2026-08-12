@@ -5,6 +5,26 @@
 Ask a question of a document, watch six extraction strategies answer it side by
 side, and see exactly what each one cost you.
 
+## Quick start
+
+```sh
+cd web && npm install && npm run dev
+```
+
+Open http://localhost:3000 and choose **Load the results** — the repository ships
+with the arXiv paper fully measured, so there is something to look at before you
+spend anything. No keys needed for that.
+
+To measure something yourself (a different document, or a different model):
+
+```sh
+cp .env.example .env                                  # add your keys
+cd pipeline && python3 -m venv .venv && .venv/bin/pip install -e .
+```
+
+Then choose **Run the evals** in the UI — it prices the run and asks before
+spending — or drive it from the terminal. Details in [Running it](#running-it).
+
 ## This is not a benchmark
 
 Three documents cannot tell you which strategy is better in general, and nothing
