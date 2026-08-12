@@ -1,24 +1,43 @@
 {
   "type": "object",
-  "description": "Structured extraction of a material contract, written to cover the questions a contracts reviewer typically asks before seeing any specific question.",
+  "description": "Structured extraction of a material contract, written to cover the questions a contracts reviewer typically asks before seeing any specific question. Every field is required: use an empty string (or empty array) for anything the document does not state.",
   "properties": {
-    "agreement_title": { "type": "string" },
-    "agreement_type": { "type": "string" },
+    "agreement_title": {
+      "type": "string"
+    },
+    "agreement_type": {
+      "type": "string"
+    },
     "parties": {
       "type": "array",
       "items": {
         "type": "object",
         "properties": {
-          "name": { "type": "string" },
-          "role": { "type": "string", "description": "e.g. borrower, lender, licensor, supplier" },
-          "jurisdiction_of_organization": { "type": "string" }
+          "name": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string",
+            "description": "e.g. borrower, lender, licensor, supplier"
+          },
+          "jurisdiction_of_organization": {
+            "type": "string"
+          }
         },
-        "required": ["name", "role"],
+        "required": [
+          "name",
+          "role",
+          "jurisdiction_of_organization"
+        ],
         "additionalProperties": false
       }
     },
-    "effective_date": { "type": "string" },
-    "governing_law": { "type": "string" },
+    "effective_date": {
+      "type": "string"
+    },
+    "governing_law": {
+      "type": "string"
+    },
     "dispute_resolution": {
       "type": "string",
       "description": "Forum, arbitration provisions, jury-trial waivers, venue."
@@ -26,11 +45,22 @@
     "term": {
       "type": "object",
       "properties": {
-        "initial_term": { "type": "string" },
-        "renewal": { "type": "string" },
-        "expiration_or_maturity_date": { "type": "string" }
+        "initial_term": {
+          "type": "string"
+        },
+        "renewal": {
+          "type": "string"
+        },
+        "expiration_or_maturity_date": {
+          "type": "string"
+        }
       },
-      "additionalProperties": false
+      "additionalProperties": false,
+      "required": [
+        "initial_term",
+        "renewal",
+        "expiration_or_maturity_date"
+      ]
     },
     "termination_rights": {
       "type": "array",
@@ -38,12 +68,26 @@
       "items": {
         "type": "object",
         "properties": {
-          "holder": { "type": "string", "description": "Which party may exercise it" },
-          "trigger": { "type": "string" },
-          "notice_or_cure_period": { "type": "string" },
-          "section_reference": { "type": "string" }
+          "holder": {
+            "type": "string",
+            "description": "Which party may exercise it"
+          },
+          "trigger": {
+            "type": "string"
+          },
+          "notice_or_cure_period": {
+            "type": "string"
+          },
+          "section_reference": {
+            "type": "string"
+          }
         },
-        "required": ["holder", "trigger"],
+        "required": [
+          "holder",
+          "trigger",
+          "notice_or_cure_period",
+          "section_reference"
+        ],
         "additionalProperties": false
       }
     },
@@ -52,12 +96,25 @@
       "items": {
         "type": "object",
         "properties": {
-          "description": { "type": "string" },
-          "amount_or_rate": { "type": "string" },
-          "timing": { "type": "string" },
-          "section_reference": { "type": "string" }
+          "description": {
+            "type": "string"
+          },
+          "amount_or_rate": {
+            "type": "string"
+          },
+          "timing": {
+            "type": "string"
+          },
+          "section_reference": {
+            "type": "string"
+          }
         },
-        "required": ["description"],
+        "required": [
+          "description",
+          "amount_or_rate",
+          "timing",
+          "section_reference"
+        ],
         "additionalProperties": false
       }
     },
@@ -66,11 +123,21 @@
       "items": {
         "type": "object",
         "properties": {
-          "name": { "type": "string" },
-          "requirement": { "type": "string" },
-          "test_period": { "type": "string" }
+          "name": {
+            "type": "string"
+          },
+          "requirement": {
+            "type": "string"
+          },
+          "test_period": {
+            "type": "string"
+          }
         },
-        "required": ["name", "requirement"],
+        "required": [
+          "name",
+          "requirement",
+          "test_period"
+        ],
         "additionalProperties": false
       }
     },
@@ -80,41 +147,82 @@
       "items": {
         "type": "object",
         "properties": {
-          "obligor": { "type": "string" },
-          "obligation": { "type": "string" },
-          "section_reference": { "type": "string" }
+          "obligor": {
+            "type": "string"
+          },
+          "obligation": {
+            "type": "string"
+          },
+          "section_reference": {
+            "type": "string"
+          }
         },
-        "required": ["obligation"],
+        "required": [
+          "obligor",
+          "obligation",
+          "section_reference"
+        ],
         "additionalProperties": false
       }
     },
     "representations_and_warranties": {
       "type": "array",
-      "items": { "type": "string" }
+      "items": {
+        "type": "string"
+      }
     },
     "liability_and_indemnity": {
       "type": "object",
       "properties": {
-        "liability_caps": { "type": "string" },
-        "excluded_damages": { "type": "string" },
-        "indemnities": { "type": "array", "items": { "type": "string" } }
+        "liability_caps": {
+          "type": "string"
+        },
+        "excluded_damages": {
+          "type": "string"
+        },
+        "indemnities": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
       },
-      "additionalProperties": false
+      "additionalProperties": false,
+      "required": [
+        "liability_caps",
+        "excluded_damages",
+        "indemnities"
+      ]
     },
-    "assignment_and_change_of_control": { "type": "string" },
-    "confidentiality": { "type": "string" },
-    "amendment_and_waiver": { "type": "string" },
-    "notices": { "type": "string" },
+    "assignment_and_change_of_control": {
+      "type": "string"
+    },
+    "confidentiality": {
+      "type": "string"
+    },
+    "amendment_and_waiver": {
+      "type": "string"
+    },
+    "notices": {
+      "type": "string"
+    },
     "defined_terms": {
       "type": "array",
       "description": "Defined terms whose definitions carry operative weight.",
       "items": {
         "type": "object",
         "properties": {
-          "term": { "type": "string" },
-          "definition": { "type": "string" }
+          "term": {
+            "type": "string"
+          },
+          "definition": {
+            "type": "string"
+          }
         },
-        "required": ["term", "definition"],
+        "required": [
+          "term",
+          "definition"
+        ],
         "additionalProperties": false
       }
     },
@@ -124,20 +232,53 @@
       "items": {
         "type": "object",
         "properties": {
-          "amount": { "type": "string" },
-          "what_it_governs": { "type": "string" },
-          "section_reference": { "type": "string" }
+          "amount": {
+            "type": "string"
+          },
+          "what_it_governs": {
+            "type": "string"
+          },
+          "section_reference": {
+            "type": "string"
+          }
         },
-        "required": ["amount", "what_it_governs"],
+        "required": [
+          "amount",
+          "what_it_governs",
+          "section_reference"
+        ],
         "additionalProperties": false
       }
     },
     "section_index": {
       "type": "array",
       "description": "Article and section headings in order, so structural questions can be answered.",
-      "items": { "type": "string" }
+      "items": {
+        "type": "string"
+      }
     }
   },
-  "required": ["agreement_title", "parties", "governing_law", "termination_rights"],
+  "required": [
+    "agreement_title",
+    "agreement_type",
+    "parties",
+    "effective_date",
+    "governing_law",
+    "dispute_resolution",
+    "term",
+    "termination_rights",
+    "payment_terms",
+    "financial_covenants",
+    "obligations",
+    "representations_and_warranties",
+    "liability_and_indemnity",
+    "assignment_and_change_of_control",
+    "confidentiality",
+    "amendment_and_waiver",
+    "notices",
+    "defined_terms",
+    "monetary_amounts",
+    "section_index"
+  ],
   "additionalProperties": false
 }

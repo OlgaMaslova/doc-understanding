@@ -12,18 +12,14 @@ pipeline/build/
 # but derived data — rebuildable with --rebuild-index.
 pipeline/.index-cache/
 
-# Precomputed results.
+# Precomputed results are committed: they are the deployed site's entire data
+# source, and shipping them means a fresh clone shows real measurements without
+# spending anything. Every committed result was produced by a real pipeline run
+# (first: arxiv-paper, all seven arms, claude-sonnet-5, 2026-08-12).
 #
-# These are the deployed site's entire data source, so it is tempting to commit
-# them. They are ignored instead, because the only results that exist today are
-# synthetic fixtures and a repository whose first commit contains invented
-# measurements is worse than one that contains none. results/README.md explains
-# how to populate the directory.
-#
-# Revisit this once a real run exists: committed results are what make the
-# deployed site instant and free to visit, and at that point they should be
-# tracked deliberately, in a commit that says so.
-results/*.json
+# Superseded results moved aside locally (e.g. measured with an older model)
+# stay out of the repository.
+results/archive/
 
 # Node
 web/node_modules/

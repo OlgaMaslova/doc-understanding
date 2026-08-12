@@ -1,80 +1,195 @@
 {
   "type": "object",
-  "description": "Structured extraction of an annual report on Form 10-K, written to cover the questions an analyst typically asks before seeing any specific question.",
+  "description": "Structured extraction of an annual report on Form 10-K, written to cover the questions an analyst typically asks before seeing any specific question. Every field is required: use an empty string (or empty array) for anything the document does not state.",
   "properties": {
-    "company_name": { "type": "string" },
-    "fiscal_year": { "type": "string" },
-    "fiscal_year_end_date": { "type": "string" },
-    "state_of_incorporation": { "type": "string" },
-    "business_description": { "type": "string" },
+    "company_name": {
+      "type": "string"
+    },
+    "fiscal_year": {
+      "type": "string"
+    },
+    "fiscal_year_end_date": {
+      "type": "string"
+    },
+    "state_of_incorporation": {
+      "type": "string"
+    },
+    "business_description": {
+      "type": "string"
+    },
     "segments": {
       "type": "array",
       "description": "Reportable segments. Include the current year and the prior comparative year for each figure the filing gives, so year-over-year questions can be answered.",
       "items": {
         "type": "object",
         "properties": {
-          "name": { "type": "string" },
-          "description": { "type": "string" },
-          "revenue_current_year": { "type": "string" },
-          "revenue_prior_year": { "type": "string" },
-          "operating_income_current_year": { "type": "string" },
-          "operating_income_prior_year": { "type": "string" },
-          "units": { "type": "string", "description": "e.g. millions of USD" }
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "revenue_current_year": {
+            "type": "string"
+          },
+          "revenue_prior_year": {
+            "type": "string"
+          },
+          "operating_income_current_year": {
+            "type": "string"
+          },
+          "operating_income_prior_year": {
+            "type": "string"
+          },
+          "units": {
+            "type": "string",
+            "description": "e.g. millions of USD"
+          }
         },
-        "required": ["name"],
+        "required": [
+          "name",
+          "description",
+          "revenue_current_year",
+          "revenue_prior_year",
+          "operating_income_current_year",
+          "operating_income_prior_year",
+          "units"
+        ],
         "additionalProperties": false
       }
     },
     "income_statement": {
       "type": "object",
       "properties": {
-        "total_revenue_current_year": { "type": "string" },
-        "total_revenue_prior_year": { "type": "string" },
-        "cost_of_revenue_current_year": { "type": "string" },
-        "gross_profit_current_year": { "type": "string" },
-        "operating_income_current_year": { "type": "string" },
-        "operating_income_prior_year": { "type": "string" },
-        "net_income_current_year": { "type": "string" },
-        "net_income_prior_year": { "type": "string" },
-        "diluted_eps_current_year": { "type": "string" },
-        "units": { "type": "string" }
+        "total_revenue_current_year": {
+          "type": "string"
+        },
+        "total_revenue_prior_year": {
+          "type": "string"
+        },
+        "cost_of_revenue_current_year": {
+          "type": "string"
+        },
+        "gross_profit_current_year": {
+          "type": "string"
+        },
+        "operating_income_current_year": {
+          "type": "string"
+        },
+        "operating_income_prior_year": {
+          "type": "string"
+        },
+        "net_income_current_year": {
+          "type": "string"
+        },
+        "net_income_prior_year": {
+          "type": "string"
+        },
+        "diluted_eps_current_year": {
+          "type": "string"
+        },
+        "units": {
+          "type": "string"
+        }
       },
-      "additionalProperties": false
+      "additionalProperties": false,
+      "required": [
+        "total_revenue_current_year",
+        "total_revenue_prior_year",
+        "cost_of_revenue_current_year",
+        "gross_profit_current_year",
+        "operating_income_current_year",
+        "operating_income_prior_year",
+        "net_income_current_year",
+        "net_income_prior_year",
+        "diluted_eps_current_year",
+        "units"
+      ]
     },
     "balance_sheet": {
       "type": "object",
       "properties": {
-        "total_assets": { "type": "string" },
-        "total_liabilities": { "type": "string" },
-        "total_equity": { "type": "string" },
-        "cash_and_equivalents": { "type": "string" },
-        "total_debt": { "type": "string" },
-        "units": { "type": "string" }
+        "total_assets": {
+          "type": "string"
+        },
+        "total_liabilities": {
+          "type": "string"
+        },
+        "total_equity": {
+          "type": "string"
+        },
+        "cash_and_equivalents": {
+          "type": "string"
+        },
+        "total_debt": {
+          "type": "string"
+        },
+        "units": {
+          "type": "string"
+        }
       },
-      "additionalProperties": false
+      "additionalProperties": false,
+      "required": [
+        "total_assets",
+        "total_liabilities",
+        "total_equity",
+        "cash_and_equivalents",
+        "total_debt",
+        "units"
+      ]
     },
     "cash_flow": {
       "type": "object",
       "properties": {
-        "operating_cash_flow": { "type": "string" },
-        "capital_expenditures": { "type": "string" },
-        "free_cash_flow": { "type": "string" },
-        "share_repurchases": { "type": "string" },
-        "dividends_paid": { "type": "string" },
-        "units": { "type": "string" }
+        "operating_cash_flow": {
+          "type": "string"
+        },
+        "capital_expenditures": {
+          "type": "string"
+        },
+        "free_cash_flow": {
+          "type": "string"
+        },
+        "share_repurchases": {
+          "type": "string"
+        },
+        "dividends_paid": {
+          "type": "string"
+        },
+        "units": {
+          "type": "string"
+        }
       },
-      "additionalProperties": false
+      "additionalProperties": false,
+      "required": [
+        "operating_cash_flow",
+        "capital_expenditures",
+        "free_cash_flow",
+        "share_repurchases",
+        "dividends_paid",
+        "units"
+      ]
     },
     "geographic_revenue": {
       "type": "array",
       "items": {
         "type": "object",
         "properties": {
-          "region": { "type": "string" },
-          "revenue_current_year": { "type": "string" },
-          "revenue_prior_year": { "type": "string" }
+          "region": {
+            "type": "string"
+          },
+          "revenue_current_year": {
+            "type": "string"
+          },
+          "revenue_prior_year": {
+            "type": "string"
+          }
         },
-        "required": ["region"],
+        "required": [
+          "region",
+          "revenue_current_year",
+          "revenue_prior_year"
+        ],
         "additionalProperties": false
       }
     },
@@ -84,27 +199,53 @@
       "items": {
         "type": "object",
         "properties": {
-          "heading": { "type": "string" },
+          "heading": {
+            "type": "string"
+          },
           "category": {
             "type": "string",
             "description": "e.g. operational, regulatory, financial, competitive, cybersecurity"
           },
-          "summary": { "type": "string" }
+          "summary": {
+            "type": "string"
+          }
         },
-        "required": ["heading"],
+        "required": [
+          "heading",
+          "category",
+          "summary"
+        ],
         "additionalProperties": false
       }
     },
-    "legal_proceedings": { "type": "array", "items": { "type": "string" } },
+    "legal_proceedings": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
     "mdna_highlights": {
       "type": "array",
       "description": "Management's stated drivers of the year's results.",
-      "items": { "type": "string" }
+      "items": {
+        "type": "string"
+      }
     },
-    "critical_accounting_estimates": { "type": "array", "items": { "type": "string" } },
-    "employees": { "type": "string" },
-    "properties_and_facilities": { "type": "string" },
-    "competition": { "type": "string" },
+    "critical_accounting_estimates": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "employees": {
+      "type": "string"
+    },
+    "properties_and_facilities": {
+      "type": "string"
+    },
+    "competition": {
+      "type": "string"
+    },
     "forward_looking_statements": {
       "type": "string",
       "description": "The filing's stated position on forward-looking statements and their limits."
@@ -112,18 +253,52 @@
     "auditor": {
       "type": "object",
       "properties": {
-        "name": { "type": "string" },
-        "opinion": { "type": "string" },
-        "internal_control_opinion": { "type": "string" }
+        "name": {
+          "type": "string"
+        },
+        "opinion": {
+          "type": "string"
+        },
+        "internal_control_opinion": {
+          "type": "string"
+        }
       },
-      "additionalProperties": false
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "opinion",
+        "internal_control_opinion"
+      ]
     },
     "item_index": {
       "type": "array",
       "description": "Form 10-K item headings in order, so structural questions can be answered.",
-      "items": { "type": "string" }
+      "items": {
+        "type": "string"
+      }
     }
   },
-  "required": ["company_name", "fiscal_year", "segments", "risk_factors"],
+  "required": [
+    "company_name",
+    "fiscal_year",
+    "fiscal_year_end_date",
+    "state_of_incorporation",
+    "business_description",
+    "segments",
+    "income_statement",
+    "balance_sheet",
+    "cash_flow",
+    "geographic_revenue",
+    "risk_factors",
+    "legal_proceedings",
+    "mdna_highlights",
+    "critical_accounting_estimates",
+    "employees",
+    "properties_and_facilities",
+    "competition",
+    "forward_looking_statements",
+    "auditor",
+    "item_index"
+  ],
   "additionalProperties": false
 }

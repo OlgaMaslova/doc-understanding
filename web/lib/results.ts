@@ -10,7 +10,7 @@
  * called when a run completes.
  */
 
-import { readFile } from "node:fs/promises";
+import { readFile, stat } from "node:fs/promises";
 import path from "node:path";
 
 import type { ArmId, Cell, DocResults, Manifest } from "./types";
@@ -34,25 +34,40 @@ export type LeanDoc = Omit<DocResults, "cells"> & {
 
 const RESULTS_DIR = path.join(process.cwd(), "..", "results");
 
-const cache = new Map<string, unknown>();
+/**
+ * Reads are cached per file, keyed by mtime and size, so a rewritten file is
+ * re-read automatically on the next request. Nothing has to signal the change:
+ * a run started from the run panel lives in a different module instance in dev
+ * (route handlers and server components are bundled separately, so a cross-module
+ * `invalidate()` cleared the wrong copy's cache), and a run started from the
+ * terminal signals nothing at all. The stat is the source of truth either way.
+ */
+const cache = new Map<string, { mtimeMs: number; size: number; value: unknown }>();
 
 /**
- * Drop cached reads so the next request sees what a run just wrote.
+ * Drop cached reads immediately rather than waiting for the next stat.
  *
- * Called by the run route rather than on a timer: the only thing that changes
- * these files is a run, so invalidating on that event is both precise and cheap.
+ * With mtime-keyed caching this is belt and braces — kept because it is free and
+ * makes the run route's intent explicit.
  */
 export function invalidate(): void {
   cache.clear();
 }
 
 async function readJson<T>(file: string): Promise<T> {
-  const hit = cache.get(file);
-  if (hit) return hit as T;
-  let raw: string;
+  const full = path.join(RESULTS_DIR, file);
   try {
-    raw = await readFile(path.join(RESULTS_DIR, file), "utf8");
+    const st = await stat(full);
+    const hit = cache.get(file);
+    if (hit && hit.mtimeMs === st.mtimeMs && hit.size === st.size) {
+      return hit.value as T;
+    }
+    const value = JSON.parse(await readFile(full, "utf8")) as T;
+    cache.set(file, { mtimeMs: st.mtimeMs, size: st.size, value });
+    return value;
   } catch (cause) {
+    // A file that exists but will not parse is a real bug, not a missing run.
+    if (cause instanceof SyntaxError) throw cause;
     // results/ is generated, not committed — a fresh clone has none. A raw ENOENT
     // from deep inside a prerender is a terrible first five minutes with this
     // repo, so say what to run instead.
@@ -69,9 +84,6 @@ async function readJson<T>(file: string): Promise<T> {
       { cause },
     );
   }
-  const parsed = JSON.parse(raw) as T;
-  cache.set(file, parsed);
-  return parsed;
 }
 
 export async function loadManifest(): Promise<Manifest> {

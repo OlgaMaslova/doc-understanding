@@ -91,6 +91,16 @@ def _windows(document: str) -> list[str]:
     return out
 
 
+def _check_complete(message, label: str) -> None:
+    """A truncated structured output is invalid JSON; fail with the cause."""
+    if message.stop_reason != "end_turn":
+        raise RuntimeError(
+            f"{label} stopped with {message.stop_reason!r} instead of completing; "
+            f"the structured output is unusable. If this is 'max_tokens', the "
+            f"schema is eliciting more output than the budget allows."
+        )
+
+
 def build_extraction(
     document: str, domain: str, *, progress=None
 ) -> tuple[dict[str, Any], Usage]:
@@ -104,9 +114,9 @@ def build_extraction(
     partials: list[dict[str, Any]] = []
 
     for i, window in enumerate(windows):
-        message = client.messages.create(
+        with client.messages.stream(
             model=INDEX_MODEL,
-            max_tokens=16_000,
+            max_tokens=64_000,
             system=EXTRACT_SYSTEM,
             messages=[
                 {
@@ -119,7 +129,9 @@ def build_extraction(
                 }
             ],
             output_config=output_config,
-        )
+        ) as stream:
+            message = stream.get_final_message()
+        _check_complete(message, f"extraction window {i + 1}/{len(windows)}")
         total = total + Usage.from_message_usage(message.usage)
         partials.append(
             json.loads(next(b.text for b in message.content if b.type == "text"))
@@ -134,13 +146,15 @@ def build_extraction(
         f'<extraction index="{i + 1}">\n{json.dumps(p, indent=2)}\n</extraction>'
         for i, p in enumerate(partials)
     )
-    message = client.messages.create(
+    with client.messages.stream(
         model=INDEX_MODEL,
-        max_tokens=32_000,
+        max_tokens=64_000,
         system=MERGE_SYSTEM,
         messages=[{"role": "user", "content": f"{joined}\n\nMerge these into one record."}],
         output_config=output_config,
-    )
+    ) as stream:
+        message = stream.get_final_message()
+    _check_complete(message, "extraction merge")
     total = total + Usage.from_message_usage(message.usage)
     merged = json.loads(next(b.text for b in message.content if b.type == "text"))
     return merged, total

@@ -75,6 +75,7 @@ export function Workbench({
         initialDocId={resultsDoc}
         measured={measured}
         onComplete={finish}
+        onRefresh={() => router.refresh()}
         onBack={() => setStage("choose")}
       />
     );

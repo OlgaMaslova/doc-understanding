@@ -1,0 +1,139 @@
+{
+  "docs": [
+    {
+      "doc_id": "arxiv-paper",
+      "domain": "scientific",
+      "title": "Mamba: Linear-Time Sequence Modeling with Selective State Spaces",
+      "tokens": 25061,
+      "source_url": "https://arxiv.org/html/2312.00752v2",
+      "license": "CC BY 4.0 (verified on the arXiv abstract page)",
+      "provenance": "arXiv:2312.00752v2 (Gu and Dao, 2023)",
+      "provenance_state": "measured",
+      "cells": 105,
+      "cells_expected": 105
+    }
+  ],
+  "arms": [
+    {
+      "id": "full_context",
+      "label": "Full context",
+      "short": "Whole document in the prompt, every query",
+      "wins": "Accuracy ceiling \u2014 the reference the others are read against",
+      "breaks": "Cost scales linearly with queries x document size",
+      "variant_of": null
+    },
+    {
+      "id": "cached_context_5m",
+      "label": "Full context + cache (5 min)",
+      "short": "Same tokens, cached for five minutes",
+      "wins": "The cheapest write, if queries keep arriving inside the window",
+      "breaks": "Let the window lapse and the next query pays the write again",
+      "variant_of": "cached_context"
+    },
+    {
+      "id": "cached_context_1h",
+      "label": "Full context + cache (1 hour)",
+      "short": "Same tokens, cached for an hour",
+      "wins": "Full context's accuracy at roughly a tenth of the marginal cost",
+      "breaks": "Write costs 2x input, not 1.25x; still scales with document size",
+      "variant_of": "cached_context"
+    },
+    {
+      "id": "naive_rag",
+      "label": "Naive chunk RAG",
+      "short": "Fixed-size chunks, embedding search, top-5",
+      "wins": "Cheap, and flat in document size",
+      "breaks": "Aggregation, multi-hop, absence",
+      "variant_of": null
+    },
+    {
+      "id": "hybrid_rag",
+      "label": "Hybrid + contextual",
+      "short": "BM25 + embeddings, LLM chunk prefixes, reranked",
+      "wins": "The honest RAG baseline; recovers most of naive RAG's losses",
+      "breaks": "A real indexing bill that scales with document size",
+      "variant_of": null
+    },
+    {
+      "id": "agentic",
+      "label": "Agentic search",
+      "short": "Model gets grep and read over the document, iterates",
+      "wins": "Multi-hop, without the whole document in context",
+      "breaks": "Slowest by far, and cost varies per query",
+      "variant_of": null
+    },
+    {
+      "id": "extract",
+      "label": "Extract then query",
+      "short": "One map-reduce pass into a schema; queries hit the output",
+      "wins": "Near-zero marginal cost; unbeatable on aggregation",
+      "breaks": "Answers only what the schema anticipated",
+      "variant_of": null
+    }
+  ],
+  "question_types": [
+    {
+      "id": "needle",
+      "label": "Needle",
+      "why": "One passage contains the answer. Everything passes; this establishes the floor."
+    },
+    {
+      "id": "multi_hop",
+      "label": "Multi-hop",
+      "why": "Requires joining facts from distant sections. Retrieval usually gets one hop."
+    },
+    {
+      "id": "aggregation",
+      "label": "Aggregation",
+      "why": "Requires seeing the whole document. Top-k retrieval structurally cannot."
+    },
+    {
+      "id": "global",
+      "label": "Global",
+      "why": "No single passage contains the answer; it is a property of the document."
+    },
+    {
+      "id": "absent",
+      "label": "Absent",
+      "why": "The answer is not in the document. Tests refusal against hallucination."
+    }
+  ],
+  "grades": [
+    {
+      "id": "correct",
+      "label": "Correct",
+      "credit": "1.0"
+    },
+    {
+      "id": "partial",
+      "label": "Partial",
+      "credit": "0.5"
+    },
+    {
+      "id": "incorrect",
+      "label": "Incorrect",
+      "credit": "0.0"
+    },
+    {
+      "id": "hallucinated",
+      "label": "Hallucinated",
+      "credit": "0.0"
+    },
+    {
+      "id": "correctly_refused",
+      "label": "Correctly refused",
+      "credit": "1.0"
+    }
+  ],
+  "credit": {
+    "correct": 1.0,
+    "correctly_refused": 1.0,
+    "partial": 0.5,
+    "incorrect": 0.0,
+    "hallucinated": 0.0
+  },
+  "model": "claude-sonnet-5",
+  "pricing_snapshot": "2026-08-12",
+  "computed_at": "2026-08-12T09:25:22Z",
+  "partial": false
+}

@@ -55,6 +55,12 @@ interface Props {
   measured: Record<string, string[]>;
   /** A run finished and rewrote results. */
   onComplete: (docId: string) => void;
+  /**
+   * A run changed results/ without finishing — failed or stopped. The data needs
+   * re-fetching, but the reader stays here: the error (or the stop note) is the
+   * thing they need to see, and navigating away would hide it.
+   */
+  onRefresh: () => void;
   /** Leave the run stage without running. */
   onBack: () => void;
 }
@@ -90,6 +96,7 @@ export function RunPanel({
   initialDocId,
   measured,
   onComplete,
+  onRefresh,
   onBack,
 }: Props) {
   const [caps, setCaps] = useState<Caps | null>(null);
@@ -336,13 +343,20 @@ export function RunPanel({
         }
       }
 
-      setPhase(failed ? "error" : "done");
-      onComplete(docId);
+      if (failed) {
+        // Stay on this panel so the error is readable. A failed run may still have
+        // written cells before it died, so the data is refreshed in place.
+        setPhase("error");
+        onRefresh();
+      } else {
+        setPhase("done");
+        onComplete(docId);
+      }
     } catch (err) {
       if (controller.signal.aborted) {
         setPhase("idle");
         setLog((l) => [...l, "Stopped. Finished cells were saved; resuming is free."]);
-        onComplete(docId);
+        onRefresh();
         return;
       }
       setPhase("error");
@@ -350,7 +364,7 @@ export function RunPanel({
     } finally {
       abortRef.current = null;
     }
-  }, [arms, questions, body, docId, doneCells, force, onComplete]);
+  }, [arms, questions, body, docId, doneCells, force, onComplete, onRefresh]);
 
   const selectedDoc = catalogue.find((d) => d.doc_id === docId);
   const overCap =
@@ -679,9 +693,15 @@ export function RunPanel({
         ) : null}
 
         {message ? (
-          <p className="max-w-3xl whitespace-pre-wrap rounded border border-[#d1382a] bg-[#2a1210] px-3 py-2 text-sm leading-relaxed text-text">
-            {message}
-          </p>
+          <div
+            role="alert"
+            className="max-w-3xl rounded border border-[#d1382a] bg-[#2a1210] px-3 py-2 text-sm leading-relaxed text-text"
+          >
+            {phase === "error" ? (
+              <p className="mb-1 font-medium text-[#f0857a]">Run failed</p>
+            ) : null}
+            <p className="whitespace-pre-wrap">{message}</p>
+          </div>
         ) : null}
 
         {Object.keys(cellStates).length ? (

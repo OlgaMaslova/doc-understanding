@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
 import { ARM_COLOR, percent, usd } from "@/lib/format";
 import type { ArmEconomics, ArmId, Manifest } from "@/lib/types";
@@ -8,12 +8,13 @@ import type { ArmEconomics, ArmId, Manifest } from "@/lib/types";
 /**
  * Total cost against number of queries answered.
  *
- * Each arm is a straight line: the y-intercept is what it cost before the first
- * query (indexing, extraction, one cache write) and the slope is what each
- * additional query costs. That decomposition is the entire argument. Where two
- * lines cross is the query volume at which one approach becomes cheaper than the
- * other, and switching documents moves those crossings — which is the thing
- * everybody writes about and nobody lets you watch.
+ * Each arm's cost is linear in queries — a fixed cost paid before the first
+ * query (indexing, extraction, one cache write) plus a constant cost per query.
+ * That decomposition is the entire argument. Where two cost functions cross is
+ * the query volume at which one approach becomes cheaper than the other, and
+ * switching documents moves those crossings — which is the thing everybody
+ * writes about and nobody lets you watch. On the log-log axes the functions
+ * render as curves, so they are drawn by sampling, not as segments.
  *
  * The y axis is logarithmic because the arms are four orders of magnitude apart
  * on the 10-K. On a linear axis, most of the lines would be flat against the
@@ -37,7 +38,7 @@ const QUERY_STOPS = [1, 10, 100, 1_000, 10_000];
  * "cheapest" and "cheapest that works" are different questions, and the second
  * one is the one a reader is actually asking.
  */
-const SCORE_FLOOR = 0.8;
+export const SCORE_FLOOR = 0.8;
 
 interface Props {
   economics: Partial<Record<ArmId, ArmEconomics>>;
@@ -62,7 +63,6 @@ function px(n: number): number {
 }
 
 export function CostChart({ economics, arms, maxQueries = 10_000 }: Props) {
-  const titleId = useId();
   const [hovered, setHovered] = useState<ArmId | null>(null);
 
   const present = useMemo(
@@ -131,9 +131,11 @@ export function CostChart({ economics, arms, maxQueries = 10_000 }: Props) {
     return out;
   }, [present, economics, maxQueries]);
 
+  // Crossing dots appear only for the hovered line. Drawing all of them at once
+  // put up to 21 unexplained dots on the chart — noise that read as data.
   const visibleCrossings = hovered
     ? crossings.filter((c) => c.a === hovered || c.b === hovered)
-    : crossings;
+    : [];
 
   /**
    * Cheapest at each volume — among arms that actually answer the questions.
@@ -212,17 +214,15 @@ export function CostChart({ economics, arms, maxQueries = 10_000 }: Props) {
   return (
     <figure className="m-0">
       <div className="overflow-x-auto">
+        {/* The description is an aria-label rather than a <title> child: browsers
+            render an SVG <title> as a hover tooltip, which popped a paragraph of
+            explainer text over the middle of the chart. */}
         <svg
           viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
           role="img"
-          aria-labelledby={titleId}
+          aria-label="Total cost against number of queries, one line per measured run. Fixed indexing costs are the starting height of each line; the slope is the cost of each additional query."
           className="block h-auto w-full min-w-[640px]"
         >
-          <title id={titleId}>
-            Total cost against number of queries, one line per measured run. Fixed
-            indexing costs are the starting height of each line; the slope is the
-            cost of each additional query.
-          </title>
 
           {yTicks.map((tick) => (
             <g key={tick}>
@@ -318,6 +318,15 @@ export function CostChart({ economics, arms, maxQueries = 10_000 }: Props) {
             const e = economics[arm.id]!;
             const dim = hovered !== null && hovered !== arm.id;
             const endCost = costAt(e, maxQueries);
+            // The cost function is linear in queries, but both axes are log — so
+            // on this plot it is a curve, not a segment. Drawing a straight line
+            // between the endpoints put the visible lines below the true curve,
+            // and the crossing dots (computed from the real function) floated
+            // off them. Sample the function instead.
+            const points = Array.from({ length: 101 }, (_, i) => {
+              const q = 10 ** ((i / 100) * Math.log10(maxQueries));
+              return `${x(q)},${y(costAt(e, q))}`;
+            }).join(" ");
             return (
               <g
                 key={arm.id}
@@ -325,21 +334,18 @@ export function CostChart({ economics, arms, maxQueries = 10_000 }: Props) {
                 onMouseEnter={() => setHovered(arm.id)}
                 onMouseLeave={() => setHovered(null)}
               >
-                <line
-                  x1={x(1)}
-                  y1={y(costAt(e, 1))}
-                  x2={x(maxQueries)}
-                  y2={y(endCost)}
+                <polyline
+                  points={points}
+                  fill="none"
                   stroke={ARM_COLOR[arm.id]}
                   strokeWidth={hovered === arm.id ? 3 : 2}
                   strokeLinecap="round"
+                  strokeLinejoin="round"
                 />
                 {/* A fat transparent line gives the thin stroke a usable hit area. */}
-                <line
-                  x1={x(1)}
-                  y1={y(costAt(e, 1))}
-                  x2={x(maxQueries)}
-                  y2={y(endCost)}
+                <polyline
+                  points={points}
+                  fill="none"
                   stroke="transparent"
                   strokeWidth={14}
                 />
@@ -417,7 +423,7 @@ export function CostChart({ economics, arms, maxQueries = 10_000 }: Props) {
             <span className="text-text">
               {arms.find((a) => a.id === hovered)?.label}
             </span>{" "}
-            crosses another line at{" "}
+            changes rank against another approach at the dotted marks:{" "}
             {visibleCrossings
               .slice()
               .sort((a, b) => a.queries - b.queries)
@@ -429,7 +435,7 @@ export function CostChart({ economics, arms, maxQueries = 10_000 }: Props) {
                     <span className="tnum">
                       {Math.round(c.queries).toLocaleString()}
                     </span>{" "}
-                    ({arms.find((a) => a.id === other)?.label ?? other})
+                    queries vs {arms.find((a) => a.id === other)?.label ?? other}
                   </span>
                 );
               })}
@@ -437,8 +443,8 @@ export function CostChart({ economics, arms, maxQueries = 10_000 }: Props) {
           </p>
         ) : (
           <p className="mt-3 text-sm leading-relaxed text-text-dim">
-            Hover a line to see where it crosses the others. Dots mark every
-            crossing point.
+            Hover a line to highlight it and mark where it becomes cheaper or
+            more expensive than each of the others.
           </p>
         )}
       </figcaption>

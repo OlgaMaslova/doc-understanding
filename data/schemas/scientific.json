@@ -1,38 +1,74 @@
 {
   "type": "object",
-  "description": "Structured extraction of a research paper, written to cover the questions a reader typically asks before seeing any specific question.",
+  "description": "Structured extraction of a research paper, written to cover the questions a reader typically asks before seeing any specific question. Every field is required: use an empty string (or empty array) for anything the document does not state.",
   "properties": {
-    "title": { "type": "string" },
-    "authors": { "type": "array", "items": { "type": "string" } },
-    "problem_statement": { "type": "string" },
+    "title": {
+      "type": "string"
+    },
+    "authors": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "problem_statement": {
+      "type": "string"
+    },
     "contributions": {
       "type": "array",
       "description": "Every distinct claimed contribution. One entry per contribution.",
-      "items": { "type": "string" }
+      "items": {
+        "type": "string"
+      }
     },
     "method": {
       "type": "object",
       "properties": {
-        "name": { "type": "string" },
-        "summary": { "type": "string" },
-        "key_components": { "type": "array", "items": { "type": "string" } },
+        "name": {
+          "type": "string"
+        },
+        "summary": {
+          "type": "string"
+        },
+        "key_components": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
         "complexity_claims": {
           "type": "string",
           "description": "Stated time/memory complexity or scaling behaviour."
         }
       },
-      "additionalProperties": false
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "summary",
+        "key_components",
+        "complexity_claims"
+      ]
     },
     "datasets_and_benchmarks": {
       "type": "array",
       "items": {
         "type": "object",
         "properties": {
-          "name": { "type": "string" },
-          "task": { "type": "string" },
-          "scale": { "type": "string" }
+          "name": {
+            "type": "string"
+          },
+          "task": {
+            "type": "string"
+          },
+          "scale": {
+            "type": "string"
+          }
         },
-        "required": ["name"],
+        "required": [
+          "name",
+          "task",
+          "scale"
+        ],
         "additionalProperties": false
       }
     },
@@ -42,15 +78,37 @@
       "items": {
         "type": "object",
         "properties": {
-          "benchmark": { "type": "string" },
-          "metric": { "type": "string" },
-          "value": { "type": "string" },
-          "baseline_name": { "type": "string" },
-          "baseline_value": { "type": "string" },
-          "model_scale": { "type": "string" },
-          "table_or_figure": { "type": "string" }
+          "benchmark": {
+            "type": "string"
+          },
+          "metric": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          },
+          "baseline_name": {
+            "type": "string"
+          },
+          "baseline_value": {
+            "type": "string"
+          },
+          "model_scale": {
+            "type": "string"
+          },
+          "table_or_figure": {
+            "type": "string"
+          }
         },
-        "required": ["benchmark", "metric", "value"],
+        "required": [
+          "benchmark",
+          "metric",
+          "value",
+          "baseline_name",
+          "baseline_value",
+          "model_scale",
+          "table_or_figure"
+        ],
         "additionalProperties": false
       }
     },
@@ -59,29 +117,59 @@
       "items": {
         "type": "object",
         "properties": {
-          "component_varied": { "type": "string" },
-          "finding": { "type": "string" }
+          "component_varied": {
+            "type": "string"
+          },
+          "finding": {
+            "type": "string"
+          }
         },
-        "required": ["component_varied", "finding"],
+        "required": [
+          "component_varied",
+          "finding"
+        ],
         "additionalProperties": false
       }
     },
-    "baselines_compared": { "type": "array", "items": { "type": "string" } },
+    "baselines_compared": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
     "experimental_setup": {
       "type": "object",
       "properties": {
-        "hardware": { "type": "string" },
-        "training_details": { "type": "string" },
-        "hyperparameters": { "type": "string" }
+        "hardware": {
+          "type": "string"
+        },
+        "training_details": {
+          "type": "string"
+        },
+        "hyperparameters": {
+          "type": "string"
+        }
       },
-      "additionalProperties": false
+      "additionalProperties": false,
+      "required": [
+        "hardware",
+        "training_details",
+        "hyperparameters"
+      ]
     },
     "limitations": {
       "type": "array",
       "description": "Limitations the authors state explicitly.",
-      "items": { "type": "string" }
+      "items": {
+        "type": "string"
+      }
     },
-    "future_work": { "type": "array", "items": { "type": "string" } },
+    "future_work": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
     "related_work_positioning": {
       "type": "string",
       "description": "How the paper positions itself against prior work."
@@ -90,13 +178,34 @@
       "type": "string",
       "description": "The paper's central thesis in its own terms."
     },
-    "code_or_artifact_availability": { "type": "string" },
+    "code_or_artifact_availability": {
+      "type": "string"
+    },
     "section_index": {
       "type": "array",
       "description": "Section headings in order, so structural questions can be answered.",
-      "items": { "type": "string" }
+      "items": {
+        "type": "string"
+      }
     }
   },
-  "required": ["title", "problem_statement", "contributions", "results"],
+  "required": [
+    "title",
+    "authors",
+    "problem_statement",
+    "contributions",
+    "method",
+    "datasets_and_benchmarks",
+    "results",
+    "ablations",
+    "baselines_compared",
+    "experimental_setup",
+    "limitations",
+    "future_work",
+    "related_work_positioning",
+    "overall_claim",
+    "code_or_artifact_availability",
+    "section_index"
+  ],
   "additionalProperties": false
 }

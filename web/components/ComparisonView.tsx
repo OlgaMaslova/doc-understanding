@@ -3,9 +3,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { ArmCard, type ArmRunState } from "./ArmCard";
-import { CostChart } from "./CostChart";
+import { CostChart, SCORE_FLOOR } from "./CostChart";
 import { Heatmap } from "./Heatmap";
-import { ARM_COLOR, seconds, tokens, usd } from "@/lib/format";
+import { ARM_COLOR, percent, seconds, tokens, usd } from "@/lib/format";
 import type { CatalogueDoc } from "@/lib/catalogue";
 import type { LeanDoc } from "@/lib/results";
 import type { ArmId, Manifest, Question, QuestionType } from "@/lib/types";
@@ -109,8 +109,6 @@ export function ComparisonView({
     doc.questions[0]?.id ?? "",
   );
   const [states, setStates] = useState<States>(() => blankStates(armIds));
-  const [running, setRunning] = useState(false);
-  const [speedup, setSpeedup] = useState<number | null>(null);
   const [finishOrder, setFinishOrder] = useState<ArmId[]>([]);
 
   const sourceRef = useRef<EventSource | null>(null);
@@ -125,24 +123,24 @@ export function ComparisonView({
   const stop = useCallback(() => {
     sourceRef.current?.close();
     sourceRef.current = null;
-    setRunning(false);
   }, []);
 
   useEffect(() => stop, [stop]);
 
   const compare = useCallback(
-    (targetQuestionId: string, opts?: { instant?: boolean }) => {
+    (targetQuestionId: string) => {
       stop();
       setStates(blankStates(armIds));
       setFinishOrder([]);
-      setSpeedup(null);
-      setRunning(true);
 
+      // Always instant: the streams were recorded with real latencies, but
+      // replaying them as an animation made the page read as if it were doing
+      // work. The measured times are on each card; the answers just appear.
       const params = new URLSearchParams({
         doc: docId,
         question: targetQuestionId,
+        instant: "1",
       });
-      if (opts?.instant) params.set("instant", "1");
 
       const source = new EventSource(`/api/comparison?${params}`);
       sourceRef.current = source;
@@ -151,7 +149,6 @@ export function ComparisonView({
         const msg = JSON.parse(event.data) as Record<string, unknown>;
         switch (msg.type) {
           case "start": {
-            setSpeedup((msg.speedup as number | null) ?? null);
             const failures = (msg.failures ?? []) as {
               arm: ArmId;
               error: string;
@@ -234,6 +231,42 @@ export function ComparisonView({
     );
   }, [doc.economics]);
 
+  /**
+   * One row per approach: accuracy, setup cost, per-question cost, and what the
+   * run actually spent (indexing plus every measured cell). Sorted by accuracy so
+   * the quality ordering is legible at a glance; "best value" is the cheapest
+   * per question among approaches clearing the accuracy floor — the same floor
+   * the cost chart's caption uses.
+   */
+  const scoreboard = useMemo(() => {
+    const spentOnCells: Partial<Record<ArmId, number>> = {};
+    for (const [k, cell] of Object.entries(doc.cells)) {
+      if ("error" in cell) continue;
+      const arm = k.split("::")[0] as ArmId;
+      spentOnCells[arm] = (spentOnCells[arm] ?? 0) + cell.cost;
+    }
+    const rows = (
+      Object.entries(doc.economics) as [
+        ArmId,
+        NonNullable<LeanDoc["economics"][ArmId]>,
+      ][]
+    ).map(([arm, e]) => ({
+      arm,
+      score: e.score,
+      setup: e.fixed_cost_usd,
+      perQuestion: e.marginal_cost_usd,
+      spent: e.indexing_cost_usd + (spentOnCells[arm] ?? 0),
+      best: false,
+    }));
+    rows.sort((a, b) => b.score - a.score || a.perQuestion - b.perQuestion);
+    const eligible = rows.filter((r) => r.score >= SCORE_FLOOR);
+    const pick = (eligible.length ? eligible : rows).reduce((a, b) =>
+      a.perQuestion <= b.perQuestion ? a : b,
+    );
+    pick.best = true;
+    return rows;
+  }, [doc.economics, doc.cells]);
+
   return (
     <div className="space-y-10">
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-3">
@@ -246,7 +279,9 @@ export function ComparisonView({
         </button>
         <div className="flex flex-wrap items-center gap-3">
           <p className="text-xs text-text-faint">
-            Replayed from disk · nothing here calls an API
+            Measured with{" "}
+            <span className="font-mono text-text-dim">{doc.model}</span> ·
+            replayed from disk, nothing here calls an API
           </p>
           <button
             type="button"
@@ -337,9 +372,9 @@ export function ComparisonView({
                 <span className="text-text">{d.domain}</span>
               </span>
             ))}{" "}
-            {pending.length === 1 ? "has" : "have"} been fetched but never
-            measured, so {pending.length === 1 ? "it has" : "they have"} nothing to
-            plot yet.{" "}
+            {pending.length === 1 ? "has" : "have"} no results yet — the document
+            {pending.length === 1 ? " is" : "s are"} downloaded, but no one has run
+            the evals on {pending.length === 1 ? "it" : "them"}.{" "}
             <button
               type="button"
               onClick={onRunMore}
@@ -347,9 +382,7 @@ export function ComparisonView({
             >
               Run {pending.length === 1 ? "it" : "one"}
             </button>{" "}
-            and it joins these charts. Swapping documents is what moves the
-            crossover, so a second one is where this page starts earning its
-            argument.
+            to see how the same approaches do on a different document.
           </p>
         ) : null}
 
@@ -377,6 +410,13 @@ export function ComparisonView({
               <Field label="Type">{doc.domain}</Field>
               <Field label="Size">
                 <span className="tnum">{doc.tokens.toLocaleString()}</span> tokens
+              </Field>
+              <Field label="Model" className="sm:col-span-2">
+                <span className="font-mono">{doc.model}</span>
+                <span className="mt-0.5 block text-xs text-text-faint">
+                  What every approach answered with. All grades and costs on this
+                  page were measured against it.
+                </span>
               </Field>
               <Field label="Title" className="sm:col-span-2">
                 {doc.title}
@@ -416,8 +456,8 @@ export function ComparisonView({
           <p className="mt-1.5 text-sm text-text-dim">
             {doc.questions.length} questions about this document, grouped by kind.
             The kind is what decides whether an approach can answer it at all,
-            which is why they are grouped rather than listed. Clicking one runs the
-            comparison.
+            which is why they are grouped rather than listed. Clicking one shows
+            how every approach answered it, straight from the recorded run.
           </p>
         </div>
 
@@ -480,37 +520,9 @@ export function ComparisonView({
       </section>
 
       <section aria-labelledby="comparison-heading" className="space-y-4">
-        <div className="flex flex-wrap items-baseline justify-between gap-3">
-          <h2 id="comparison-heading" className="text-base font-medium text-text">
-            {question ? question.question : "Pick a question"}
-          </h2>
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() => questionId && compare(questionId)}
-              disabled={!questionId}
-              className="rounded border border-accent px-3 py-1.5 text-sm text-text transition-colors hover:bg-bg-raised disabled:opacity-40"
-            >
-              {running ? "Restart comparison" : "Run the comparison"}
-            </button>
-            <button
-              type="button"
-              onClick={() => questionId && compare(questionId, { instant: true })}
-              disabled={!questionId}
-              className="rounded border border-border px-3 py-1.5 text-sm text-text-dim transition-colors hover:border-border-strong hover:text-text disabled:opacity-40"
-            >
-              Skip to results
-            </button>
-          </div>
-        </div>
-
-        {speedup !== null && speedup > 1.05 ? (
-          <p className="text-xs text-text-faint">
-            Replaying recorded streams at{" "}
-            <span className="tnum">{speedup.toFixed(1)}×</span> speed. The latency
-            figures on each card are the real measured times.
-          </p>
-        ) : null}
+        <h2 id="comparison-heading" className="text-base font-medium text-text">
+          {question ? question.question : "Pick a question"}
+        </h2>
 
         {/* The answer key, stated outright rather than behind a disclosure.
             Every grade on this page was assigned against this reference answer,
@@ -526,12 +538,8 @@ export function ComparisonView({
             <h3 className="text-xs uppercase tracking-wide text-accent">
               Correct answer
             </h3>
-            <p className="mt-0.5 text-xs text-text-faint">
-              Committed with the question before any run. Every grade below is
-              measured against this, not against the other answers.
-            </p>
 
-            <div className="mt-3 space-y-3 leading-relaxed">
+            <div className="mt-2 space-y-3 leading-relaxed">
               <p className="text-base text-text">{question.ground_truth}</p>
 
               {question.quote ? (
@@ -540,8 +548,7 @@ export function ComparisonView({
                     “{question.quote}”
                   </blockquote>
                   <figcaption className="text-xs text-text-faint">
-                    Verbatim from the document. Every quote in the answer key is
-                    checked against the source text before a run.
+                    From the document, checked verbatim.
                   </figcaption>
                 </figure>
               ) : null}
@@ -592,16 +599,85 @@ export function ComparisonView({
         </div>
       </section>
 
+      <section aria-labelledby="scoreboard-heading" className="space-y-3">
+        <div>
+          <h2 id="scoreboard-heading" className="text-base font-medium text-text">
+            The scoreboard
+          </h2>
+          <p className="mt-1 max-w-3xl text-sm leading-relaxed text-text-dim">
+            Every approach on one row: how accurate it was on the{" "}
+            {doc.questions.length} questions, and what it cost. Best value is the
+            cheapest per question among approaches that scored at least{" "}
+            <span className="tnum">{Math.round(SCORE_FLOOR * 100)}%</span>.
+          </p>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="w-full max-w-3xl border-collapse text-sm">
+            <thead>
+              <tr className="border-b border-border text-left text-xs uppercase tracking-wide text-text-faint">
+                <th className="py-2 pr-4 font-normal">Approach</th>
+                <th className="py-2 pr-4 text-right font-normal">Accuracy</th>
+                <th className="py-2 pr-4 text-right font-normal">Setup cost</th>
+                <th className="py-2 pr-4 text-right font-normal">Per question</th>
+                <th className="py-2 text-right font-normal">Spent this run</th>
+              </tr>
+            </thead>
+            <tbody>
+              {scoreboard.map((row) => (
+                <tr
+                  key={row.arm}
+                  className={`border-b border-border/60 ${
+                    row.best ? "bg-bg-raised" : ""
+                  }`}
+                >
+                  <td className="py-2 pr-4">
+                    <span style={{ color: ARM_COLOR[row.arm] }}>
+                      {manifest.arms.find((a) => a.id === row.arm)?.label ??
+                        row.arm}
+                    </span>
+                    {row.best ? (
+                      <span className="ml-2 rounded border border-accent px-1.5 py-0.5 text-[11px] text-accent">
+                        best value
+                      </span>
+                    ) : null}
+                  </td>
+                  <td className="tnum py-2 pr-4 text-right">
+                    {percent(row.score)}
+                  </td>
+                  <td className="tnum py-2 pr-4 text-right text-text-dim">
+                    {usd(row.setup)}
+                  </td>
+                  <td className="tnum py-2 pr-4 text-right text-text-dim">
+                    {usd(row.perQuestion)}
+                  </td>
+                  <td className="tnum py-2 text-right text-text-dim">
+                    {usd(row.spent)}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
       <section aria-labelledby="cost-heading" className="space-y-3">
         <div>
           <h2 id="cost-heading" className="text-base font-medium text-text">
             What it costs, as query volume grows
           </h2>
           <p className="mt-1 max-w-3xl text-sm leading-relaxed text-text-dim">
-            Switch documents above and watch the lines reorder. Indexing and
-            extraction are paid once, so they set where a line starts; the slope is
-            what each additional query costs. On this document the cheapest
-            marginal cost belongs to{" "}
+            {/* The switch-documents invitation only makes sense once there is
+                more than one measured document to switch between. */}
+            {docs.length > 1
+              ? "Switch documents above and watch the lines reorder. "
+              : ""}
+            Each line is one approach, and the lines are projections, not a
+            record: the run measured {doc.questions.length} questions, and each
+            line extends that measured cost — one-time setup plus a per-question
+            average — out to thousands of hypothetical queries. Approaches with
+            setup work (building an index, extracting the document) start
+            higher; the steeper the line, the more each question costs. Here the
+            cheapest per question is{" "}
             {cheapest ? (
               <>
                 <span style={{ color: ARM_COLOR[cheapest[0]] }}>
