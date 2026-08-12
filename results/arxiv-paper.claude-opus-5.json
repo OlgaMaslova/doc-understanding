@@ -1,0 +1,685 @@
+{
+  "doc_id": "arxiv-paper",
+  "domain": "scientific",
+  "title": "Mamba: Linear-Time Sequence Modeling with Selective State Spaces",
+  "source_url": "https://arxiv.org/html/2312.00752v2",
+  "provenance": "arXiv:2312.00752v2 (Gu and Dao, 2023)",
+  "license": "CC BY 4.0 (verified on the arXiv abstract page)",
+  "tokens": 25061,
+  "chars": 62611,
+  "model": "claude-opus-5",
+  "pricing_snapshot": "2026-08-10",
+  "computed_at": "2026-08-11T17:52:51Z",
+  "chunking": {
+    "chunk_tokens": 500,
+    "overlap_tokens": 50
+  },
+  "fixed_costs": {
+    "full_context": {
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_5m_tokens": 0,
+        "cache_write_1h_tokens": 0,
+        "embed_tokens": 0,
+        "rerank_tokens": 0,
+        "calls": 0
+      },
+      "cost": {
+        "input": 0.0,
+        "output": 0.0,
+        "cache_read": 0.0,
+        "cache_write": 0.0,
+        "embed": 0.0,
+        "rerank": 0.0,
+        "total": 0.0
+      }
+    },
+    "cached_context_5m": {
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_5m_tokens": 0,
+        "cache_write_1h_tokens": 0,
+        "embed_tokens": 0,
+        "rerank_tokens": 0,
+        "calls": 0
+      },
+      "cost": {
+        "input": 0.0,
+        "output": 0.0,
+        "cache_read": 0.0,
+        "cache_write": 0.0,
+        "embed": 0.0,
+        "rerank": 0.0,
+        "total": 0.0
+      }
+    },
+    "cached_context_1h": {
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_5m_tokens": 0,
+        "cache_write_1h_tokens": 0,
+        "embed_tokens": 0,
+        "rerank_tokens": 0,
+        "calls": 0
+      },
+      "cost": {
+        "input": 0.0,
+        "output": 0.0,
+        "cache_read": 0.0,
+        "cache_write": 0.0,
+        "embed": 0.0,
+        "rerank": 0.0,
+        "total": 0.0
+      }
+    },
+    "naive_rag": {
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_5m_tokens": 0,
+        "cache_write_1h_tokens": 0,
+        "embed_tokens": 22723,
+        "rerank_tokens": 0,
+        "calls": 0
+      },
+      "cost": {
+        "input": 0.0,
+        "output": 0.0,
+        "cache_read": 0.0,
+        "cache_write": 0.0,
+        "embed": 0.00136338,
+        "rerank": 0.0,
+        "total": 0.00136338
+      }
+    },
+    "hybrid_rag": {
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_5m_tokens": 0,
+        "cache_write_1h_tokens": 0,
+        "embed_tokens": 0,
+        "rerank_tokens": 0,
+        "calls": 0
+      },
+      "cost": {
+        "input": 0.0,
+        "output": 0.0,
+        "cache_read": 0.0,
+        "cache_write": 0.0,
+        "embed": 0.0,
+        "rerank": 0.0,
+        "total": 0.0
+      }
+    },
+    "agentic": {
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_5m_tokens": 0,
+        "cache_write_1h_tokens": 0,
+        "embed_tokens": 0,
+        "rerank_tokens": 0,
+        "calls": 0
+      },
+      "cost": {
+        "input": 0.0,
+        "output": 0.0,
+        "cache_read": 0.0,
+        "cache_write": 0.0,
+        "embed": 0.0,
+        "rerank": 0.0,
+        "total": 0.0
+      }
+    },
+    "extract": {
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_5m_tokens": 0,
+        "cache_write_1h_tokens": 0,
+        "embed_tokens": 0,
+        "rerank_tokens": 0,
+        "calls": 0
+      },
+      "cost": {
+        "input": 0.0,
+        "output": 0.0,
+        "cache_read": 0.0,
+        "cache_write": 0.0,
+        "embed": 0.0,
+        "rerank": 0.0,
+        "total": 0.0
+      }
+    }
+  },
+  "questions": [
+    {
+      "id": "arxiv-paper-needle-1",
+      "doc_id": "arxiv-paper",
+      "type": "needle",
+      "question": "What inference throughput speedup over Transformers does the paper claim?",
+      "ground_truth": "5x higher generation/inference throughput than a Transformer of similar size. The abstract says \"5x higher throughput than Transformers\" and the introduction says \"5x generation throughput compared to Transformers of similar size\". Section 4.5 gives the more precise range: \"Mamba achieves 4-5x higher inference throughput than a Transformer of similar size, since without the KV cache it can use much higher batch sizes.\" The reason given is the absence of a KV cache, which permits much larger batch sizes.",
+      "grading_notes": "Correct: 5x (or 4-5x) higher inference/generation throughput against a similarly sized Transformer. Partial: says only \"faster inference\" with no number. Reject as the answer to this question, because they are different claims: \"3x faster on A100 GPUs\" is the training-time claim for the selective-scan implementation against prior SSM methods; \"20-40x faster than a standard PyTorch scan\" and \"40x faster scan\" are training-time kernel comparisons; \"faster than FlashAttention-2 beyond sequence length 2K\" is a different benchmark.",
+      "quote": "Mamba enjoys fast inference (5\u00d7 higher throughput than Transformers) and linear scaling in sequence length",
+      "absent_terms": []
+    },
+    {
+      "id": "arxiv-paper-needle-2",
+      "doc_id": "arxiv-paper",
+      "type": "needle",
+      "question": "Which dataset and how many tokens were used to pretrain the language models?",
+      "ground_truth": "The Pile, for 300B tokens. Section 4.2 says \"We use the Pile dataset and follow the training recipe described in [brown2020language]\", with model depth and width mirroring GPT-3 specifications. Section 4.2.2 establishes the token count: Pythia and RWKV \"were trained with the same tokenizer, dataset, and training length (300B tokens) as our models\". The models use the GPT-NeoX-20B tokenizer at context length 2048 (RWKV used 1024).",
+      "grading_notes": "Correct: the Pile plus 300B tokens. Partial: names the Pile but omits the token count, or gives the token count without the dataset. The NeoX tokenizer, context length 2048, and the Chinchilla protocol are welcome additions but not required. Wrong, because these belong to other experiments: HG38 and ~4.5 billion tokens is the DNA pretraining data; 10B tokens is DNA model-size scaling; ~330B tokens is DNA context-length scaling; YouTubeMix is audio and SC09 is speech.",
+      "quote": "We use the Pile dataset [pile], and follow the training recipe described in",
+      "absent_terms": []
+    },
+    {
+      "id": "arxiv-paper-needle-3",
+      "doc_id": "arxiv-paper",
+      "type": "needle",
+      "question": "What model sizes are reported in the zero-shot downstream evaluation?",
+      "ground_truth": "Five sizes: Mamba-130M, Mamba-370M, Mamba-790M, Mamba-1.4B and Mamba-2.8B, in Table 1 (Zero-shot Evaluations). Their Pile validation perplexities are 10.56, 8.28, 7.33, 6.80 and 6.22, and their average accuracies across the six accuracy benchmarks are 44.7, 50.0, 57.1, 59.7 and 63.3. The abstract and introduction informally call the largest model \"Mamba-3B\"; that is the same 2.8B model.",
+      "grading_notes": "Correct: 130M, 370M, 790M, 1.4B, 2.8B \u2014 or \"five sizes from 130M to 2.8B\". Accept \"Mamba-3B\" as an alias for 2.8B if the other four are right. Partial: gets the range but miscounts or omits sizes. Wrong: \"125M to 1.3B\", which is the scaling-law range in Section 4.2.1 and a different experiment; also wrong are the DNA scaling sizes and the 6.1M/24.3M audio models. No 7B Mamba is evaluated.",
+      "quote": "Mamba-130M",
+      "absent_terms": []
+    },
+    {
+      "id": "arxiv-paper-multi_hop-1",
+      "doc_id": "arxiv-paper",
+      "type": "multi_hop",
+      "question": "The paper says Mamba matches Transformers twice its size on common sense reasoning \u2014 which specific baselines and numbers back that up?",
+      "ground_truth": "The introduction claims Mamba-3B is \"4 points higher avg. on common sense reasoning compared to Pythia-3B and even exceeding Pythia-7B\". Joining that to Table 1: Mamba-2.8B averages 63.3, against Pythia-2.8B at 59.1 (the 4.2-point gap) and Pythia-6.9B at 61.7, so Mamba-2.8B exceeds a model roughly 2.5x its size by 1.6 points. Mamba-2.8B also beats Pythia-2.8B on every column: Pile perplexity 6.22 vs 6.73, LAMBADA perplexity 4.23 vs 5.04, LAMBADA accuracy 69.2 vs 64.7, HellaSwag 66.1 vs 59.3, PIQA 75.2 vs 74.0, ARC-E 69.7 vs 64.1, ARC-C 36.3 vs 32.9, WinoGrande 63.5 vs 59.7. Mamba-1.4B's 59.7 average likewise exceeds Pythia-2.8B's 59.1.",
+      "grading_notes": "Correct: identifies Pythia-2.8B and Pythia-6.9B as the baselines and gives averages 63.3, 59.1 and 61.7 (0.1 of rounding is fine). Partial: names Pythia and the roughly 4-point gap but gives no table numbers, or gives 63.3 without the baseline values. The answer must be tied to the 2.8B scale: 59.7 is Mamba-1.4B's average, and 44.7 / 50.0 / 57.1 are the smaller models'. The intro's \"Pythia-3B\" and \"Pythia-7B\" are Pythia-2.8B and Pythia-6.9B in the table, so an answer using the intro's names with correct table numbers is still correct.",
+      "quote": "4 points higher avg. on common sense reasoning compared to Pythia-3B and even exceeding Pythia-7B",
+      "absent_terms": []
+    },
+    {
+      "id": "arxiv-paper-multi_hop-2",
+      "doc_id": "arxiv-paper",
+      "type": "multi_hop",
+      "question": "Does the model use real or complex numbers in its state, and is there any experiment where that choice changes?",
+      "ground_truth": "Real values are the default, and the one exception is the audio waveform experiment. Section 3.6 says most prior SSMs use complex numbers in the state but \"We use real values as the default, which work well for all but one of our tasks\", hypothesising that complex numbers help continuous modalities and not discrete ones. Section 4.4.1, long-context autoregressive pretraining on YouTubeMix, states \"this is the only experiment in this paper in which we switched from the real parameterization to complex\". Section 5's \"No Free Lunch: Continuous-Discrete Spectrum\" ties this together: selection overcomes weakness on discrete modalities like text and DNA but \"conversely can impede their performance on data that LTI SSMs excel on\". The language ablations agree: S4D-Lin at 10.30 perplexity versus S4D-Real at 10.34 is near-identical, and real initialization beats complex for language (8.71 versus 9.16).",
+      "grading_notes": "Correct: real by default, complex only in the audio experiment, ideally connected to the continuous-versus-discrete tradeoff. Partial: says real by default but does not identify the exception as audio, or identifies the audio exception without the default. Wrong: claiming the model is complex throughout, or naming the SC09 speech-generation experiment as the exception \u2014 the paper pins the switch to the long-context pretraining in 4.4.1. Quoting the 9.16-versus-8.71 initialization ablation as the exception is a near-miss: that is evidence real is better on language, not the complex-valued experiment.",
+      "quote": "this is the only experiment in this paper in which we switched from the real parameterization to complex",
+      "absent_terms": []
+    },
+    {
+      "id": "arxiv-paper-multi_hop-3",
+      "doc_id": "arxiv-paper",
+      "type": "multi_hop",
+      "question": "How much does enlarging the SSM state dimension improve language modeling perplexity in the ablations?",
+      "ground_truth": "More than 1.0 perplexity \u2014 but only when B and C are also selective. In the state-dimension ablation at roughly 350M parameters, with constant (non-selective) B and C, going from N=1 to N=16 moves perplexity only from 9.88 to 9.81. With selective B and C the same sweep goes 9.73, 9.40, 9.09, 8.84, 8.71 for N of 1, 2, 4, 8, 16 \u2014 a 1.02-point improvement \u2014 while parameters rise only from 367.1M to 371.5M. The caption says increasing N \"can significantly improve performance for a negligible cost in parameters/FLOPs, but only when B and C are also selective\", and Section 4.6.2 concludes \"over a 1.0 perplexity improvement for a cost of only 1% additional parameters\".",
+      "grading_notes": "Correct: states the greater-than-1.0 perplexity gain at about 1% extra parameters AND the qualifier that it only holds when B and C are selective, since the constant-B-and-C branch gains only about 0.07. Partial: reports the 9.73-to-8.71 numbers or the \"over 1.0 perplexity for 1% of parameters\" line without the selectivity condition \u2014 that condition is the discriminating half of the answer. Wrong: claiming the improvement holds regardless of selectivity, or attributing 8.71 to N=1. Near-misses from other ablations: 9.12-to-8.71 is the delta-projection sweep and 10.93-to-8.71 is the selective-parameters ablation. All of these are at roughly 350M parameters, not 2.8B.",
+      "quote": "over a 1.0 perplexity improvement for a cost of only 1% additional parameters",
+      "absent_terms": []
+    },
+    {
+      "id": "arxiv-paper-aggregation-1",
+      "doc_id": "arxiv-paper",
+      "type": "aggregation",
+      "question": "How many distinct baseline model families does the paper compare against in its zero-shot language evaluation?",
+      "ground_truth": "Six: Hybrid H3, Pythia, GPT-Neo, OPT, RWKV and GPT-J. Table 1 has 24 rows \u2014 5 Mamba rows and 19 baseline rows: Hybrid H3 at 130M/360M/1.3B/2.7B (four), Pythia at 160M/410M/1B/1.4B/2.8B/6.9B (six), GPT-Neo at 1.3B/2.7B (two), OPT at 1.3B/2.7B/6.7B (three), RWKV at 1.5B/3B/7.4B (three), and GPT-J at 6B (one). Counting method: distinct named model families in Table 1 excluding Mamba, with all size variants of one family counted once.",
+      "grading_notes": "Correct: 6, with the family names. Also correct: 19, if the answer explicitly counts rows or checkpoints instead of families and lists them correctly. Partial: 5 (dropping GPT-J, the single-row family, or merging it with GPT-Neo), 7 (double-counting GPT-Neo and GPT-J, or adding Transformer/Transformer++, which are Section 4.2.1 scaling-law baselines and not in Table 1), or 4 (dropping Hybrid H3 as a hybrid). Noting that Section 4.2.1 additionally compares against Transformer, Transformer++, RetNet and others is a correct observation about a different table and should not change the count of 6.",
+      "quote": "We compare against open source LMs with various tokenizers, trained for up to 300B tokens.",
+      "absent_terms": []
+    },
+    {
+      "id": "arxiv-paper-aggregation-2",
+      "doc_id": "arxiv-paper",
+      "type": "aggregation",
+      "question": "How many separate ablation studies does the paper run on the model's components at the language-modeling scale?",
+      "ground_truth": "Five. Section 4.6 sets the scene \u2014 \"language modeling with size ~350M models at Chinchilla token counts\" \u2014 and presents five ablations: (1) architecture and inner SSM layer, comparing Hyena, H3, S4-complex, S4-real and S6 across the H3 and Mamba blocks, best being Mamba+S6 at 8.69 perplexity; (2) which of delta, B and C are selective, running from 10.93 with none to 8.71 with all three, delta alone the best single at 9.81; (3) initialization and parameterization of A, with complex -1/2+ni at 9.16, real -1/2 at 8.85, real -(n+1) at 8.71 and random at 8.71; (4) the dimension of the delta projection, from 9.12 with none to 8.71 at 64; and (5) SSM state dimension N with constant versus selective B and C. Counting method: distinct ablation tables and figures in the Model Ablations section, treating the architecture table's two halves as one study since they share a caption and grid.",
+      "grading_notes": "Correct: 5, ideally naming the axes. Partial, and worth explaining rather than simply marking wrong: 4 (merging the delta-projection and state-dimension sweeps, both being dimension studies), 6 (splitting the architecture table into halves, or adding the SC09 architecture ablation, which is a 6M-parameter audio ablation outside this setting), or 7 (also counting the Selective Copying architecture grid, a synthetic-task experiment). The normalized text has garbled figure cross-references, so judge an answer on the substance of the studies it lists rather than the figure numbers it cites. A further MLP-interleaving ablation is deferred to an appendix that is not present in this text and is not a reported study.",
+      "quote": "focusing on the setting of language modeling with size \u2248350 M models at Chinchilla token counts",
+      "absent_terms": []
+    },
+    {
+      "id": "arxiv-paper-aggregation-3",
+      "doc_id": "arxiv-paper",
+      "type": "aggregation",
+      "question": "How many distinct named real-world datasets does the paper use across all of its experiments, and what are they?",
+      "ground_truth": "Four: the Pile, for language model pretraining and Pile-validation perplexity; HG38, a single human genome with about 4.5 billion tokens in the training split, for DNA pretraining; YouTubeMix, four hours of solo piano at 16000 Hz, for audio waveform pretraining; and SC09, one-second 16 kHz clips of the spoken digits zero through nine, for autoregressive speech generation. Counting method: distinct datasets given a proper name and used for training or evaluation. Beyond those four the paper uses two synthetic tasks (Selective Copying and Induction Heads) and one unnamed downstream dataset \u2014 great-apes species classification built by sampling DNA segments from human, chimpanzee, gorilla, orangutan and bonobo \u2014 plus the six zero-shot benchmarks in Table 1, which are evaluation suites rather than training datasets.",
+      "grading_notes": "Correct: 4, with the names Pile, HG38, YouTubeMix and SC09. Also acceptable: 5, if the answer explicitly includes the great-apes classification data as a separate unnamed dataset and says so. Partial: names three of the four, or gives a count with no names. Near-misses worth explaining: 6 (adding the two synthetic tasks), 10 (adding the six zero-shot benchmarks), or 3 (folding the two audio datasets into one). Wrong: naming datasets that do not appear at all, such as WikiText, C4, OpenWebText, RedPajama or LibriSpeech.",
+      "quote": "a single human genome with about 4.5 billion tokens",
+      "absent_terms": []
+    },
+    {
+      "id": "arxiv-paper-global-1",
+      "doc_id": "arxiv-paper",
+      "type": "global",
+      "question": "What is the central claim of this paper, in its own terms?",
+      "ground_truth": "That adding a selection mechanism to structured state space models closes the quality gap with attention while keeping linear-time scaling, yielding a general foundation-model backbone. The paper's framing: subquadratic architectures had not matched attention on modalities such as language, and the identified weakness is their \"inability to perform content-based reasoning\". The fix is threefold: let the SSM parameters delta, B and C be functions of the input so the model can \"selectively propagate or forget information along the sequence length dimension depending on the current token\"; since that breaks the efficient convolution, use a hardware-aware parallel algorithm in recurrent mode (kernel fusion, parallel scan, recomputation, state materialized only in SRAM), up to 3x faster on A100 GPUs; and fold the resulting selective SSM into a simplified architecture with no attention and no MLP blocks. The claimed payoff is linear-time training, constant-time-per-step inference with no KV cache, 5x generation throughput, quality improving with context to 1M-length sequences, and Mamba-3B outperforming same-size Transformers while matching Transformers twice its size.",
+      "grading_notes": "Correct: input-dependent selective SSM parameters as the core idea, the hardware-aware scan as the enabling implementation, the simplified attention-free architecture, and Transformer-quality at linear time as the result. Strong partial: selection plus linear-time quality, missing the hardware-aware algorithm or the architectural simplification. Partial: describes the model only as a fast Transformer alternative without selection as the mechanism. Wrong: framing it as an efficient attention variant, as a hybrid retaining attention or MLP blocks, or as primarily a kernel contribution with selection as secondary.",
+      "quote": "We identify that a key weakness of such models is their inability to perform content-based reasoning",
+      "absent_terms": []
+    },
+    {
+      "id": "arxiv-paper-global-2",
+      "doc_id": "arxiv-paper",
+      "type": "global",
+      "question": "How does the paper position its approach relative to prior state space model work?",
+      "ground_truth": "As the removal of a constraint every prior structured SSM was forced into. S4 and its derivatives are linear time invariant \u2014 the parameters are fixed for all timesteps \u2014 and they are LTI precisely for efficiency, since only LTI models admit the dual recurrent and convolutional forms that expand the effective state without materializing it: \"Thus far, all structured SSMs have been LTI (e.g. computed as convolutions) because of fundamental efficiency constraints.\" The core insight is that \"LTI models have fundamental limitations in modeling certain types of data\", and the contribution is \"removing the LTI constraint while overcoming the efficiency bottlenecks\". It names S5, QRNN and SRU as the closest prior methods, and rejects the idea that architecture gating already confers data-dependence: gating \"does not interact along the sequence axis, and cannot affect the spacing between tokens\", so it \"is not an instance of a selection mechanism\". Conversely it argues classical RNN gating is a special case of selection. It also drops two conventions of prior SSMs: complex-valued states and special initializations. The headline positioning claim is being the first attention-free model to match a very strong Transformer recipe.",
+      "grading_notes": "Correct: identifies linear time invariance as the shared limitation of prior SSMs, that LTI was adopted for computational efficiency, and that the contribution is breaking time-invariance while restoring efficiency via the hardware-aware scan. Strong partial adds the gating-as-special-case point, the architecture-gating-is-not-selection point, or the first-attention-free-model claim. Partial: says only that it improves on S4 without naming time-invariance or the efficiency tradeoff. Wrong: claiming prior SSMs were already input-dependent, that this is the first SSM applied to language, or that it abandons structured diagonal A matrices.",
+      "quote": "our technical contributions involve removing the LTI constraint while overcoming the efficiency bottlenecks",
+      "absent_terms": []
+    },
+    {
+      "id": "arxiv-paper-global-3",
+      "doc_id": "arxiv-paper",
+      "type": "global",
+      "question": "What is the paper's overall argument for why selectivity matters, and what does it concede that selectivity costs?",
+      "ground_truth": "The argument is a compression argument. Section 3.1 frames sequence modeling as compressing context into a state: attention is effective but inefficient because it does not compress context at all, while recurrent models are efficient because their state is finite but are bounded by how well that state has compressed the context. Hence \"efficient models must have a small state, while effective models must have a state that contains all necessary information from the context\", and the proposed principle is \"selectivity: or the context-aware ability to focus on or filter out inputs into a sequential state\". Two synthetic tasks isolate it \u2014 Selective Copying, which needs content-awareness, and Induction Heads, a proxy for in-context learning \u2014 and LTI models fail because constant dynamics cannot select input-dependently. Section 3.5 gives the payoffs: variable spacing, filtering context so performance improves monotonically with length, and boundary resetting. Two costs are conceded. The computational one: selection destroys the convolutional form, so the model must be computed as a recurrence, which is why the fused hardware-aware scan is necessary at all. The inductive-bias one: the \"No Free Lunch\" discussion admits that overcoming weakness on discrete modalities \"conversely can impede their performance on data that LTI SSMs excel on\", meaning continuous signals such as audio and video. The paper also concedes its evaluation is limited to small model sizes.",
+      "grading_notes": "Correct: the compression and efficiency-versus-effectiveness framing, selectivity as content-aware filtering into a finite state, and at least one of the two conceded costs. Strong partial: the compression argument with supporting evidence but no concession. Partial: describes selectivity only as input-dependent parameters without the compression rationale. Wrong: claiming the paper argues selectivity is free of tradeoffs, that selection improves efficiency (it costs the convolutional form), or that the conceded weakness is on discrete data \u2014 it is the opposite. Any perplexity figures cited belong to the roughly 350M ablations, not the 2.8B model.",
+      "quote": "selectivity: or the context-aware ability to focus on or filter out inputs into a sequential state",
+      "absent_terms": []
+    },
+    {
+      "id": "arxiv-paper-absent-1",
+      "doc_id": "arxiv-paper",
+      "type": "absent",
+      "question": "What score does the largest model achieve on MMLU?",
+      "ground_truth": "The paper does not report MMLU at all; the benchmark is never mentioned, and no multitask knowledge or exam-style benchmark appears. The closest thing it contains is Table 1's zero-shot suite, which covers exactly six accuracy benchmarks \u2014 LAMBADA, HellaSwag, PIQA, ARC-easy, ARC-challenge and WinoGrande \u2014 plus Pile validation perplexity. For Mamba-2.8B those are LAMBADA perplexity 4.23 and accuracy 69.2, HellaSwag 66.1, PIQA 75.2, ARC-E 69.7, ARC-C 36.3, WinoGrande 63.5, average 63.3, Pile perplexity 6.22. A correct answer says no MMLU result appears.",
+      "grading_notes": "Correct: says the paper does not evaluate on MMLU, ideally naming the six benchmarks it does report, or noting that all its downstream evaluations are zero-shot commonsense and reading benchmarks rather than knowledge benchmarks. Partial: says \"not found\" or \"unclear\" without naming what the paper does report. Hallucinated: any numeric MMLU score, or presenting the 63.3 average as an MMLU score. That average is over the six benchmarks, so an answer offering it as MMLU is a fabrication rather than a near-miss.",
+      "quote": "",
+      "absent_terms": [
+        "MMLU",
+        "massive multitask",
+        "multitask",
+        "TruthfulQA",
+        "BoolQ",
+        "OpenBookQA",
+        "HumanEval",
+        "few-shot"
+      ]
+    },
+    {
+      "id": "arxiv-paper-absent-2",
+      "doc_id": "arxiv-paper",
+      "type": "absent",
+      "question": "How does the model perform on the Long Range Arena benchmark?",
+      "ground_truth": "The paper never evaluates on Long Range Arena. LRA is mentioned exactly once, in the introduction, and only as background about prior SSMs: they \"have principled mechanisms for modeling long-range dependencies and have dominated benchmarks such as the Long Range Arena\". No LRA task \u2014 ListOps, Text, Retrieval, Image, Pathfinder, Path-X \u2014 appears anywhere, and no LRA numbers are given for this model or any baseline. The closest things the paper contains are its own long-context experiments: induction-heads extrapolation to 2^20 tokens, 4000x the training length of 256, while no other method exceeds 2x; DNA pretraining perplexity that keeps improving to sequence length 1M while HyenaDNA degrades; and audio pretraining from 8192 up to about a million samples.",
+      "grading_notes": "Correct: states that no LRA results are reported, ideally noting that LRA appears only as a one-line remark about prior SSMs. Also correct: substitutes the paper's actual long-context evidence while making clear it is not LRA. Partial: \"the paper doesn't say\" with no mention of the background reference or the actual long-context experiments. Hallucinated: reporting any LRA accuracy or average, naming per-task LRA scores, or claiming this model dominates LRA \u2014 the sentence in the introduction is about prior SSMs and is a citation, so attributing it to Mamba is a misreading rather than a partial answer.",
+      "quote": "",
+      "absent_terms": [
+        "LRA",
+        "Path-X",
+        "Pathfinder",
+        "ListOps",
+        "sCIFAR",
+        "sequential CIFAR"
+      ]
+    },
+    {
+      "id": "arxiv-paper-absent-3",
+      "doc_id": "arxiv-paper",
+      "type": "absent",
+      "question": "How much compute did it take to train the models \u2014 how many GPUs and how many GPU-hours?",
+      "ground_truth": "The paper states no training compute cost: no GPU count, no GPU-hours, no wall-clock training time, no device or cluster description, and no training FLOP budget. The closest things it contains are a single hardware mention used for a speed comparison rather than a training budget \u2014 the selective-scan implementation is \"up to 3x faster on A100 GPUs\" \u2014 and token and step budgets: 300B training tokens for the language models, 10K gradient steps and 10B tokens for DNA model-size scaling, and 20K gradient steps and about 330B tokens for DNA context-length scaling. The efficiency benchmarks are all relative multipliers with no absolute timings, and all training hyperparameters are deferred to an appendix that is not present in this text.",
+      "grading_notes": "Correct: says the paper does not report GPU counts, GPU-hours or training wall-clock time, ideally distinguishing the A100 mention as a kernel-speed comparison rather than a training-cost statement. Partial: says the compute cost is not given but omits the closest substitutes. Hallucinated: inventing any number of GPUs, GPU-hours, days or dollar cost; asserting \"trained on N A100s\"; presenting the DNA gradient-step counts or the 300B token count as the answer to a compute-hours question without flagging that no time or device count is stated; or claiming absolute throughput or latency figures appear.",
+      "quote": "",
+      "absent_terms": [
+        "GPU-hours",
+        "GPU hours",
+        "wall-clock",
+        "training time",
+        "compute budget",
+        "petaflop",
+        "AdamW",
+        "tokens per second"
+      ]
+    }
+  ],
+  "economics": {
+    "cached_context_1h": {
+      "fixed_cost_usd": 0.252,
+      "indexing_cost_usd": 0.0,
+      "cache_write_cost_usd": 0.252,
+      "cache_write_total_usd": 0.252,
+      "cache_write_count": 1,
+      "cache_write_shared": true,
+      "cache_read_queries": 1,
+      "marginal_cost_usd": 0.0230525,
+      "marginal_min_usd": 0.01405,
+      "marginal_max_usd": 0.032055,
+      "mean_latency_ms": 8365,
+      "median_latency_ms": 9690,
+      "max_latency_ms": 9690,
+      "score": 1.0,
+      "score_by_type": {
+        "needle": 1.0
+      },
+      "n": 2
+    },
+    "naive_rag": {
+      "fixed_cost_usd": 0.00136338,
+      "indexing_cost_usd": 0.00136338,
+      "cache_write_cost_usd": 0.0,
+      "cache_write_total_usd": 0.0,
+      "cache_write_count": 0,
+      "cache_write_shared": false,
+      "cache_read_queries": 0,
+      "marginal_cost_usd": 0.03437575,
+      "marginal_min_usd": 0.03007566,
+      "marginal_max_usd": 0.03867584,
+      "mean_latency_ms": 8385,
+      "median_latency_ms": 10917,
+      "max_latency_ms": 10917,
+      "score": 1.0,
+      "score_by_type": {
+        "needle": 1.0
+      },
+      "n": 2
+    }
+  },
+  "cells": {
+    "naive_rag::arxiv-paper-needle-1": {
+      "arm": "naive_rag",
+      "doc_id": "arxiv-paper",
+      "question_id": "arxiv-paper-needle-1",
+      "answer": "**5\u00d7 higher inference throughput** is the headline claim; the benchmark section states the range as **4\u20135\u00d7**.\n\nSupporting passages:\n\n- **Abstract:** \"Mamba enjoys fast inference (5\u00d7 higher throughput than Transformers) and linear scaling in sequence length.\"\n- **Section 4.5 (Speed and Memory Benchmarks):** \"Mamba achieves 4-5\u00d7 higher inference throughput than a Transformer of similar size, since without the KV cache it can use much higher batch sizes. For example, a Mamba-6.9B (untrained) would have higher inference throughput than a 5\u00d7 smaller Transformer-1.3B.\"\n- **Figure 12 caption:** \"(Right) Inference: as a recurrent model, Mamba can achieve 5\u00d7 higher throughput than Transformers.\"\n\nNote the related but distinct training-side claim in the same figure: the efficient SSM scan is \"40\u00d7 faster than a standard implementation\" (PyTorch scan; stated as 20\u201340\u00d7 in the text), and faster than FlashAttention-2 beyond sequence length 2K.",
+      "deltas": [
+        [
+          2621,
+          "**5\u00d7 higher inference throughput** is the headline claim; the benchmark section states the range as **4\u20135\u00d7**"
+        ],
+        [
+          3235,
+          ".\n\nSupporting passages:\n\n- **Abstract:** \"Mamba enjoys fast inference (5\u00d7 higher throughput than Transformers) and linear scaling in sequence length.\"\n- **Section 4.5 (Speed and Memory Benchmarks):** \""
+        ],
+        [
+          3943,
+          "Mamba achieves 4-5\u00d7 higher inference throughput than a Transformer of similar size, since without the KV cache it can use much higher batch sizes. For example, a Mamba-6.9B (untrained) would have"
+        ],
+        [
+          4705,
+          " higher inference throughput than a 5\u00d7 smaller Transformer-1.3B.\"\n- **Figure 12 caption:** \"(Right) Inference: as a recurrent model, Mamba can achieve 5\u00d7 higher throughput than Transformers.\"\n\nNote the related"
+        ],
+        [
+          5351,
+          " but distinct training-side claim in the same figure: the efficient SSM scan is \"40\u00d7 faster than a standard implementation\" (PyTorch scan; st"
+        ],
+        [
+          5826,
+          "ated as 20\u201340\u00d7 in the text), and faster than FlashAttention-2 beyond sequence length 2K."
+        ]
+      ],
+      "usage": {
+        "input_tokens": 3940,
+        "output_tokens": 415,
+        "cache_read_tokens": 0,
+        "cache_write_5m_tokens": 0,
+        "cache_write_1h_tokens": 0,
+        "embed_tokens": 11,
+        "rerank_tokens": 0,
+        "calls": 1
+      },
+      "cost": {
+        "input": 0.0197,
+        "output": 0.010375,
+        "cache_read": 0.0,
+        "cache_write": 0.0,
+        "embed": 6.6e-07,
+        "rerank": 0.0,
+        "total": 0.03007566
+      },
+      "latency_ms": 5853,
+      "ttft_ms": 2621,
+      "notes": {
+        "retrieved_chunks": [
+          44,
+          2,
+          1,
+          43,
+          3
+        ],
+        "top_k": 5,
+        "retrieval": "embedding cosine similarity, no reranking"
+      },
+      "grade": {
+        "grade": "correct",
+        "rationale": "The answer correctly gives the 5x (4-5x) inference throughput claim over a similarly sized Transformer, including the KV-cache/batch-size rationale, and properly distinguishes the training-side speedups."
+      }
+    },
+    "naive_rag::arxiv-paper-needle-2": {
+      "arm": "naive_rag",
+      "doc_id": "arxiv-paper",
+      "question_id": "arxiv-paper-needle-2",
+      "answer": "**The Pile, for 300B tokens.**\n\nSupport:\n\n- Figure 6 caption: \"Models of size \u2248125M to \u22481.3B parameters, trained on the Pile.\"\n- Section 4.2.2: \"most importantly Pythia [biderman2023pythia] and RWKV [peng2023rwkv] which were trained with the same tokenizer, dataset, and training length (300B tokens) as our models.\" This attributes the 300B-token training length to Mamba's own language models.\n- Table 1 caption confirms the dataset identity: \"Pile refers to the validation split, comparing only against models trained on the same dataset and tokenizer (GPT-NeoX-20B).\"\n\nTwo caveats from the excerpts:\n\n1. The 300B-token figure is stated for the models in the Table 1 downstream evaluation; the excerpts do not separately state the token budget for the Figure 6 scaling-law runs (they only state the parameter range, \u2248125M to \u22481.3B, and the dataset, the Pile).\n2. The excerpts also describe a *DNA* pretraining setup, which uses a different corpus: \"the setup of HyenaDNA [nguyen2023hyenadna], which uses the HG38 dataset for pretraining consisting of a single human genome with about 4.5 billion tokens (DNA base pairs) in the training split\" (Section 4.3), with 10B tokens trained in the model-size experiment and \u2248330B tokens in the context-length experiment. If your question was about those genomics models rather than the language models, that is the relevant answer instead.",
+      "deltas": [
+        [
+          4622,
+          "**The Pile, for 300B tokens.**\n\nSupport:\n\n- Figure 6 caption: \"Models of size"
+        ],
+        [
+          5280,
+          " \u2248125M to \u22481.3B parameters, trained on the Pile.\"\n- Section 4.2.2: \"most importantly Pythia [biderman2023pythia] and R"
+        ],
+        [
+          6050,
+          "WKV [peng2023rwkv] which were trained with the same tokenizer, dataset, and training length (300B tokens) as our models.\" This attributes the 300B-token training length to Mamba's own language models.\n- Table 1"
+        ],
+        [
+          6694,
+          " caption confirms the dataset identity: \"Pile refers to the validation split, comparing only against models trained on the same dataset and tokenizer (GPT-NeoX-20B).\"\n\nTwo caveats from"
+        ],
+        [
+          7424,
+          " the excerpts:\n\n1. The 300B-token figure is stated for the models in the Table 1 downstream evaluation; the excerpts do not separately state the token budget for the"
+        ],
+        [
+          8163,
+          " Figure 6 scaling-law runs (they only state the parameter range, \u2248125M to \u22481.3B, and the dataset, the Pile).\n2. The excerpts also"
+        ],
+        [
+          8895,
+          " describe a *DNA* pretraining setup, which uses a different corpus: \"the setup of HyenaDNA [nguyen2023hyenadna], which uses the HG38 dataset for"
+        ],
+        [
+          9575,
+          " pretraining consisting of a single human genome with about 4.5 billion tokens (DNA base pairs) in the training split\" (Section 4.3), with 10B tokens trained in the model-size experiment and \u2248330B tokens in"
+        ],
+        [
+          10839,
+          " the context-length experiment. If your question was about those genomics models rather than the language models, that is the relevant answer instead."
+        ]
+      ],
+      "usage": {
+        "input_tokens": 4125,
+        "output_tokens": 722,
+        "cache_read_tokens": 0,
+        "cache_write_5m_tokens": 0,
+        "cache_write_1h_tokens": 0,
+        "embed_tokens": 14,
+        "rerank_tokens": 0,
+        "calls": 1
+      },
+      "cost": {
+        "input": 0.020625,
+        "output": 0.01805,
+        "cache_read": 0.0,
+        "cache_write": 0.0,
+        "embed": 8.4e-07,
+        "rerank": 0.0,
+        "total": 0.03867584
+      },
+      "latency_ms": 10917,
+      "ttft_ms": 4622,
+      "notes": {
+        "retrieved_chunks": [
+          37,
+          38,
+          35,
+          39,
+          36
+        ],
+        "top_k": 5,
+        "retrieval": "embedding cosine similarity, no reranking"
+      },
+      "grade": {
+        "grade": "correct",
+        "rationale": "The answer correctly identifies the Pile and 300B tokens, with appropriate supporting detail and correct distinction from the DNA setup."
+      }
+    },
+    "cached_context_1h::arxiv-paper-needle-1": {
+      "arm": "cached_context_1h",
+      "doc_id": "arxiv-paper",
+      "question_id": "arxiv-paper-needle-1",
+      "answer": "**The paper claims roughly 5\u00d7 (stated as \"4-5\u00d7\" in the benchmark section).** The claim appears in four places with slightly different phrasing:\n\n1. **Abstract:** \"Mamba enjoys fast inference (5\u00d7 higher throughput than Transformers)\"\n2. **Introduction:** \"Our Mamba language model has 5\u00d7 generation throughput compared to Transformers of similar size\"\n3. **Section 4.5 (Speed and Memory Benchmarks):** \"Mamba achieves 4-5\u00d7 higher inference throughput than a Transformer of similar size, since without the KV cache it can use much higher batch sizes.\"\n4. **Figure 12 caption:** \"(Right) Inference: as a recurrent model, Mamba can achieve 5\u00d7 higher throughput than Transformers.\"\n\nSection 4.5 adds a related comparison across sizes: \"a Mamba-6.9B (untrained) would have higher inference throughput than a 5\u00d7 smaller Transformer-1.3B.\"\n\nNote this is distinct from the training-side speed claim, which concerns the scan operation, not inference: the efficient SSM scan is \"faster than the best attention implementation that we know of (FlashAttention-2) beyond sequence length 2K, and up to 20-40\u00d7 faster than a standard scan implementation in PyTorch\" (Section 4.5); the Introduction separately cites \"up to 3\u00d7 faster on A100 GPUs\" for the hardware-aware algorithm versus previous methods.",
+      "deltas": [
+        [
+          1772,
+          "**"
+        ],
+        [
+          2467,
+          "The paper claims roughly 5\u00d7 (stated as \"4-5\u00d7\" in the benchmark section).** The claim appears in four places with slightly different phrasing:\n\n1. **"
+        ],
+        [
+          3211,
+          "Abstract:** \"Mamba enjoys fast inference (5\u00d7 higher throughput than Transformers)\"\n2. **Introduction:** \"Our Mamba language model has 5\u00d7 generation throughput compared to Transformers of similar size\"\n3. **Section 4.5 (Speed and"
+        ],
+        [
+          3924,
+          " Memory Benchmarks):** \"Mamba achieves 4-5\u00d7 higher inference throughput than a Transformer of similar size, since without the KV cache it can use much higher batch sizes.\"\n4. **Figure 12 caption:** \"(Right) Inference:"
+        ],
+        [
+          4588,
+          " as a recurrent model, Mamba can achieve 5\u00d7 higher throughput than Transformers.\"\n\nSection 4.5 adds a related comparison across sizes: \"a Mamba-6.9B (unt"
+        ],
+        [
+          5293,
+          "rained) would have higher inference throughput than a 5\u00d7 smaller Transformer-1.3B.\"\n\nNote this is distinct from the training-side speed claim, which concerns the sc"
+        ],
+        [
+          6018,
+          "an operation, not inference: the efficient SSM scan is \"faster than the best attention implementation that we know of (FlashAttention-2) beyond s"
+        ],
+        [
+          6704,
+          "equence length 2K, and up to 20-40\u00d7 faster than a standard scan implementation in PyTorch\" (Section 4.5); the Introduction separately cites \"up to 3\u00d7 faster on A100 GPUs\" for the hardware-aware algorith"
+        ],
+        [
+          7039,
+          "m versus previous methods."
+        ]
+      ],
+      "usage": {
+        "input_tokens": 25,
+        "output_tokens": 557,
+        "cache_read_tokens": 0,
+        "cache_write_5m_tokens": 0,
+        "cache_write_1h_tokens": 25200,
+        "embed_tokens": 0,
+        "rerank_tokens": 0,
+        "calls": 1
+      },
+      "cost": {
+        "input": 0.000125,
+        "output": 0.013925,
+        "cache_read": 0.0,
+        "cache_write": 0.252,
+        "embed": 0.0,
+        "rerank": 0.0,
+        "total": 0.26605
+      },
+      "latency_ms": 7040,
+      "ttft_ms": 1772,
+      "notes": {
+        "context": "entire document, cached",
+        "cache_ttl": "1h",
+        "cache_hit": false,
+        "cache_written": true
+      },
+      "grade": {
+        "grade": "correct",
+        "rationale": "The answer correctly identifies the 5x (4-5x) inference throughput claim over similarly sized Transformers, including the KV-cache rationale, and properly distinguishes it from training-side speed claims."
+      }
+    },
+    "cached_context_1h::arxiv-paper-needle-2": {
+      "arm": "cached_context_1h",
+      "doc_id": "arxiv-paper",
+      "question_id": "arxiv-paper-needle-2",
+      "answer": "**The Pile, with 300B tokens** for the models reported in the downstream evaluations.\n\nSupport:\n\n- Dataset: Section 4.2 \u2014 \"We set the model sizes (depth and width) to mirror GPT3 specifications. We use the Pile dataset [pile], and follow the training recipe described in [brown2020language].\" Table 1 also notes \"Pile refers to the validation split, comparing only against models trained on the same dataset and tokenizer (GPT-NeoX-20B).\"\n- Token count: Section 4.2.2 \u2014 the comparison is against \"Pythia [biderman2023pythia] and RWKV [peng2023rwkv] which were trained with the same tokenizer, dataset, and training length (300B tokens) as our models.\"\n\nTwo caveats the document imposes:\n\n1. The 300B figure is stated only for the models in the zero-shot evaluation table. The scaling-law models in Section 4.2.1 were trained \"under the standard Chinchilla [hoffmann2022empirical] protocol, on models from \u2248125M to \u22481.3B parameters\" \u2014 the document does not give an absolute token count for those runs, and the ablations in Section 4.6 are likewise described only as \"\u2248350M models at Chinchilla token counts.\"\n2. Context length: \"Mamba and Pythia are trained with context length 2048, while RWKV was trained with context length 1024\" (Section 4.2.2), though Figure 6 also reports scaling-law results at context length 8k.\n\n(Non-language pretraining used different data: HG38 for DNA, ~4.5B tokens in the training split; YouTubeMix and SC09 for audio.)",
+      "deltas": [
+        [
+          4068,
+          "**The Pile, with 300B tokens** for the models reported in the downstream evaluations."
+        ],
+        [
+          4888,
+          "\n\nSupport:\n\n- Dataset: Section 4.2 \u2014 \"We set the model sizes (depth and width) to mirror GPT3 specifications. We use the Pile dataset [pile], and follow the training recipe described in ["
+        ],
+        [
+          5547,
+          "brown2020language].\" Table 1 also notes \"Pile refers to the validation split, comparing only against models trained on the same dataset and tokenizer (GPT-NeoX-20B).\"\n- Token count:"
+        ],
+        [
+          6111,
+          " Section 4.2.2 \u2014 the comparison is against \"Pythia [biderman2023pythia] and RWKV [peng2023rwkv] which were trained with the same tokenizer, dataset, and training length (300B tokens) as our models.\""
+        ],
+        [
+          6867,
+          "\n\nTwo caveats the document imposes:\n\n1. The 300B figure is stated only for the models in the zero-shot evaluation table. The scaling-law models in"
+        ],
+        [
+          7523,
+          " Section 4.2.1 were trained \"under the standard Chinchilla [hoffmann2022empirical] protocol, on models from \u2248125M to \u22481.3B parameters\" \u2014 the document does"
+        ],
+        [
+          8248,
+          " not give an absolute token count for those runs, and the ablations in Section 4.6 are likewise described only as \"\u2248350M models at Chinchilla token counts.\"\n2. Context"
+        ],
+        [
+          8931,
+          " length: \"Mamba and Pythia are trained with context length 2048, while RWKV was trained with context length 1024\" (Section 4.2.2), though Figure 6 also reports scaling-law results at context length 8k.\n\n("
+        ],
+        [
+          9647,
+          "Non-language pretraining used different data: HG38 for DNA, ~4.5B tokens in the training split; YouTubeMix and SC09 for audio.)"
+        ]
+      ],
+      "usage": {
+        "input_tokens": 26,
+        "output_tokens": 773,
+        "cache_read_tokens": 25200,
+        "cache_write_5m_tokens": 0,
+        "cache_write_1h_tokens": 0,
+        "embed_tokens": 0,
+        "rerank_tokens": 0,
+        "calls": 1
+      },
+      "cost": {
+        "input": 0.00013,
+        "output": 0.019325,
+        "cache_read": 0.0126,
+        "cache_write": 0.0,
+        "embed": 0.0,
+        "rerank": 0.0,
+        "total": 0.032055
+      },
+      "latency_ms": 9690,
+      "ttft_ms": 4068,
+      "notes": {
+        "context": "entire document, cached",
+        "cache_ttl": "1h",
+        "cache_hit": true,
+        "cache_written": false
+      },
+      "grade": {
+        "grade": "correct",
+        "rationale": "Correctly identifies the Pile and 300B tokens, with accurate supporting details on tokenizer and context lengths."
+      }
+    }
+  }
+}

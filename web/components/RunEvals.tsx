@@ -90,7 +90,7 @@ const RUN: Step[] = [
 const FLAGS: { flag: string; what: string }[] = [
   {
     flag: "DOCRACE_MODEL=<id>",
-    what: "the model the approaches answer with (env var, not a flag — default claude-opus-5; must have a rate-card entry in data/pricing.json). Indexing and grading stay on claude-opus-5 regardless, so runs compare answering models and nothing else. One results file holds one model's measurements — delete results/<doc>.json before re-measuring with another.",
+    what: "the model the approaches answer with (env var, not a flag — default claude-opus-5; must have a rate-card entry in data/pricing.json). Indexing and grading stay on claude-opus-5 regardless, so runs compare answering models and nothing else. Results land in results/<doc>.<model>.json, one file per model — measuring with a second model adds a file rather than touching the first.",
   },
   { flag: "--doc / --arm / --question", what: "narrow the run; each is repeatable" },
   { flag: "--limit N", what: "only the first N questions per document" },

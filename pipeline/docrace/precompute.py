@@ -346,21 +346,75 @@ def derive_economics(
     return out
 
 
-def results_path(doc_id: str):
+def results_path(doc_id: str, model: str = ARM_MODEL):
+    """One file per (document, model): results/{doc_id}.{model}.json.
+
+    The model is in the filename, not just the header, so measuring the same
+    document with a second model produces a sibling file instead of a conflict
+    with the first one's cells.
+    """
     RESULTS.mkdir(parents=True, exist_ok=True)
-    return RESULTS / f"{doc_id}.json"
+    return RESULTS / f"{doc_id}.{model}.json"
+
+
+def migrate_legacy_results() -> None:
+    """Rename bare {doc_id}.json files to the per-model {doc_id}.{model}.json.
+
+    Results used to be one file per document with the model only in the header,
+    which is why a second model could not be measured without deleting the
+    first. Old files carry real measurements, so they are renamed in place —
+    the header already says which model they belong to.
+    """
+    for doc_id in BY_ID:
+        legacy = RESULTS / f"{doc_id}.json"
+        if not legacy.exists():
+            continue
+        model = json.loads(legacy.read_text()).get("model")
+        if not model:
+            raise SystemExit(
+                f"results/{legacy.name} has no model header, so it cannot be "
+                f"assigned a per-model filename. Fix or remove it."
+            )
+        target = results_path(doc_id, model)
+        if target.exists():
+            raise SystemExit(
+                f"Both results/{legacy.name} and results/{target.name} claim "
+                f"{model}. Merge or remove one of them."
+            )
+        legacy.rename(target)
+        print(f"migrated results/{legacy.name} -> results/{target.name}")
 
 
 def load_existing(doc_id: str) -> dict[str, Any]:
-    """Prior results for this document, so a run can resume rather than repeat."""
+    """Prior results for this document and model, so a run resumes, not repeats."""
     path = results_path(doc_id)
     if not path.exists():
         return {}
-    return json.loads(path.read_text())
+    existing = json.loads(path.read_text())
+    prior = existing.get("model")
+    # Only reachable through a hand-renamed file: the filename and the header
+    # disagree about the model, and resuming would mix two models' cells.
+    if prior and prior != ARM_MODEL:
+        raise SystemExit(
+            f"{doc_id}: results/{path.name} is named for {ARM_MODEL} but its "
+            f"header says {prior!r}. Fix the filename or the header before running."
+        )
+    return existing
 
 
 def write_results(doc_id: str, payload: dict[str, Any]) -> None:
     results_path(doc_id).write_text(json.dumps(payload, indent=2) + "\n")
+
+
+def _is_done(cell: Any) -> bool:
+    """Whether a stored cell is a result worth keeping.
+
+    An error cell is a gap to fill, not a result: skipping it would make a
+    crashed cell permanent, silently, until someone noticed the hole and
+    reached for --force. Re-running the same scope retries errors by default
+    and touches nothing that succeeded.
+    """
+    return isinstance(cell, dict) and "error" not in cell
 
 
 def precompute_doc(
@@ -393,25 +447,11 @@ def precompute_doc(
     existing = load_existing(doc_id)
     cells: dict[str, Any] = existing.get("cells", {})
 
-    # One results file holds one model's measurements. Resume skips completed
-    # cells, so running a different model against an existing file would leave
-    # the old model's cells in place while the header claims the new one — every
-    # aggregate would silently mix two models' answers. Refuse rather than
-    # misattribute; a fresh model comparison wants a fresh file.
-    prior_model = existing.get("model")
-    if cells and prior_model and prior_model != ARM_MODEL:
-        raise SystemExit(
-            f"{doc_id}: results/{doc_id}.json holds measurements made with "
-            f"{prior_model}, but this run uses {ARM_MODEL}. Mixing models in one "
-            f"file would misattribute results. Delete or move results/{doc_id}.json "
-            f"to measure this document with {ARM_MODEL}."
-        )
-
     pending = [
         (arm, q)
         for arm in selected_arms
         for q in questions
-        if force or f"{arm}::{q.id}" not in cells
+        if force or not _is_done(cells.get(f"{arm}::{q.id}"))
     ]
     emit(
         "doc_planned",
@@ -438,7 +478,7 @@ def precompute_doc(
     for arm in selected_arms:
         for q in questions:
             key = f"{arm}::{q.id}"
-            if key in cells and not force:
+            if _is_done(cells.get(key)) and not force:
                 continue
             label = f"{arm} / {q.id} ({q.type})"
             print(f"  running {label} ... ", end="", flush=True)
@@ -520,7 +560,10 @@ def provenance_of(data: dict[str, Any], arms: int, questions: int) -> dict[str, 
     rest on a couple of cells. Real but sparse is a different claim from real and
     complete, so each document says which it is and the UI repeats it.
     """
-    cells = data.get("cells") or {}
+    # Error cells are pending retries, not measurements — counting them would
+    # call a matrix with holes "measured" and the run panel would offer nothing
+    # to fill them with.
+    cells = [c for c in (data.get("cells") or {}).values() if _is_done(c)]
     expected = arms * questions
     return {
         "provenance_state": "measured" if cells and len(cells) >= expected else "partial",
@@ -530,12 +573,26 @@ def provenance_of(data: dict[str, Any], arms: int, questions: int) -> dict[str, 
 
 
 def write_manifest() -> None:
-    """One small file the web app reads first, listing docs in token order."""
+    """One small file the web app reads first, listing result sets in token order.
+
+    One entry per (document, model) pair — the same document measured with two
+    models is two real result sets, and the manifest describes what is on disk.
+    Each entry carries its filename, so nothing downstream has to reconstruct or
+    parse the {doc_id}.{model}.json convention.
+    """
     docs = []
+    seen: set[tuple[str, str]] = set()
     for path in sorted(RESULTS.glob("*.json")):
         if path.name == "manifest.json":
             continue
         data = json.loads(path.read_text())
+        pair = (data["doc_id"], data.get("model", ""))
+        if pair in seen:
+            raise SystemExit(
+                f"results/ holds more than one file for {pair[0]} measured with "
+                f"{pair[1]}; results/{path.name} is the duplicate. Merge or remove it."
+            )
+        seen.add(pair)
         questions = len(data.get("questions") or [])
         docs.append(
             {
@@ -546,17 +603,15 @@ def write_manifest() -> None:
                 "source_url": data.get("source_url", ""),
                 "license": data.get("license", ""),
                 "provenance": data.get("provenance", ""),
-                # Held under a scratch key and popped before writing: the per-doc
-                # model is only needed to derive the manifest-level field.
-                "_model": data.get("model", ""),
+                "model": data.get("model", ""),
+                "file": path.name,
+                "computed_at": data.get("computed_at", ""),
                 **provenance_of(data, len(arms_pkg.ARM_ORDER), questions),
             }
         )
-    docs.sort(key=lambda d: d["tokens"])
-    # Derived from the files rather than from this run's ARM_MODEL: two documents
-    # measured with different models are both real, and the manifest describes
-    # what is on disk. One model reads as itself; a mix names every contributor.
-    doc_models = sorted({m for m in (d.pop("_model", None) for d in docs) if m})
+    docs.sort(key=lambda d: (d["tokens"], d["doc_id"], d["model"]))
+    # One model reads as itself; a mix names every contributor.
+    doc_models = sorted({d["model"] for d in docs if d["model"]})
     manifest = {
         "docs": docs,
         "arms": [
@@ -583,12 +638,15 @@ def write_manifest() -> None:
         "partial": any(d["provenance_state"] == "partial" for d in docs),
     }
     (RESULTS / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
-    print(f"manifest: {len(docs)} document(s)")
+    print(f"manifest: {len(docs)} result set(s)")
 
 
 def main() -> None:
     ap = argparse.ArgumentParser(
-        description="Precompute DocRace results. Resumable; skips completed cells."
+        description=(
+            "Precompute DocRace results. Resumable: completed cells are "
+            "skipped, cells that errored are retried."
+        )
     )
     ap.add_argument("--doc", action="append", help="Doc id; repeatable. Default: all.")
     ap.add_argument("--arm", action="append", help="Arm id; repeatable. Default: all.")
@@ -605,7 +663,9 @@ def main() -> None:
         ),
     )
     ap.add_argument(
-        "--force", action="store_true", help="Re-run cells that already have results."
+        "--force",
+        action="store_true",
+        help="Re-run all selected cells, including ones with good results.",
     )
     ap.add_argument(
         "--rebuild-index",
@@ -625,6 +685,10 @@ def main() -> None:
     )
     args = ap.parse_args()
     set_json_events(args.json)
+
+    # Results written before the per-model layout get their new names first, so
+    # every path below — resume, manifest, a fresh run — sees one layout.
+    migrate_legacy_results()
 
     if args.manifest_only:
         write_manifest()

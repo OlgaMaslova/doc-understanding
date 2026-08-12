@@ -9,7 +9,7 @@ import { tokens } from "@/lib/format";
 import type { CatalogueDoc } from "@/lib/catalogue";
 import type { Presets } from "@/lib/presets";
 import type { LeanDoc } from "@/lib/results";
-import type { Manifest } from "@/lib/types";
+import { resultKey, type Manifest } from "@/lib/types";
 
 /**
  * The fork, and the two things it forks into.
@@ -30,9 +30,12 @@ interface Props {
   docs: LeanDoc[];
   catalogue: CatalogueDoc[];
   presets: Presets;
-  /** Per-document completeness, for the run stage's picker. */
+  /** Completeness per result set, keyed by `resultKey(doc, model)`. */
   status: Record<string, DocStatus>;
-  /** Cell keys (`arm::question`) that already have results, by document. */
+  /**
+   * Cell keys (`arm::question`) that already have results, keyed by
+   * `resultKey(doc, model)`.
+   */
   measured: Record<string, string[]>;
 }
 
@@ -48,8 +51,10 @@ export function Workbench({
 }: Props) {
   const router = useRouter();
   const [stage, setStage] = useState<Stage>("choose");
-  /** Which document the results view should open on, after a run produced it. */
-  const [resultsDoc, setResultsDoc] = useState<string | undefined>();
+  /** Which result set the results view should open on, after a run produced it. */
+  const [resultsDoc, setResultsDoc] = useState<
+    { docId: string; model: string } | undefined
+  >();
 
   const hasResults = Boolean(manifest) && docs.length > 0;
 
@@ -58,8 +63,8 @@ export function Workbench({
   // branch guards on the data actually being there, so arriving early degrades to a
   // wait rather than an error.
   const finish = useCallback(
-    (docId: string) => {
-      setResultsDoc(docId);
+    (docId: string, model: string) => {
+      setResultsDoc({ docId, model });
       router.refresh();
       setStage("results");
     },
@@ -72,7 +77,7 @@ export function Workbench({
         catalogue={catalogue}
         presets={presets}
         status={status}
-        initialDocId={resultsDoc}
+        initialDocId={resultsDoc?.docId}
         measured={measured}
         onComplete={finish}
         onRefresh={() => router.refresh()}
@@ -103,7 +108,8 @@ export function Workbench({
         manifest={manifest}
         docs={docs}
         catalogue={catalogue}
-        initialDocId={resultsDoc}
+        initialDocId={resultsDoc?.docId}
+        initialModel={resultsDoc?.model}
         onRunMore={() => setStage("run")}
         onBack={() => setStage("choose")}
       />
@@ -159,13 +165,19 @@ export function Workbench({
           </span>
           <span className="mt-2 block text-xs text-text-faint">
             {hasResults
-              ? docs
-                  .map(
-                    (d) =>
-                      `${d.domain} · ${tokens(d.tokens)} tokens${
-                        status[d.doc_id]?.state === "partial" ? " · partial" : ""
-                      }`,
-                  )
+              ? // One line per document, not per result set — and "partial" only
+                // when no model has measured it completely.
+                [...new Map(docs.map((d) => [d.doc_id, d])).values()]
+                  .map((d) => {
+                    const complete = docs.some(
+                      (x) =>
+                        x.doc_id === d.doc_id &&
+                        status[resultKey(x.doc_id, x.model)]?.state === "measured",
+                    );
+                    return `${d.domain} · ${tokens(d.tokens)} tokens${
+                      complete ? "" : " · partial"
+                    }`;
+                  })
                   .join("   ")
               : "Empty"}
           </span>

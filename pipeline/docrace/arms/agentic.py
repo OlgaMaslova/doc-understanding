@@ -129,13 +129,37 @@ def _grep(lines: list[str], pattern: str) -> str:
     return body
 
 
-def _read_lines(lines: list[str], start: int, end: int) -> str:
-    start = max(1, int(start))
-    end = min(len(lines), int(end))
-    if start > end:
+def _parse_line_number(value: Any) -> int | None:
+    """`input_schema` is advisory, so an argument can arrive as a mangled
+    string (a trailing comma, or the model's tool-call markup leaking into the
+    value). Salvage the benign cases; return None for the rest."""
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        pass
+    try:
+        return int(str(value).strip(" ,"))
+    except ValueError:
+        return None
+
+
+def _read_lines(lines: list[str], start: Any, end: Any) -> str:
+    # A malformed argument goes back to the model as a tool error it can
+    # correct on the next call, like _grep's invalid-regex path — raising
+    # would abort the whole question.
+    first = _parse_line_number(start)
+    last = _parse_line_number(end)
+    if first is None or last is None:
+        return (
+            f"Invalid arguments: start={start!r}, end={end!r}. Call read_lines "
+            'again with plain integers, e.g. {"start": 100, "end": 150}.'
+        )
+    first = max(1, first)
+    last = min(len(lines), last)
+    if first > last:
         return f"Empty range: the document has {len(lines)} lines."
-    end = min(end, start + READ_MAX_LINES - 1)
-    return "\n".join(f"{n}: {lines[n - 1]}" for n in range(start, end + 1))
+    last = min(last, first + READ_MAX_LINES - 1)
+    return "\n".join(f"{n}: {lines[n - 1]}" for n in range(first, last + 1))
 
 
 def _apply_cache_breakpoints(messages: list[dict[str, Any]]) -> None:

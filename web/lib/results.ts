@@ -111,21 +111,38 @@ export async function loadManifestIfPresent(): Promise<Manifest | null> {
   return loadManifest();
 }
 
-export async function loadDoc(docId: string): Promise<DocResults> {
-  // Guard against traversal: the id has to be one the manifest knows about.
+/**
+ * One (document, model) result set.
+ *
+ * Results are stored per model — measuring a document with a second model adds a
+ * sibling file rather than replacing the first. Without `model`, the most
+ * recently measured set for the document is returned, which is what "show me
+ * this document" should mean when nobody named a model.
+ */
+export async function loadDoc(docId: string, model?: string): Promise<DocResults> {
+  // Guard against traversal: the pair has to be one the manifest knows about,
+  // and the filename read is the one the pipeline wrote into the manifest.
   const manifest = await loadManifest();
-  if (!manifest.docs.some((d) => d.doc_id === docId)) {
+  const entries = manifest.docs.filter((d) => d.doc_id === docId);
+  if (!entries.length) {
     throw new Error(`Unknown document: ${docId}`);
   }
-  return readJson<DocResults>(`${docId}.json`);
+  const entry = model
+    ? entries.find((d) => d.model === model)
+    : entries.reduce((a, b) => (a.computed_at >= b.computed_at ? a : b));
+  if (!entry) {
+    throw new Error(`No results for ${docId} measured with ${model}`);
+  }
+  return readJson<DocResults>(path.basename(entry.file));
 }
 
 export async function loadCell(
   docId: string,
   arm: ArmId,
   questionId: string,
+  model?: string,
 ): Promise<Cell | null> {
-  const doc = await loadDoc(docId);
+  const doc = await loadDoc(docId, model);
   const cell = doc.cells[cellKey(arm, questionId)];
   if (!cell || isFailed(cell)) return null;
   return cell;
@@ -141,8 +158,8 @@ export async function loadCell(
  * neither is needed for that: the charts run on numbers, and the comparison cards
  * receive their text over SSE.
  */
-export async function loadDocLean(docId: string): Promise<LeanDoc> {
-  const doc = await loadDoc(docId);
+export async function loadDocLean(docId: string, model?: string): Promise<LeanDoc> {
+  const doc = await loadDoc(docId, model);
   const cells: LeanDoc["cells"] = {};
   for (const [key, cell] of Object.entries(doc.cells)) {
     cells[key] = isFailed(cell)

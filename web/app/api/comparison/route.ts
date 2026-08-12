@@ -56,6 +56,9 @@ function schedule(cells: [ArmId, Cell][], speedup: number): Scheduled[] {
 export async function GET(request: Request) {
   const url = new URL(request.url);
   const docId = url.searchParams.get("doc");
+  // Results are stored per (document, model). Optional here: without it, the
+  // document's most recently measured set replays.
+  const model = url.searchParams.get("model") ?? undefined;
   const questionId = url.searchParams.get("question");
   const instant = url.searchParams.get("instant") === "1";
 
@@ -65,9 +68,12 @@ export async function GET(request: Request) {
 
   let doc;
   try {
-    doc = await loadDoc(docId);
+    doc = await loadDoc(docId, model);
   } catch {
-    return new Response(`Unknown document: ${docId}`, { status: 404 });
+    return new Response(
+      `No results for document ${docId}${model ? ` measured with ${model}` : ""}`,
+      { status: 404 },
+    );
   }
 
   const cells: [ArmId, Cell][] = [];

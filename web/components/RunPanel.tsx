@@ -5,7 +5,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ARM_COLOR, GRADE_COLOR, TYPE_ORDER, tokens, usd } from "@/lib/format";
 import type { CatalogueDoc } from "@/lib/catalogue";
 import type { Presets, PresetQuestion } from "@/lib/presets";
-import type { ArmId, GradeId, QuestionType } from "@/lib/types";
+import { resultKey, type ArmId, type GradeId, type QuestionType } from "@/lib/types";
 
 /**
  * The run stage: measure a document with your own keys.
@@ -47,14 +47,21 @@ interface Props {
   catalogue: CatalogueDoc[];
   /** Approach and question metadata that does not need a run to exist. */
   presets: Presets;
-  /** Per-document completeness, for documents that have results. */
+  /**
+   * Completeness per result set, keyed by `resultKey(doc, model)`. Results are
+   * stored per model, so a document fully measured with one model is still
+   * unmeasured for another.
+   */
   status: Record<string, DocStatus>;
   /** Which document to start on — the one the results view was showing. */
   initialDocId?: string;
-  /** Cell keys (`arm::question`) that already have results, by document. */
+  /**
+   * Cell keys (`arm::question`) that already have results, keyed by
+   * `resultKey(doc, model)`.
+   */
   measured: Record<string, string[]>;
-  /** A run finished and rewrote results. */
-  onComplete: (docId: string) => void;
+  /** A run finished and wrote its (document, model) result set. */
+  onComplete: (docId: string, model: string) => void;
   /**
    * A run changed results/ without finishing — failed or stopped. The data needs
    * re-fetching, but the reader stays here: the error (or the stop note) is the
@@ -158,9 +165,10 @@ export function RunPanel({
     [presets.question_types],
   );
 
+  // Per (document, model): the skip set has to match the file this run resumes.
   const doneCells = useMemo(
-    () => new Set(measured[docId] ?? []),
-    [measured, docId],
+    () => new Set(measured[resultKey(docId, modelId)] ?? []),
+    [measured, docId, modelId],
   );
 
   // Cells that already have results. The pipeline skips them unless forced, so they
@@ -350,7 +358,7 @@ export function RunPanel({
         onRefresh();
       } else {
         setPhase("done");
-        onComplete(docId);
+        onComplete(docId, modelId);
       }
     } catch (err) {
       if (controller.signal.aborted) {
@@ -364,7 +372,7 @@ export function RunPanel({
     } finally {
       abortRef.current = null;
     }
-  }, [arms, questions, body, docId, doneCells, force, onComplete, onRefresh]);
+  }, [arms, questions, body, docId, modelId, doneCells, force, onComplete, onRefresh]);
 
   const selectedDoc = catalogue.find((d) => d.doc_id === docId);
   const overCap =
@@ -418,7 +426,9 @@ export function RunPanel({
         <div className="flex flex-wrap gap-2">
           {catalogue.map((d) => {
             const active = d.doc_id === docId;
-            const st = status[d.doc_id];
+            // Completeness under the *selected model* — results are stored per
+            // model, so "complete" with one model is "not run yet" with another.
+            const st = status[resultKey(d.doc_id, modelId)];
             return (
               <button
                 key={d.doc_id}
@@ -482,7 +492,9 @@ export function RunPanel({
             <p className="max-w-md text-xs leading-relaxed text-text-faint">
               The model every approach answers with. Indexing and grading stay on{" "}
               <span className="text-text-dim">{presets.index_model}</span> whichever
-              you pick, so a run compares answering models, nothing else.
+              you pick, so a run compares answering models, nothing else. Each
+              model&apos;s results are kept in their own file — running a second
+              model measures afresh instead of overwriting the first.
             </p>
           </div>
           {overContext && model?.context_window && selectedDocMeta ? (
@@ -730,7 +742,7 @@ export function RunPanel({
           <div className="flex flex-wrap items-center gap-3">
             <button
               type="button"
-              onClick={() => onComplete(docId)}
+              onClick={() => onComplete(docId, modelId)}
               className="rounded border border-accent px-3 py-1.5 text-sm text-text transition-colors hover:bg-bg-inset"
             >
               See the results →

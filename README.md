@@ -383,23 +383,25 @@ python3 -m venv .venv && .venv/bin/pip install -e .
 # before committing to the full run.
 .venv/bin/python -m docrace.precompute --doc arxiv-paper --arm full_context
 
-# Full run. Resumable: completed cells are skipped, so an interrupted run costs
-# nothing to resume. Indexes, prefixes, and extractions are cached on disk.
+# Full run. Resumable: completed cells are skipped (errored ones are retried),
+# so an interrupted run costs nothing to resume. Indexes, prefixes, and
+# extractions are cached on disk.
 .venv/bin/python -m docrace.precompute
 ```
 
 The model the approaches answer with is `DOCRACE_MODEL` (default `claude-opus-5`;
 any model with a rate-card entry in `data/pricing.json` — the UI offers the same
 list as a dropdown). Indexing and grading stay on `claude-opus-5` whichever you
-pick, so a run compares answering models and nothing else, and one results file
-holds one model's measurements — the pipeline refuses to mix them.
+pick, so a run compares answering models and nothing else. Results are stored per
+model — `results/<doc>.<model>.json` — so measuring with a second model adds a
+file next to the first, and the results page lets you switch between them.
 
 ```sh
 DOCRACE_MODEL=claude-haiku-4-5 .venv/bin/python -m docrace.precompute --doc arxiv-paper
 ```
 
 Useful flags: `--doc` / `--arm` / `--question` to narrow, `--force` to re-run
-completed cells, `--rebuild-index` to regenerate indexes and extractions (this
+cells that already have good results, `--rebuild-index` to regenerate indexes and extractions (this
 costs money), `--manifest-only` to just refresh `results/manifest.json`.
 
 ### Running the evals from the browser

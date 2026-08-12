@@ -3,8 +3,13 @@
 This directory holds the precomputed comparison data the site serves. The
 committed files are real measurements — currently the arXiv paper's full matrix
 (7 arms × 15 questions), answered with `claude-sonnet-5`. The other documents'
-files appear when someone runs them; one results file holds one model's
-measurements, and the pipeline refuses to mix models within a file.
+files appear when someone runs them.
+
+One file holds one model's measurements of one document, and the model is in the
+filename: `<doc>.<model>.json`. Measuring a document with a second model adds a
+sibling file rather than touching the first, and the site offers the choice
+wherever a document has more than one. (Files from before this layout — bare
+`<doc>.json` — are renamed automatically the next time the pipeline runs.)
 
 Nothing here calls an API at request time. The deployed site reads these files
 and serves the recorded answers, which is what makes it instant, deterministic,
@@ -39,7 +44,8 @@ on. The full matrix is about $81.
 
 Resumable: indexes, contextual prefixes, and extractions cache under
 `pipeline/.index-cache/`, and cells already present here are skipped unless
-`--force` is passed. An interrupted run costs nothing to resume.
+`--force` is passed — except cells that recorded an error, which are retried
+by default. An interrupted run costs nothing to resume.
 
 ### From the browser
 
@@ -67,10 +73,10 @@ a spot check, and the page calls it one.
 
 | File | |
 |---|---|
-`manifest.json` | Documents with completeness state, arms, question types, grade vocabulary, model, pricing snapshot date |
-`arxiv-paper.json` | Up to 105 cells (7 arms × 15 questions) plus per-arm economics |
-`edgar-contract.json` | same |
-`form-10k.json` | same |
+`manifest.json` | One entry per (document, model) result set with completeness state and filename, plus arms, question types, grade vocabulary, pricing snapshot date |
+`arxiv-paper.<model>.json` | Up to 105 cells (7 arms × 15 questions) plus per-arm economics, for one answering model |
+`edgar-contract.<model>.json` | same |
+`form-10k.<model>.json` | same |
 
 Each cell holds the answer text, the delta stream with millisecond offsets, token
 usage, a cost breakdown, latency, arm-specific notes, and a grade with its

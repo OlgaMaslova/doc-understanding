@@ -7,6 +7,7 @@ import { loadCatalogue } from "@/lib/catalogue";
 import { loadPresets } from "@/lib/presets";
 import { loadDocLean, loadManifestIfPresent } from "@/lib/results";
 import { groupApproaches, numberWord } from "@/lib/approaches";
+import { resultKey } from "@/lib/types";
 
 /**
  * The page is a funnel with a fork in it: what the approaches are, how they are
@@ -24,16 +25,19 @@ export default async function Home() {
     loadPresets(),
   ]);
 
+  // One lean result set per (document, model) pair — a document measured with two
+  // models is two entries, and the results view offers the choice.
   const docs = manifest
-    ? await Promise.all(manifest.docs.map((d) => loadDocLean(d.doc_id)))
+    ? await Promise.all(manifest.docs.map((d) => loadDocLean(d.doc_id, d.model)))
     : [];
 
-  // Completeness per document, for the run stage's picker. Derived from the
-  // manifest, never asserted: a document is complete or it is not, and the manifest
-  // reports what the files actually contain.
+  // Completeness per result set, for the run stage's picker. Keyed by (document,
+  // model) because that is what results/ stores: a document fully measured with one
+  // model is still unmeasured for another. Derived from the manifest, never
+  // asserted: the manifest reports what the files actually contain.
   const status: Record<string, DocStatus> = {};
   for (const d of manifest?.docs ?? []) {
-    status[d.doc_id] = {
+    status[resultKey(d.doc_id, d.model)] = {
       cells: d.cells,
       cellsExpected: d.cells_expected,
       state: d.provenance_state,
@@ -41,9 +45,14 @@ export default async function Home() {
   }
 
   // Which cells already exist, so the run stage can say what it will skip rather
-  // than pricing work it is not going to do.
+  // than pricing work it is not going to do. Error cells don't count: the
+  // pipeline retries them by default, so the run stage must price and queue them.
   const measured: Record<string, string[]> = {};
-  for (const doc of docs) measured[doc.doc_id] = Object.keys(doc.cells);
+  for (const doc of docs) {
+    measured[resultKey(doc.doc_id, doc.model)] = Object.entries(doc.cells)
+      .filter(([, cell]) => !("error" in cell))
+      .map(([key]) => key);
+  }
 
   // Arm and question-type metadata comes from the presets dump when there is no
   // manifest to read it from — same values, same shapes, so the sections above the
@@ -67,7 +76,9 @@ export default async function Home() {
   // running something and reading something. The document picker badges the partial
   // ones and the results view states the cell count for whichever is selected, which
   // is where the caveat is actually load-bearing.
-  const docCount = docs.length;
+  // Distinct documents, not result sets: a document measured with two models is
+  // still one document you can read.
+  const docCount = new Set(docs.map((d) => d.doc_id)).size;
   const docCountWord =
     numberWord(docCount).charAt(0).toUpperCase() + numberWord(docCount).slice(1);
 

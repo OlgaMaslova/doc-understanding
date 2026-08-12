@@ -12,11 +12,14 @@ import type { ArmId, Manifest, Question, QuestionType } from "@/lib/types";
 
 interface Props {
   manifest: Manifest;
+  /** One entry per (document, model) result set. */
   docs: LeanDoc[];
   /** Every fetched document, so the picker can name the ones with no results. */
   catalogue: CatalogueDoc[];
   /** Open on this document — the one a run just produced. */
   initialDocId?: string;
+  /** And on this model — the one the run answered with. */
+  initialModel?: string;
   /** Go measure something. */
   onRunMore: () => void;
   /** Back to the fork. */
@@ -81,10 +84,21 @@ export function ComparisonView({
   docs,
   catalogue,
   initialDocId,
+  initialModel,
   onRunMore,
   onBack,
 }: Props) {
   const armIds = useMemo(() => manifest.arms.map((a) => a.id), [manifest.arms]);
+
+  // Result sets grouped by document. A document measured with two models is one
+  // entry in the document picker and two in the model picker under it.
+  const byDoc = useMemo(() => {
+    const groups = new Map<string, LeanDoc[]>();
+    for (const d of docs) {
+      groups.set(d.doc_id, [...(groups.get(d.doc_id) ?? []), d]);
+    }
+    return groups;
+  }, [docs]);
 
   // Documents in the catalogue with nothing measured. They belong in the picker
   // named rather than absent: "there is one document" and "there are three, two of
@@ -96,14 +110,35 @@ export function ComparisonView({
   );
 
   const [docId, setDocId] = useState(
-    initialDocId && docs.some((d) => d.doc_id === initialDocId)
-      ? initialDocId
-      : docs[0].doc_id,
+    initialDocId && byDoc.has(initialDocId) ? initialDocId : docs[0].doc_id,
   );
+  /**
+   * The model whose result set is shown. Model names are shared across documents,
+   * so the choice survives switching documents; a document never measured with the
+   * selected model falls back to its freshest set. Derived, not synced: like the
+   * question id below, the fallback is a pure function of the current document.
+   */
+  const [selectedModel, setSelectedModel] = useState<string | undefined>(
+    initialModel,
+  );
+
+  const variantFor = useCallback(
+    (id: string): LeanDoc => {
+      const variants = byDoc.get(id) ?? [];
+      return (
+        variants.find((v) => v.model === selectedModel) ??
+        variants.reduce((a, b) => (a.computed_at >= b.computed_at ? a : b))
+      );
+    },
+    [byDoc, selectedModel],
+  );
+
   const doc = useMemo(
-    () => docs.find((d) => d.doc_id === docId) ?? docs[0],
-    [docs, docId],
+    () => (byDoc.has(docId) ? variantFor(docId) : docs[0]),
+    [byDoc, docId, variantFor, docs],
   );
+  /** Every model this document has been measured with. */
+  const variants = byDoc.get(doc.doc_id) ?? [doc];
 
   const [selectedQuestionId, setSelectedQuestionId] = useState(
     doc.questions[0]?.id ?? "",
@@ -127,17 +162,30 @@ export function ComparisonView({
 
   useEffect(() => stop, [stop]);
 
+  // One replay per (document, model, question). When any of the three changes,
+  // the cards reset during the same render — the pattern React documents for
+  // deriving state from a changed input — and the effect below starts the new
+  // stream. Resetting inside the effect instead was flagged as a cascading
+  // render, and resetting inside the click handlers left the arrival case
+  // blank: the first question is preselected, and nobody clicks it.
+  const runKey = `${docId}|${doc.model}|${questionId}`;
+  const [prevRunKey, setPrevRunKey] = useState(runKey);
+  if (runKey !== prevRunKey) {
+    setPrevRunKey(runKey);
+    setStates(blankStates(armIds));
+    setFinishOrder([]);
+  }
+
   const compare = useCallback(
     (targetQuestionId: string) => {
       stop();
-      setStates(blankStates(armIds));
-      setFinishOrder([]);
 
       // Always instant: the streams were recorded with real latencies, but
       // replaying them as an animation made the page read as if it were doing
       // work. The measured times are on each card; the answers just appear.
       const params = new URLSearchParams({
         doc: docId,
+        model: doc.model,
         question: targetQuestionId,
         instant: "1",
       });
@@ -207,8 +255,15 @@ export function ComparisonView({
 
       source.onerror = () => stop();
     },
-    [armIds, docId, stop],
+    [docId, doc.model, stop],
   );
+
+  // The one place a replay starts. Question clicks only update the selection,
+  // and a document or model switch re-fires this through `compare`'s identity,
+  // which tracks both.
+  useEffect(() => {
+    if (questionId) compare(questionId);
+  }, [questionId, compare]);
 
   const question = doc.questions.find((q) => q.id === questionId);
 
@@ -306,17 +361,16 @@ export function ComparisonView({
         </h2>
 
         <div className="flex flex-wrap gap-2">
-          {docs.map((d) => {
-            const active = d.doc_id === docId;
+          {[...byDoc.keys()].map((id) => {
+            const d = variantFor(id);
+            const active = id === docId;
             return (
               <button
-                key={d.doc_id}
+                key={id}
                 type="button"
                 onClick={() => {
                   stop();
-                  setDocId(d.doc_id);
-                  setStates(blankStates(armIds));
-                  setFinishOrder([]);
+                  setDocId(id);
                 }}
                 aria-pressed={active}
                 className={`rounded-md border px-3 py-2 text-left transition-colors ${
@@ -330,9 +384,12 @@ export function ComparisonView({
                   {tokens(d.tokens)} tokens
                 </span>
                 {(() => {
-                  // Which document you are looking at decides how much its
-                  // numbers can carry, so completeness rides the selector.
-                  const m = manifest.docs.find((x) => x.doc_id === d.doc_id);
+                  // Which result set you are looking at decides how much its
+                  // numbers can carry, so completeness rides the selector — for
+                  // the variant this button would actually show.
+                  const m = manifest.docs.find(
+                    (x) => x.doc_id === id && x.model === d.model,
+                  );
                   if (!m || m.provenance_state === "measured") return null;
                   return (
                     <span className="mt-1 block text-[11px] text-[#d9a441]">
@@ -386,14 +443,69 @@ export function ComparisonView({
           </p>
         ) : null}
 
+        {/* Only when there is a choice to make. Results are stored per (document,
+            model), so two models never mix in one chart — this picks which
+            measurement everything below replays. */}
+        {variants.length > 1 ? (
+          <div className="space-y-1.5">
+            <p className="text-xs uppercase tracking-wide text-text-faint">
+              Measured with
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {variants.map((v) => {
+                const active = v.model === doc.model;
+                const m = manifest.docs.find(
+                  (x) => x.doc_id === v.doc_id && x.model === v.model,
+                );
+                return (
+                  <button
+                    key={v.model}
+                    type="button"
+                    onClick={() => {
+                      stop();
+                      setSelectedModel(v.model);
+                    }}
+                    aria-pressed={active}
+                    className={`rounded-md border px-3 py-1.5 text-left transition-colors ${
+                      active
+                        ? "border-accent bg-bg-raised"
+                        : "border-border bg-bg hover:border-border-strong"
+                    }`}
+                  >
+                    <span className="block font-mono text-xs text-text">
+                      {v.model}
+                    </span>
+                    <span className="tnum block text-[11px] text-text-faint">
+                      {v.computed_at.slice(0, 10)}
+                      {m && m.provenance_state === "partial" ? (
+                        <span className="text-[#d9a441]">
+                          {" "}
+                          · partial {m.cells}/{m.cells_expected}
+                        </span>
+                      ) : null}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+            <p className="max-w-3xl text-xs leading-relaxed text-text-faint">
+              This document has been measured more than once. Each set of charts
+              below is one model&apos;s run — the numbers never mix.
+            </p>
+          </div>
+        ) : null}
+
         {(() => {
-          const m = manifest.docs.find((x) => x.doc_id === doc.doc_id);
+          const m = manifest.docs.find(
+            (x) => x.doc_id === doc.doc_id && x.model === doc.model,
+          );
           if (!m || m.provenance_state === "measured") return null;
           return (
             <p className="text-sm leading-relaxed text-[#d9a441]">
-              {m.cells} of {m.cells_expected} cells measured for this document.
-              The charts and scores are real but computed from a partial matrix —
-              treat them as a spot check, not a result.
+              {m.cells} of {m.cells_expected} cells measured for this document
+              with <span className="font-mono">{doc.model}</span>. The charts and
+              scores are real but computed from a partial matrix — treat them as
+              a spot check, not a result.
             </p>
           );
         })()}
@@ -496,10 +608,7 @@ export function ComparisonView({
                     <button
                       key={q.id}
                       type="button"
-                      onClick={() => {
-                        setSelectedQuestionId(q.id);
-                        compare(q.id);
-                      }}
+                      onClick={() => setSelectedQuestionId(q.id)}
                       aria-pressed={active}
                       className={`max-w-full truncate rounded border px-2 py-1 text-left text-xs transition-colors ${
                         active
@@ -668,7 +777,7 @@ export function ComparisonView({
           <p className="mt-1 max-w-3xl text-sm leading-relaxed text-text-dim">
             {/* The switch-documents invitation only makes sense once there is
                 more than one measured document to switch between. */}
-            {docs.length > 1
+            {byDoc.size > 1
               ? "Switch documents above and watch the lines reorder. "
               : ""}
             Each line is one approach, and the lines are projections, not a
@@ -711,10 +820,7 @@ export function ComparisonView({
           questions={doc.questions}
           cells={doc.cells}
           credit={manifest.credit}
-          onSelectQuestion={(id) => {
-            setSelectedQuestionId(id);
-            compare(id);
-          }}
+          onSelectQuestion={(id) => setSelectedQuestionId(id)}
         />
       </section>
 
@@ -810,7 +916,7 @@ export function ComparisonView({
         </button>
         <p className="max-w-2xl text-sm leading-relaxed text-text-dim">
           Same pipeline, your keys, your numbers. Every figure above came out of it,
-          and a run overwrites them with yours.
+          and a run adds yours — per model, next to these.
         </p>
       </div>
     </div>

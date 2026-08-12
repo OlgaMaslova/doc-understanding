@@ -156,6 +156,10 @@ export interface DocResults {
 export type ProvenanceState = "partial" | "measured";
 
 export interface Manifest {
+  /**
+   * One entry per (document, model) result set. The same document measured with
+   * two models is two entries — results/ keeps one file per pair.
+   */
   docs: {
     doc_id: string;
     domain: string;
@@ -164,6 +168,11 @@ export interface Manifest {
     source_url: string;
     license: string;
     provenance: string;
+    /** The model this result set was measured with. */
+    model: string;
+    /** Filename of this result set inside results/, as written by the pipeline. */
+    file: string;
+    computed_at: string;
     provenance_state: ProvenanceState;
     cells: number;
     cells_expected: number;
@@ -199,4 +208,9 @@ export function isFailed(cell: Cell | FailedCell): cell is FailedCell {
 
 export function cellKey(arm: ArmId, questionId: string): string {
   return `${arm}::${questionId}`;
+}
+
+/** Key for one (document, model) result set, mirroring the results/ layout. */
+export function resultKey(docId: string, model: string): string {
+  return `${docId}::${model}`;
 }
