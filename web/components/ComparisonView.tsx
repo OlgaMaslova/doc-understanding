@@ -1,38 +1,43 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { ArmCard, type ArmRunState } from "./ArmCard";
 import { CostChart, SCORE_FLOOR } from "./CostChart";
 import { Heatmap } from "./Heatmap";
+import { RepoLink } from "./RepoLink";
 import { ARM_COLOR, percent, seconds, tokens, usd } from "@/lib/format";
 import type { CatalogueDoc } from "@/lib/catalogue";
+import { isFailedReplay, loadReplay, type ReplayBundle } from "@/lib/replay";
 import type { LeanDoc } from "@/lib/results";
+import { cellKey } from "@/lib/types";
 import type { ArmId, Manifest, Question, QuestionType } from "@/lib/types";
 
+/**
+ * The comparison: a document, a question, and every approach's recorded answer to it,
+ * followed by the charts that price and grade them.
+ *
+ * This used to be one branch of a fork — read the results, or run new ones — and the
+ * run branch is what a static deployment cannot serve. So it is the page now, and the
+ * only thing the fork is remembered by is the link where its button was.
+ *
+ * The numbers arrive with the page, prerendered; the answers arrive in one fetch per
+ * result set, from a bundle written at build time. That split is deliberate: the
+ * charts are what a reader reorders by clicking documents, and it has to be instant,
+ * while the answer text is most of the payload and only one document's is ever on
+ * screen.
+ */
 interface Props {
   manifest: Manifest;
   /** One entry per (document, model) result set. */
   docs: LeanDoc[];
   /** Every fetched document, so the picker can name the ones with no results. */
   catalogue: CatalogueDoc[];
-  /** Open on this document — the one a run just produced. */
-  initialDocId?: string;
-  /** And on this model — the one the run answered with. */
-  initialModel?: string;
-  /** Go measure something. */
-  onRunMore: () => void;
-  /** Back to the fork. */
-  onBack: () => void;
 }
 
 type States = Record<ArmId, ArmRunState>;
 
 const IDLE: ArmRunState = { status: "waiting", text: "" };
-
-function blankStates(arms: ArmId[]): States {
-  return Object.fromEntries(arms.map((a) => [a, { ...IDLE }])) as States;
-}
 
 /**
  * The short half of a question type's rationale, for the picker.
@@ -79,15 +84,7 @@ function Field({
   );
 }
 
-export function ComparisonView({
-  manifest,
-  docs,
-  catalogue,
-  initialDocId,
-  initialModel,
-  onRunMore,
-  onBack,
-}: Props) {
+export function ComparisonView({ manifest, docs, catalogue }: Props) {
   const armIds = useMemo(() => manifest.arms.map((a) => a.id), [manifest.arms]);
 
   // Result sets grouped by document. A document measured with two models is one
@@ -109,18 +106,14 @@ export function ComparisonView({
     [catalogue, docs],
   );
 
-  const [docId, setDocId] = useState(
-    initialDocId && byDoc.has(initialDocId) ? initialDocId : docs[0].doc_id,
-  );
+  const [docId, setDocId] = useState(docs[0].doc_id);
   /**
    * The model whose result set is shown. Model names are shared across documents,
    * so the choice survives switching documents; a document never measured with the
    * selected model falls back to its freshest set. Derived, not synced: like the
    * question id below, the fallback is a pure function of the current document.
    */
-  const [selectedModel, setSelectedModel] = useState<string | undefined>(
-    initialModel,
-  );
+  const [selectedModel, setSelectedModel] = useState<string | undefined>();
 
   const variantFor = useCallback(
     (id: string): LeanDoc => {
@@ -143,10 +136,6 @@ export function ComparisonView({
   const [selectedQuestionId, setSelectedQuestionId] = useState(
     doc.questions[0]?.id ?? "",
   );
-  const [states, setStates] = useState<States>(() => blankStates(armIds));
-  const [finishOrder, setFinishOrder] = useState<ArmId[]>([]);
-
-  const sourceRef = useRef<EventSource | null>(null);
 
   // Question ids are per-document, so a selection made on one document is
   // meaningless on another. Derive the effective id rather than syncing it in an
@@ -155,115 +144,110 @@ export function ComparisonView({
     ? selectedQuestionId
     : (doc.questions[0]?.id ?? "");
 
-  const stop = useCallback(() => {
-    sourceRef.current?.close();
-    sourceRef.current = null;
-  }, []);
+  /** The replay bundle holding this result set's answers, as the manifest names it. */
+  const file = manifest.docs.find(
+    (x) => x.doc_id === doc.doc_id && x.model === doc.model,
+  )?.file;
 
-  useEffect(() => stop, [stop]);
+  // Answers arrive per result set, not per question: one fetch covers every
+  // question of the document on screen, and switching questions after that is
+  // local. Bundles already in hand are never re-fetched — `lib/replay` caches them
+  // for the tab — so switching back to a document is instant.
+  const [bundles, setBundles] = useState<Record<string, ReplayBundle>>({});
+  const [failures, setFailures] = useState<Record<string, string>>({});
 
-  // One replay per (document, model, question). When any of the three changes,
-  // the cards reset during the same render — the pattern React documents for
-  // deriving state from a changed input — and the effect below starts the new
-  // stream. Resetting inside the effect instead was flagged as a cascading
-  // render, and resetting inside the click handlers left the arrival case
-  // blank: the first question is preselected, and nobody clicks it.
-  const runKey = `${docId}|${doc.model}|${questionId}`;
-  const [prevRunKey, setPrevRunKey] = useState(runKey);
-  if (runKey !== prevRunKey) {
-    setPrevRunKey(runKey);
-    setStates(blankStates(armIds));
-    setFinishOrder([]);
-  }
+  // Membership, not truthiness: an error with an empty message would otherwise read
+  // as "not yet attempted" and the effect would refetch on every render.
+  const attempted = file ? file in failures : false;
 
-  const compare = useCallback(
-    (targetQuestionId: string) => {
-      stop();
-
-      // Always instant: the streams were recorded with real latencies, but
-      // replaying them as an animation made the page read as if it were doing
-      // work. The measured times are on each card; the answers just appear.
-      const params = new URLSearchParams({
-        doc: docId,
-        model: doc.model,
-        question: targetQuestionId,
-        instant: "1",
-      });
-
-      const source = new EventSource(`/api/comparison?${params}`);
-      sourceRef.current = source;
-
-      source.onmessage = (event) => {
-        const msg = JSON.parse(event.data) as Record<string, unknown>;
-        switch (msg.type) {
-          case "start": {
-            const failures = (msg.failures ?? []) as {
-              arm: ArmId;
-              error: string;
-            }[];
-            if (failures.length) {
-              setStates((prev) => {
-                const next = { ...prev };
-                for (const f of failures) {
-                  next[f.arm] = { status: "failed", text: "", error: f.error };
-                }
-                return next;
-              });
-            }
-            break;
-          }
-          case "arm_start": {
-            const arm = msg.arm as ArmId;
-            setStates((prev) => ({
-              ...prev,
-              [arm]: { ...prev[arm], status: "streaming", text: "" },
-            }));
-            break;
-          }
-          case "delta": {
-            const arm = msg.arm as ArmId;
-            const text = msg.text as string;
-            setStates((prev) => ({
-              ...prev,
-              [arm]: { ...prev[arm], text: prev[arm].text + text },
-            }));
-            break;
-          }
-          case "arm_done": {
-            const arm = msg.arm as ArmId;
-            setStates((prev) => ({
-              ...prev,
-              [arm]: {
-                status: "done",
-                text: (msg.answer as string) || prev[arm].text,
-                latency_ms: msg.latency_ms as number,
-                ttft_ms: msg.ttft_ms as number,
-                cost: msg.cost as ArmRunState["cost"],
-                usage: msg.usage as ArmRunState["usage"],
-                grade: msg.grade as ArmRunState["grade"],
-                notes: msg.notes as Record<string, unknown>,
-              },
-            }));
-            setFinishOrder((prev) => (prev.includes(arm) ? prev : [...prev, arm]));
-            break;
-          }
-          case "end":
-            stop();
-            break;
-        }
-      };
-
-      source.onerror = () => stop();
-    },
-    [docId, doc.model, stop],
-  );
-
-  // The one place a replay starts. Question clicks only update the selection,
-  // and a document or model switch re-fires this through `compare`'s identity,
-  // which tracks both.
   useEffect(() => {
-    if (questionId) compare(questionId);
-  }, [questionId, compare]);
+    if (!file || bundles[file] || attempted) return;
+    let live = true;
+    loadReplay(file)
+      .then((bundle) => {
+        if (live) setBundles((prev) => ({ ...prev, [file]: bundle }));
+      })
+      .catch((cause: unknown) => {
+        const message = cause instanceof Error ? cause.message : String(cause);
+        if (live) setFailures((prev) => ({ ...prev, [file]: message }));
+      });
+    return () => {
+      live = false;
+    };
+  }, [file, bundles, attempted]);
+
+  const bundle = file ? bundles[file] : undefined;
+  const loadError = file ? failures[file] : undefined;
+
+  /** Forget the failure, which is what lets the effect above try again. */
+  const retry = useCallback(() => {
+    if (!file) return;
+    setFailures((prev) => {
+      const next = { ...prev };
+      delete next[file];
+      return next;
+    });
+  }, [file]);
+
+  /**
+   * The cards, derived rather than accumulated.
+   *
+   * These answers were streamed once, during the run, and every fragment was
+   * recorded with its arrival time — but replaying that as an animation made the
+   * page read as if it were doing work it was not, so it has always been shown
+   * instantly. Which means there is nothing to accumulate: each card is a pure
+   * function of the bundle and the selected question.
+   */
+  const states: States = useMemo(() => {
+    const out = Object.fromEntries(
+      armIds.map((arm) => [
+        arm,
+        // A bundle that failed to load is not a bundle that is still arriving.
+        // Cards left on "Loading…" under a visible error message would be waiting
+        // for something nothing is going to deliver — and the failure is this
+        // page's, not the arm's, which is why it is not `failed`.
+        loadError ? { status: "unavailable" as const, text: "" } : { ...IDLE },
+      ]),
+    ) as States;
+    if (!bundle) return out;
+    for (const arm of armIds) {
+      const cell = bundle.cells[cellKey(arm, questionId)];
+      if (!cell) {
+        // A scoped run leaves holes in the matrix. "Waiting…" would be a lie on a
+        // page where nothing further is coming.
+        out[arm] = { status: "missing", text: "" };
+      } else if (isFailedReplay(cell)) {
+        out[arm] = { status: "failed", text: "", error: cell.error };
+      } else {
+        out[arm] = {
+          status: "done",
+          text: cell.answer,
+          latency_ms: cell.latency_ms,
+          ttft_ms: cell.ttft_ms,
+          cost: cell.cost,
+          usage: cell.usage,
+          grade: cell.grade,
+          notes: cell.notes,
+        };
+      }
+    }
+    return out;
+  }, [armIds, bundle, loadError, questionId]);
+
+  /**
+   * Rank by measured latency, fastest first.
+   *
+   * The badge reads "#1" and means what it says: of the arms that answered this
+   * question, this one answered it soonest. It used to be the order the recorded
+   * streams happened to be replayed in, which — replayed instantly — was file
+   * order wearing a stopwatch.
+   */
+  const placeOf = useMemo(() => {
+    const ranked = armIds
+      .filter((arm) => states[arm]?.status === "done")
+      .sort((a, b) => (states[a].latency_ms ?? 0) - (states[b].latency_ms ?? 0));
+    return new Map(ranked.map((arm, i) => [arm, i + 1]));
+  }, [armIds, states]);
 
   const question = doc.questions.find((q) => q.id === questionId);
 
@@ -325,27 +309,11 @@ export function ComparisonView({
   return (
     <div className="space-y-10">
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-3">
-        <button
-          type="button"
-          onClick={onBack}
-          className="text-sm text-text-faint underline decoration-dotted hover:text-text-dim"
-        >
-          ← Back
-        </button>
-        <div className="flex flex-wrap items-center gap-3">
-          <p className="text-xs text-text-faint">
-            Measured with{" "}
-            <span className="font-mono text-text-dim">{doc.model}</span> ·
-            replayed from disk, nothing here calls an API
-          </p>
-          <button
-            type="button"
-            onClick={onRunMore}
-            className="rounded border border-border-strong px-3 py-1.5 text-sm text-text transition-colors hover:bg-bg-inset"
-          >
-            Run the evals
-          </button>
-        </div>
+        <p className="text-xs text-text-faint">
+          Measured with <span className="font-mono text-text-dim">{doc.model}</span>{" "}
+          · replayed from a recording, nothing here calls an API
+        </p>
+        <RepoLink className="text-xs">Run it yourself</RepoLink>
       </div>
 
       {/* Document and question were one section behind a single screen-reader-only
@@ -368,10 +336,7 @@ export function ComparisonView({
               <button
                 key={id}
                 type="button"
-                onClick={() => {
-                  stop();
-                  setDocId(id);
-                }}
+                onClick={() => setDocId(id)}
                 aria-pressed={active}
                 className={`rounded-md border px-3 py-2 text-left transition-colors ${
                   active
@@ -431,15 +396,9 @@ export function ComparisonView({
             ))}{" "}
             {pending.length === 1 ? "has" : "have"} no results yet — the document
             {pending.length === 1 ? " is" : "s are"} downloaded, but no one has run
-            the evals on {pending.length === 1 ? "it" : "them"}.{" "}
-            <button
-              type="button"
-              onClick={onRunMore}
-              className="text-text underline decoration-border-strong underline-offset-2 hover:decoration-accent"
-            >
-              Run {pending.length === 1 ? "it" : "one"}
-            </button>{" "}
-            to see how the same approaches do on a different document.
+            the evals on {pending.length === 1 ? "it" : "them"}. The pipeline that
+            would is in <RepoLink>the repository</RepoLink>, and a run there adds{" "}
+            {pending.length === 1 ? "it" : "them"} to a copy of this page.
           </p>
         ) : null}
 
@@ -461,10 +420,7 @@ export function ComparisonView({
                   <button
                     key={v.model}
                     type="button"
-                    onClick={() => {
-                      stop();
-                      setSelectedModel(v.model);
-                    }}
+                    onClick={() => setSelectedModel(v.model)}
                     aria-pressed={active}
                     className={`rounded-md border px-3 py-1.5 text-left transition-colors ${
                       active
@@ -692,17 +648,27 @@ export function ComparisonView({
           </div>
         ) : null}
 
+        {loadError ? (
+          <p className="text-sm leading-relaxed text-[#d1382a]">
+            {loadError}. The answers live in a file fetched separately from the page;
+            the charts below do not need it and are unaffected.{" "}
+            <button
+              type="button"
+              onClick={retry}
+              className="text-text underline decoration-border-strong underline-offset-2 hover:decoration-accent"
+            >
+              Try again
+            </button>
+          </p>
+        ) : null}
+
         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
           {manifest.arms.map((arm) => (
             <ArmCard
               key={arm.id}
               arm={arm}
               state={states[arm.id] ?? IDLE}
-              place={
-                finishOrder.indexOf(arm.id) >= 0
-                  ? finishOrder.indexOf(arm.id) + 1
-                  : undefined
-              }
+              place={placeOf.get(arm.id)}
             />
           ))}
         </div>
@@ -905,18 +871,15 @@ export function ComparisonView({
       </section>
 
       {/* The way back out. A reader who got this far and believes the charts is
-          exactly the reader who should be offered the chance to disbelieve them. */}
+          exactly the reader who should be offered the chance to disbelieve them —
+          which this copy of the site cannot do for them, so it says where to. */}
       <div className="flex flex-wrap items-center gap-3 border-t border-border pt-6">
-        <button
-          type="button"
-          onClick={onRunMore}
-          className="rounded border border-accent px-3 py-1.5 text-sm text-text transition-colors hover:bg-bg-inset"
-        >
-          Run this yourself
-        </button>
+        <RepoLink variant="button">If you want to run it yourself</RepoLink>
         <p className="max-w-2xl text-sm leading-relaxed text-text-dim">
-          Same pipeline, your keys, your numbers. Every figure above came out of it,
-          and a run adds yours — per model, next to these.
+          This is a static deployment: every figure above is a recording. The
+          pipeline that produced them is in the repository, and running it against
+          your own keys — another document, another model — is the point of shipping
+          it.
         </p>
       </div>
     </div>

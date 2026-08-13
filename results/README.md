@@ -11,9 +11,11 @@ sibling file rather than touching the first, and the site offers the choice
 wherever a document has more than one. (Files from before this layout — bare
 `<doc>.json` — are renamed automatically the next time the pipeline runs.)
 
-Nothing here calls an API at request time. The deployed site reads these files
-and serves the recorded answers, which is what makes it instant, deterministic,
-and free to visit regardless of traffic.
+Nothing here calls an API at request time — on this branch there is no request time
+at all. `next build` reads these files, prerenders the charts from them, and writes
+the answers into static replay bundles under `web/public/replay/` (these files minus
+the delta streams), which is what makes the site instant, deterministic, and free to
+visit regardless of traffic.
 
 **There is no synthetic mode.** Every number in these files is measured. A fixture
 generator existed while the interface was being built and was removed: each file it
@@ -47,19 +49,13 @@ Resumable: indexes, contextual prefixes, and extractions cache under
 `--force` is passed — except cells that recorded an error, which are retried
 by default. An interrupted run costs nothing to resume.
 
-### From the browser
+### From the browser — on `main`, not here
 
-In a local clone you can also run it from the UI, with no flag to set:
-
-```sh
-cd web && npm run dev
-```
-
-Choose "run the evals" at the fork, pick a document and the approaches, and the panel
+`main` can drive a run from the UI: pick a document and the approaches, and the panel
 prices the scope, asks for confirmation, and streams progress per cell — writing here
-as it goes. A run asks every question in the document's set. It refuses scopes over
-$25 (`DOCRACE_MAX_RUN_USD` to change that) and prints the equivalent CLI command
-instead. See the README for the gates involved.
+as it goes. This branch is the static deployment and has no such flow, because a
+static host has no Python to shell out to. The terminal is the only path here, and it
+is the one with no ceiling.
 
 ## Partial runs are expected, and labelled
 

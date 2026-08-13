@@ -25,6 +25,10 @@ results/archive/
 web/node_modules/
 web/.next/
 web/out/
+# Replay bundles: the committed results with the delta streams and the fields the
+# charts already summarize stripped out. Written by scripts/build-replay.mjs on every
+# build, so committing them would only be a second copy to keep in sync.
+web/public/replay/
 web/next-env.d.ts
 web/.vercel/
 web/tsconfig.tsbuildinfo

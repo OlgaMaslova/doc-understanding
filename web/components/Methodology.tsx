@@ -4,13 +4,13 @@ import type { GradeId, Manifest } from "@/lib/types";
 /**
  * How an answer was judged.
  *
- * This stays below the fork, unlike the approach guide: the grade scale answers a
- * question a reader has *after* seeing a heatmap cell they don't believe, and the
- * heatmap is legible without it.
+ * This sits low on the reference page, unlike the approach guide: the grade scale
+ * answers a question a reader has *after* seeing a heatmap cell they don't believe,
+ * and the heatmap is legible without it.
  *
  * The question taxonomy used to be explained here too. It is introduced where it is
  * actually used instead — the question picker names each type and what it demands,
- * and the run panel does the same — so a second, fuller telling this far down the
+ * and the heatmap legend does the same — so a second, fuller telling this far down the
  * page was explaining the rows of a chart the reader had already read.
  */
 
@@ -34,7 +34,7 @@ const GRADE_MEANING: Record<GradeId, string> = {
 };
 
 interface Props {
-  /** Same shape whether it came from the manifest or the presets dump. */
+  /** As the manifest records them. */
   grades: Manifest["grades"];
   credit: Manifest["credit"];
 }

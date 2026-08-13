@@ -1,0 +1,75 @@
+# Build the site out of the committed results and publish it to GitHub Pages.
+#
+# Nothing here needs a key, and nothing here can spend money: `results/` is committed
+# on this branch, `next build` exports static files, and the pipeline is never
+# installed. That is the whole reason this branch exists.
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [static-pages]
+  # So a deploy can be re-run without an empty commit.
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# One deploy at a time, and let a newer commit finish rather than cancelling it
+# halfway through publishing.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - name: Install
+        working-directory: web
+        run: npm ci
+
+      - name: Build
+        working-directory: web
+        # A project site is served from /<repo>/, so the URL prefix is derived from the
+        # repository name rather than pinned — a fork under another name gets working
+        # links without editing next.config.ts. A user site (<owner>.github.io) is
+        # served from the root and must have no prefix at all.
+        run: |
+          name="${GITHUB_REPOSITORY#*/}"
+          if [ "$name" = "${GITHUB_REPOSITORY%%/*}.github.io" ]; then
+            export NEXT_PUBLIC_BASE_PATH=""
+          else
+            export NEXT_PUBLIC_BASE_PATH="/$name"
+          fi
+          echo "basePath: ${NEXT_PUBLIC_BASE_PATH:-(root)}"
+          npm run build
+
+      - name: Skip Jekyll
+        # Belt and braces. An artifact deploy does not run Jekyll, but a repository
+        # switched to branch-based Pages would — and Jekyll drops every path starting
+        # with an underscore, which is all of Next's assets.
+        run: touch web/out/.nojekyll
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: web/out
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

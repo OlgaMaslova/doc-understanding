@@ -8,25 +8,38 @@ in the CLI commands and env vars below.)
 Ask a question of a document, watch six extraction strategies answer it side by
 side, and see exactly what each one cost you.
 
+## This branch is the static build
+
+`static-pages` is the branch that gets deployed to GitHub Pages. It is `main` with
+the in-browser run flow removed: no `/api` routes, no shelling out to Python, no
+`RunPanel`. Everything the site shows is written at build time out of the committed
+`results/`, and the page links to this repository wherever it used to offer a run
+button — a static host has no pipeline and no key, and a button that fails on click
+is worse than a link that works.
+
+The pipeline itself is untouched and still lives here, so a clone of this branch
+measures exactly what a clone of `main` does. Work on features from `main`; treat
+this branch as the deployment. See [Deploying](#deploying).
+
 ## Quick start
 
 ```sh
 cd web && npm install && npm run dev
 ```
 
-Open http://localhost:3000 and choose **Load the results** — the repository ships
-with the arXiv paper fully measured, so there is something to look at before you
-spend anything. No keys needed for that.
+Open http://localhost:3000 — the repository ships with measured results, so the
+comparison is there to read immediately. No keys needed, and on this branch nothing
+in the page can spend anything.
 
-To measure something yourself (a different document, or a different model):
+To measure something yourself (a different document, or a different model), the
+terminal is the only path here:
 
 ```sh
 cp .env.example .env                                  # add your keys
 cd pipeline && python3 -m venv .venv && .venv/bin/pip install -e .
 ```
 
-Then choose **Run the evals** in the UI — it prices the run and asks before
-spending — or drive it from the terminal. Details in [Running it](#running-it).
+Details in [Running it](#running-it).
 
 ## This is not a benchmark
 
@@ -115,15 +128,16 @@ and where the real differentiation lives.
 ## Architecture
 
 ```
- pipeline/  (Python, offline)          results/  (generated JSON)      web/  (Next.js)
- ─────────────────────────────         ─────────────────────────      ───────────────
- documents  → normalize, count    ─→   <doc>.json   per q x arm  ─→   /api/comparison  SSE
- chunking   → 500/50 token chunks       manifest.json                  serves recorded
- retrieval  → numpy vectors, BM25                                      answers, instantly
- contextual → LLM chunk prefixes                                            │
- arms/      → the six strategies                                            ▼
- grading    → judge vs ground truth                              comparison view,
- precompute → CLI, resumable                                     scoreboard + 2 charts
+ pipeline/  (Python, offline)          results/  (committed JSON)     web/  (Next.js, exported)
+ ─────────────────────────────         ─────────────────────────      ───────────────────────
+ documents  → normalize, count    ─→   <doc>.json   per q x arm  ─→   next build  → out/
+ chunking   → 500/50 token chunks       manifest.json                  charts prerendered,
+ retrieval  → numpy vectors, BM25                                      answers as static
+ contextual → LLM chunk prefixes                                       replay bundles
+ arms/      → the six strategies                                            │
+ grading    → judge vs ground truth                                         ▼
+ precompute → CLI, resumable                                     comparison view,
+                                                                 scoreboard + 2 charts
 ```
 
 **The single most important engineering decision: precompute everything.** Every
@@ -132,11 +146,18 @@ answer text, delta timings, token counts, latency, cost, grade. The deployed sit
 runs in **replay mode**: instant, deterministic, and free to visit. Without it,
 one post to the front page empties the account in an afternoon.
 
+On this branch that goes one step further: there is no server at all. `next build`
+prerenders the pages and `web/scripts/build-replay.mjs` writes one JSON bundle per
+result set — the committed results minus the delta streams, which nothing reads now
+that the replay is instant — and the browser fetches the bundle for whichever document
+is on screen, 200–260 KB for a fully measured one. The bundles are generated, not
+committed, so `results/` stays the single source.
+
 ### Stack
 
-- **Frontend:** Next.js + Tailwind, SSE for the race stream, hand-rolled SVG
-  charts. A handful of series and two chart types do not justify a charting dependency,
-  and the charts are part of what's being judged.
+- **Frontend:** Next.js static export + Tailwind, hand-rolled SVG charts. A handful
+  of series and two chart types do not justify a charting dependency, and the charts
+  are part of what's being judged.
 - **Pipeline:** Python. Offline only — it writes JSON, it does not serve
   requests.
 - **Vectors:** numpy, in memory. **No pgvector.** Three documents do not need a
@@ -404,71 +425,18 @@ Useful flags: `--doc` / `--arm` / `--question` to narrow, `--force` to re-run
 cells that already have good results, `--rebuild-index` to regenerate indexes and extractions (this
 costs money), `--manifest-only` to just refresh `results/manifest.json`.
 
-### Running the evals from the browser
+### Running the evals from the browser — not on this branch
 
-Everything on the page came out of the pipeline in this repository, and you can
-regenerate it with your own keys — including from the UI, in a local clone, with no
-flag to set:
+`main` can start a run from the page: pick a document, tick the approaches, see what
+that scope would cost, confirm, and watch progress stream per cell while the charts
+rewrite themselves. That needs the Python pipeline and a key on the machine serving
+the page, which is exactly what a static host does not have, so this branch removed
+the flow rather than shipping a control panel that fails on click. What is left in
+its place is a link to the repository, at the top of the page, in the comparison
+header, and at the bottom under **If you want to run it yourself**.
 
-```sh
-cd web && npm run dev
-```
-
-The page forks after the approach guide: **run the evals**, or **load the results**
-already on disk. The two want opposite screens — one is a control panel, the other is
-a finding — so the choice is made once and everything below belongs to the branch you
-took. A run ends by handing you its results, because that is why you ran it.
-
-The run branch is the pipeline with a face on it. Pick a document, tick the
-approaches, see what that scope would cost, then confirm. Progress streams per cell
-as a live approach × question grid, coloured by grade, and the charts rewrite
-themselves when it finishes. The front end holds no keys and calls no model API: it
-POSTs a scope, the route re-prices it and shells out to `docrace.precompute`, and the
-browser renders the event stream.
-
-A run asks **every** question in the set. There is no question picker, because a
-partial question set produces a partial accuracy score and the taxonomy is the
-argument — a heatmap with three of five types filled in invites exactly the
-misreading this project exists to prevent. Which document, and which approaches, is
-the decision worth offering.
-
-Every fetched document is selectable, measured or not. `docrace.presets` supplies the
-approach and question metadata that used to arrive only in a run's manifest, so a
-fresh clone can name the seven approaches and count a document's questions before it
-has measured anything.
-
-Cells that already have results are skipped, as they are from the CLI, so a scope you
-have already run costs nothing to re-open. The panel marks them and prices the full
-selection anyway, which over-states rather than under-states the bill; tick **re-run**
-to measure them again.
-
-Two gates have to pass before a single token is spent, and a hosted copy of this
-site fails both:
-
-| Gate | Why |
-|---|---|
-`pipeline/.venv` exists | Runs need the Python pipeline; a serverless host has no Python. |
-A key in the environment or `.env` | Read server-side, never sent to the browser, never logged. |
-
-Runs used to also require `DOCRACE_ENABLE_RUNS=1`. That flag is gone: it made the
-honest answer to "can I run this from the page?" be "no, restart your dev server
-first", and it was never what kept a deployment safe — the two gates above are.
-`DOCRACE_DISABLE_RUNS=1` remains as a kill switch for the one deployment that has
-both, a checkout on a VM, where they would otherwise pass.
-
-A **$25 ceiling** applies to runs started from the browser, overridable with
-`DOCRACE_MAX_RUN_USD`. Above it the request is refused with the equivalent CLI
-command. The number is chosen against the real projections rather than for
-roundness — every approach on the paper is $15 and on the contract $19, so the runs
-you are likely to want go through; every approach on the 10-K is $46 and does not,
-because the most expensive thing this UI can ask for should take a deliberate act
-rather than a click.
-
-The ceiling constrains the button, not the pipeline — the terminal has no limit. The
-server re-prices every scope itself, so the number shown in the panel is information
-rather than a security boundary. What stops *you* overspending is that price sitting
-in the confirm button; what the ceiling stops is the scope nobody meant to ask for,
-and it can only do that while it sits below the biggest thing on the menu.
+The per-document projections that flow governed are still worth knowing before you
+start a run from the terminal:
 
 | Per-document projection | all 7 approaches × 15 questions |
 |---|---|
@@ -476,16 +444,16 @@ and it can only do that while it sits below the biggest thing on the menu.
 | EDGAR contract, 53k tokens | $19.32 |
 | 10-K filing, 223k tokens | $46.32 |
 
-There is deliberately **no bring-your-own-key path**. Accepting a visitor's
-credential over HTTP means owning the handling of somebody else's secret, and this
-project has no need to. Live mode with BYO keys is the roadmap's v1 item and needs
-a rate limit before it exists.
+There is deliberately **no bring-your-own-key path**, and on a static deployment
+there could not be one: accepting a visitor's credential means owning the handling of
+somebody else's secret, and there is no server here to own it.
 
 A scoped run leaves an **incomplete matrix**, which the site labels rather than
 hides: each document records its cell count and completeness state, and a
 partially-run document is marked on the picker, under its title, and in a banner.
-The figures are real either way — what a two-cell run cannot support is an
-aggregate, so the page calls its heatmap a spot check instead of a result.
+Cards for cells the run skipped say so rather than spinning. The figures are real
+either way — what a two-cell run cannot support is an aggregate, so the page calls
+its heatmap a spot check instead of a result.
 
 ### Web
 
@@ -495,14 +463,38 @@ npm install
 npm run dev
 ```
 
-The app reads `results/` from disk; a fresh clone includes the committed
-measurements, and if the files are missing entirely the app names the commands
-that produce them. There is deliberately no way to populate `results/` without
+The app reads `results/` from disk at build time; a fresh clone includes the
+committed measurements. There is deliberately no way to populate `results/` without
 spending: a fixture generator existed while the interface was being built and was
 removed, because every header it wrote was a claim about work that never happened —
 which model produced the answers, when they were computed — and its hardcoded token
 counts eventually drifted 30–50% from the real documents and surfaced in the
 document picker, where no warning covered them.
+
+`npm run dev` and `npm run build` both run `scripts/build-replay.mjs` first, so a
+fresh run's answers are there without a separate step. One caveat while iterating: the
+charts re-read `results/` per render, but the answer bundles are written once at
+startup — so a run finished while `next dev` is up shows new grades in the heatmap and
+"nothing recorded" on the cards until the dev server is restarted. Dev serves from the
+root; `build` writes `web/out/` under the Pages path prefix.
+
+## Deploying
+
+Pushing to `static-pages` builds and publishes the site —
+[`.github/workflows/pages.yml`](.github/workflows/pages.yml). The workflow needs no
+secrets and cannot spend anything: it installs Node, runs `npm run build`, and uploads
+`web/out/`. Enable it once under *Settings → Pages → Source: GitHub Actions*.
+
+A project site is served from `/<repo>/`, so the build sets `basePath`. The workflow
+derives it from the repository name — a fork under another name gets working links
+with no edit, and a user site (`<owner>.github.io`) gets no prefix — and
+`NEXT_PUBLIC_BASE_PATH` overrides it, including to an empty string for a custom domain
+at a root. `next.config.ts` re-exports whatever it resolves to, because the replay
+bundles are fetched by URL and Next prefixes links and assets but not fetches.
+
+To publish a new measurement: run the pipeline on `main`, commit the result files
+and `manifest.json`, then bring them onto this branch. Nothing else has to change —
+the page, the pickers, and the copy are all derived from the manifest.
 
 ## Source documents
 

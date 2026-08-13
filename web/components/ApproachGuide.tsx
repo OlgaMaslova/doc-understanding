@@ -49,7 +49,7 @@ const MECHANISM: Record<string, { how: string; bill: string }> = {
 };
 
 interface Props {
-  /** Same shape whether it came from the manifest or the presets dump. */
+  /** As the manifest records them. */
   arms: Manifest["arms"];
 }
 

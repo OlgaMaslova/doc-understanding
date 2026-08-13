@@ -2,24 +2,22 @@ import Link from "next/link";
 
 import { ApproachGuide } from "@/components/ApproachGuide";
 import { Methodology } from "@/components/Methodology";
-import { RunEvals } from "@/components/RunEvals";
-import { loadPresets } from "@/lib/presets";
+import { RunItYourself } from "@/components/RunItYourself";
 import { loadManifestIfPresent } from "@/lib/results";
 
 /**
- * The reference page: what the approaches are, how a grade was decided, and how to
- * run the whole thing from a terminal.
+ * The reference page: what the approaches are, how a grade was decided, and where to
+ * go to run the whole thing.
  *
  * Split out of the main page because it answers questions a reader has at a
- * different time. The main page is a choice — run something, or read what has been
- * run — and three screens of explanation sitting under that choice made it look like
- * reading material with a control panel attached. Someone who wants to know what
- * "extract then query" actually is, or why a cell is graded `hallucinated` rather
- * than `incorrect`, comes looking; they should find a page, not a scroll position.
+ * different time. Someone who wants to know what "extract then query" actually is, or
+ * why a cell is graded `hallucinated` rather than `incorrect`, comes looking; they
+ * should find a page, not a scroll position.
  *
- * Everything here reads from the presets dump first and the manifest second, so the
- * page is complete on a clone that has never run anything — which is exactly when
- * someone is most likely to be reading it.
+ * Everything here comes out of the manifest, which this branch commits along with the
+ * results it describes. The local copy of the site can also ask the pipeline directly
+ * — that is how it stays complete on a clone that has never run anything — but a
+ * static build has no pipeline to ask and no need to: the measurements are right here.
  */
 export const metadata = {
   title: "How it works — Document Understanding, Measured",
@@ -28,14 +26,11 @@ export const metadata = {
 };
 
 export default async function HowItWorksPage() {
-  const [manifest, presets] = await Promise.all([
-    loadManifestIfPresent(),
-    loadPresets(),
-  ]);
+  const manifest = await loadManifestIfPresent();
 
-  const arms = manifest?.arms.length ? manifest.arms : presets.arms;
-  const grades = manifest?.grades.length ? manifest.grades : presets.grades;
-  const credit = manifest?.credit ?? presets.credit;
+  const arms = manifest?.arms ?? [];
+  const grades = manifest?.grades ?? [];
+  const credit = manifest?.credit;
 
   return (
     <main className="mx-auto max-w-7xl px-5 py-10 sm:px-8">
@@ -60,22 +55,23 @@ export default async function HowItWorksPage() {
         <ApproachGuide arms={arms} />
       ) : (
         <p className="mt-10 max-w-3xl text-sm leading-relaxed text-text-dim">
-          The approach list comes from the pipeline, and this copy of the site cannot
-          reach it. Clone the repository to see it.
+          The approach list comes from{" "}
+          <code className="text-text-dim">results/manifest.json</code>, and this build
+          was made without one. Clone the repository to see it.
         </p>
       )}
 
-      {grades.length ? (
+      {grades.length && credit ? (
         <div className="mt-14 border-t border-border pt-10">
           <Methodology grades={grades} credit={credit} />
         </div>
       ) : null}
 
       {/* The loudest break on the page. "You can run this" is the claim the whole
-          project rests on, and the instructions for doing it should not read as one
-          more reference subsection after the grading rubric. */}
+          project rests on, and where to do it should not read as one more reference
+          subsection after the grading rubric. */}
       <div className="mt-20 border-t-2 border-border-strong pt-12">
-        <RunEvals />
+        <RunItYourself />
       </div>
 
       <div className="mt-14 border-t border-border pt-6">

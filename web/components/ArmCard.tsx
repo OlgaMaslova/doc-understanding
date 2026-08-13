@@ -6,7 +6,17 @@ import { ARM_COLOR, GRADE_COLOR, seconds, tokens, usd } from "@/lib/format";
 import type { ArmId, CostBreakdown, GradeId, UsageBreakdown } from "@/lib/types";
 
 export interface ArmRunState {
-  status: "waiting" | "streaming" | "done" | "failed";
+  /**
+   * Four ways to have no answer, and they are not interchangeable:
+   *
+   * `waiting` — the recording has not arrived yet. `missing` — it is not in the
+   * recording at all, because the run that produced it was scoped; a scoped run
+   * leaves holes in the matrix, and a card that says "Loading…" forever is the wrong
+   * way to show one. `failed` — the arm itself errored during the run, which is a
+   * finding about the arm. `unavailable` — the recording exists and could not be
+   * fetched, which is a fact about this page and says nothing about the arm.
+   */
+  status: "waiting" | "missing" | "done" | "failed" | "unavailable";
   text: string;
   latency_ms?: number;
   ttft_ms?: number;
@@ -88,15 +98,12 @@ function noteEntries(notes: Record<string, unknown>): [string, string][] {
 export function ArmCard({ arm, state, place }: Props) {
   const bodyRef = useRef<HTMLDivElement>(null);
 
-  // Keep the newest text in view while streaming, but never fight a reader who
-  // has scrolled up to read something.
+  // A new answer scrolls its card back to the top. Answers differ in length by an
+  // order of magnitude, and a card left mid-scroll from the previous question opens
+  // on the middle of a sentence.
   useEffect(() => {
-    const el = bodyRef.current;
-    if (!el || state.status !== "streaming") return;
-    const atBottom =
-      el.scrollHeight - el.scrollTop - el.clientHeight < 40;
-    if (atBottom) el.scrollTop = el.scrollHeight;
-  }, [state.text, state.status]);
+    if (bodyRef.current) bodyRef.current.scrollTop = 0;
+  }, [state.text]);
 
   const color = ARM_COLOR[arm.id];
   const cacheRead = state.usage?.cache_read_tokens ?? 0;
@@ -128,17 +135,23 @@ export function ArmCard({ arm, state, place }: Props) {
         className="flex-1 overflow-y-auto px-3 py-2 text-[13px] leading-relaxed text-text-dim"
       >
         {state.status === "waiting" ? (
-          <p className="text-text-faint">Waiting…</p>
+          <p className="text-text-faint">Loading the recorded answer…</p>
+        ) : state.status === "missing" ? (
+          <p className="text-text-faint">
+            Nothing recorded for this approach on this question — the run that produced
+            these results did not include the cell.
+          </p>
         ) : state.status === "failed" ? (
           <p className="text-[#d1382a]">
             This arm failed on this question: {state.error}
           </p>
-        ) : (
-          <p
-            className={`whitespace-pre-wrap ${state.status === "streaming" ? "caret" : ""}`}
-          >
-            {state.text}
+        ) : state.status === "unavailable" ? (
+          <p className="text-text-faint">
+            The recorded answers for this document could not be loaded. The grades and
+            costs below were measured; only the answer text is missing.
           </p>
+        ) : (
+          <p className="whitespace-pre-wrap">{state.text}</p>
         )}
       </div>
 

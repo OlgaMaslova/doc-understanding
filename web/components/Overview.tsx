@@ -5,13 +5,12 @@ import { groupApproaches, numberWord } from "@/lib/approaches";
 import type { GradeId, Manifest } from "@/lib/types";
 
 /**
- * The setup, stated once, above the fork.
+ * The setup, stated once, before the comparison.
  *
  * This was three numbered steps — pick a question, watch the answers, read the
  * charts — and it was wrong twice over. Only the first was something a reader does;
  * the other two were the page describing its own output back to itself, numbered as
- * if they were instructions. And all three described the *results* branch, so the
- * choice underneath them arrived unexplained.
+ * if they were instructions.
  *
  * What has to be true before that choice makes sense is the experiment: what is
  * being compared, over what, asked what, measured how. Four stat tiles, and the
@@ -28,10 +27,10 @@ interface Props {
   /**
    * The documents available to ask, from the catalogue rather than the manifest.
    *
-   * This sits above the fork, so it describes what the project can do — and a
-   * document you have fetched but not measured is still one you can pick and run.
-   * Describing only the measured ones understated the page on a fresh clone to
-   * exactly nothing.
+   * This describes what the project can do rather than what this deployment
+   * happens to hold — a document that has been fetched but not measured is still
+   * one the pipeline can run. Describing only the measured ones understates the
+   * experiment to whatever the last run's scope was.
    */
   docs: { domain: string; tokens: number }[];
   /** Questions per document, when the preset set is known. Zero hides the figure. */
