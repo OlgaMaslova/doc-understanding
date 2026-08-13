@@ -8,6 +8,20 @@ in the CLI commands and env vars below.)
 Ask a question of a document, watch six extraction strategies answer it side by
 side, and see exactly what each one cost you.
 
+## Look at it first
+
+**[olgamaslova.github.io/doc-understanding](https://olgamaslova.github.io/doc-understanding/)**
+
+The committed measurements, deployed as a static page: pick a question, read every
+approach's answer side by side, and see the cost and accuracy charts. Nothing to
+install, no keys, and it spends nothing — every answer was measured once and is
+replayed from a recording.
+
+That deployment is the [`static-pages`](../../tree/static-pages) branch, which is this
+repository with the in-browser run flow removed, since a static host has no pipeline
+to run and no key to run it with. Everything below is about running it yourself, which
+is the part the page cannot do for you.
+
 ## Quick start
 
 ```sh
