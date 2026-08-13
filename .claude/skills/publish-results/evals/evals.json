@@ -1,0 +1,37 @@
+{
+  "skill_name": "publish-results",
+  "notes": "Runs go against a throwaway fixture repo (bare local origin, main and static-pages diverged the same way the real branches are) so a test can never push to GitHub. Build one with scratchpad/make-fixture.sh; grade with scratchpad/grade.py.",
+  "evals": [
+    {
+      "id": 1,
+      "name": "publish-new-measurement",
+      "prompt": "just finished measuring edgar-contract with opus — publish it so it's on the site",
+      "expected_output": "results/ and data/docs/ synced from main onto static-pages, including removal of a result set main deleted; a commit naming the document and model; pushed; no code files touched; no merge of main; tree back on main.",
+      "files": [],
+      "assertions": [
+        "New result sets are on static-pages (edgar-contract.claude-opus-5, form-10k.claude-sonnet-5)",
+        "New document metadata came along (data/docs/form-10k.json)",
+        "Superseded result set deleted on main was removed here too (arxiv-paper.claude-haiku-4-5)",
+        "Static-branch code was not overwritten with main's version",
+        "Only results/ and data/docs/ were committed",
+        "No merge of main into static-pages",
+        "Commit message names the document and model published",
+        "Pushed: origin/static-pages matches the local branch",
+        "Working tree left on the branch it started on (main), and clean"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "already-published",
+      "prompt": "the site looks like it's showing old numbers, can you push the latest results live?",
+      "expected_output": "Recognizes that static-pages already carries these measurements: no commit, no push, and it says so plainly rather than manufacturing work.",
+      "files": [],
+      "assertions": [
+        "No commit was created: static-pages is still at its original tip",
+        "Nothing was pushed: origin/static-pages unchanged",
+        "No empty commit and no reset gymnastics in the reflog",
+        "Working tree left on the branch it started on (main), and clean"
+      ]
+    }
+  ]
+}
