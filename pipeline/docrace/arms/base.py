@@ -192,8 +192,10 @@ def context_block(document: str, *, cache: bool = False) -> list[dict]:
     """The document as a content block, optionally cached.
 
     Caching is a cost transform on identical tokens, not a different strategy:
-    arms 1 and 2 send byte-identical prompts and differ only in whether this
-    block carries a cache breakpoint.
+    arms 1 and 2 send the same document under the same instructions and differ in
+    whether this block carries a cache breakpoint. Arm 2 also carries a one-line
+    cache-lifetime marker, which is what keeps its two variants from sharing a
+    single cache entry — see `cached_context._lifetime_marker`.
     """
     block: dict[str, Any] = {
         "type": "text",

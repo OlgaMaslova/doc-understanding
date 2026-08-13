@@ -550,6 +550,23 @@ def precompute_doc(
         f"${spend:.2f} in queries + ${fixed:.2f} in indexing"
     )
 
+    # An arm that reads a cache it never wrote reports a $0 intercept, and $0 reads
+    # as "warming this cache is free" rather than "this run did not measure it".
+    # The usual cause is a still-live entry from an earlier run of the same arm —
+    # re-run it outside the lifetime, or wait it out, to price the warm.
+    for arm in arms_pkg.ARM_ORDER:
+        e = payload["economics"].get(arm)
+        if (
+            arm in arms_pkg.ARM_CACHE_SHARED_ACROSS_QUERIES
+            and e
+            and e["cache_write_count"] == 0
+        ):
+            print(
+                f"  warn  {arm}: {e['cache_read_queries']}/{e['n']} queries read a "
+                "cache this run never wrote — its $0.00 fixed cost is unmeasured, "
+                "not free"
+            )
+
 
 
 def provenance_of(data: dict[str, Any], arms: int, questions: int) -> dict[str, Any]:

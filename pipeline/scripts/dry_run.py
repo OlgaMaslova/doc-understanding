@@ -323,10 +323,32 @@ def main() -> None:
         )
         check(f"{ttl}: arm id records the lifetime", r2.arm.endswith(ttl))
         check(f"{ttl}: notes record cache state", "cache_hit" in r2.notes)
+    five_m, one_h = stub.requests[-2], stub.requests[-1]
+
+    def _document(req: dict) -> str:
+        return next(
+            b.get("text", "")
+            for b in req["system"]
+            if b.get("text", "").startswith("<document>")
+        )
+
+    def _cache_key(req: dict) -> str:
+        # The cache is keyed on the bytes of the prefix, so that is what has to
+        # differ — every system block, since the breakpoint sits on the last one.
+        return "".join(b.get("text", "") for b in req["system"])
+
     check(
-        "the two variants send identical prompt text",
-        stub.requests[-1]["system"][1]["text"]
-        == stub.requests[-2]["system"][1]["text"],
+        "the two variants send the same document",
+        _document(five_m) == _document(one_h),
+    )
+    check(
+        # The variants used to send byte-identical prompts, which meant one cache
+        # entry between them: whichever ran second read the first one's still-live
+        # entry, was never billed a write, and reported its warm as costing $0 —
+        # the y-intercept the cost chart is built on. They now carry a lifetime
+        # marker so each keys its own entry and pays its own warm.
+        "the two variants cache under different keys",
+        _cache_key(five_m) != _cache_key(one_h),
     )
 
     print("\narm 3 — naive rag")

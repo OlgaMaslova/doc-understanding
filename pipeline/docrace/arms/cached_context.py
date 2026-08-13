@@ -2,13 +2,15 @@
 
 The same tokens as arm 1 at a different price. Caching is not a retrieval
 strategy and presenting it as a peer of the RAG arms would be wrong: accuracy is
-arm 1's accuracy, because the prompt is byte-identical. What changes is that
-after the first query the document bills at the cache-read rate, roughly a tenth
-of fresh input.
+arm 1's accuracy, because the prompt is the same document, whole, under the same
+instructions — one line of cache metadata apart (see `_lifetime_marker`). What
+changes is that after the first query the document bills at the cache-read rate,
+roughly a tenth of fresh input.
 
 This arm runs twice, once at each cache lifetime, because the cache TTL is the
 thing that actually breaks it and a footnote is a weak way to say so. The two
-variants send identical prompts and differ only in the `ttl` on the breakpoint:
+variants differ only in the `ttl` — on the breakpoint, and in the marker line
+that keeps their cache entries apart:
 
 - **5 minutes** writes at 1.25x input, the cheaper write. It holds only if
   queries keep arriving inside a five-minute window. Let the window lapse and the
@@ -60,6 +62,29 @@ def ttl_for(arm: str) -> str:
     raise ValueError(f"{arm!r} is not a cached-context arm")
 
 
+def _lifetime_marker(ttl: str) -> dict[str, Any]:
+    """One inert line naming the lifetime, so each variant caches separately.
+
+    Cache entries are keyed by the bytes of the prefix, not by the TTL asked for.
+    Without this line the two variants send the same prefix, so whichever runs
+    second finds the first one's entry still live, reads it, and is never billed
+    a write — and an arm that never warmed its own cache reports a $0 intercept,
+    which is the one number it exists to measure. Naming the lifetime inside the
+    prefix gives each variant its own entry and makes each pay its own warm.
+
+    Two constraints on what can go here. It has to be identical across the
+    questions of a run, or every question would miss and the arm would measure
+    fifteen writes instead of the read rate. And it has to sit before the
+    breakpoint: bytes after it are not part of the key.
+
+    A comment rather than a tag or a sentence, because everything in this prompt
+    that looks like content or instruction is one — `ANSWER_SYSTEM` tells the
+    model to answer from the material it is given, and a cache lifetime is not
+    part of the material.
+    """
+    return {"type": "text", "text": f"<!-- cache lifetime: {ttl} -->"}
+
+
 def _system(document: str, ttl: str) -> list[dict[str, Any]]:
     # The breakpoint sits on the last stable block. The question lives in
     # `messages`, after the breakpoint, so it never disturbs the cached prefix.
@@ -68,6 +93,7 @@ def _system(document: str, ttl: str) -> list[dict[str, Any]]:
     # at prefix lengths nothing ever asks for.
     return [
         {"type": "text", "text": ANSWER_SYSTEM},
+        _lifetime_marker(ttl),
         {
             "type": "text",
             "text": f"<document>\n{document}\n</document>",
