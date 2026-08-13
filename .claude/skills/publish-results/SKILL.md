@@ -95,7 +95,21 @@ Anything it lists exists on `static-pages` and not on `main`. Remove those with 
 git rm results/<the superseded set>.json
 ```
 
-### 5. Stop if there is nothing to publish
+It is also *directory-wide*, which is not the same as measurement-wide. Only `*.json` result sets and `manifest.json` belong in a publish; anything else `results/` happens to contain gets copied along with them. So look at what you just staged:
+
+```sh
+git diff --cached --name-only
+```
+
+In this repository that reliably catches one file: **`results/README.md`**, which the two branches disagree about on purpose — `static-pages` rewrote it to say the browser run flow is not on this branch, and `main`'s copy tells readers to run evals from the UI. Publishing `main`'s version puts those instructions on the branch built to have no such flow. If it appears in the list, put it back:
+
+```sh
+git checkout HEAD -- results/README.md
+```
+
+Same move for anything else non-measurement that shows up. This is not a one-off to remember: `git checkout main -- results` re-stages that README on *every* publish.
+
+### 5. Stop if there is nothing to publish — and look at what is there
 
 ```sh
 git diff --cached --stat
@@ -103,15 +117,19 @@ git diff --cached --stat
 
 Empty means the site is already showing these measurements. Say so and stop — do not make an empty commit, and do not push. "Already published" is a perfectly good outcome and the most common one when someone runs this twice.
 
+Not empty means read the list before committing, because this is the last point where a stray file is cheap to remove. Every entry should be a result set or `manifest.json`. If anything else is there — a README, a component, a script — take it out with `git checkout HEAD -- <path>` and say so when you report back.
+
 ### 6. Write a commit message that says what a reader gains
 
-The message should name the result sets that changed, because "sync results" tells a future reader nothing about what appeared on the site. The bundled script reads the old and new manifests and prints a summary:
+The message should name the result sets that changed, because "sync results" tells a future reader nothing about what appeared on the site. The bundled script diffs the staged result sets against the committed ones and prints a summary:
 
 ```sh
 python3 .claude/skills/publish-results/scripts/summarize.py
 ```
 
-It prints a subject line and a body listing each added, extended or removed `(document, model)` pair with its cell counts. Use it as written when it fits; extend the body when you know something it cannot, such as *why* a set was replaced. Then:
+It prints a subject line and a body with one bullet per `(document, model)` pair, and it distinguishes the kinds of change that look alike in a cell count: cells **added**, cells **re-run** (same count, different answers), costs **re-priced** (same answers, different rate card), and metadata-only stamps. Where an arm's fixed cost moved it says so on its own line, because that number is the y-intercept of the cost chart and a change in it is usually the news.
+
+Use it as written when it fits. Extend the body when you know something it cannot — it describes *what* changed and only you know *why*: a bug in an arm, a rate card that moved, a set withdrawn. Then:
 
 ```sh
 git commit -F <message-file>
@@ -125,6 +143,17 @@ Publish edgar-contract measured with claude-opus-5
   + edgar-contract · claude-opus-5 — 105/105 cells
   ~ arxiv-paper · claude-sonnet-5 — 104 → 105 cells
   - arxiv-paper · claude-haiku-4-5 — superseded
+```
+
+Or, for a publish that corrects numbers rather than adding them:
+
+```
+Publish cached_context_5m and cached_context_1h re-run across 2 result sets
+
+  ~ arxiv-paper · claude-sonnet-5 — 30 cells re-run in cached_context_5m, cached_context_1h; 105/105 cells
+      cached_context_1h fixed cost $0.0000 → $0.1009
+  ~ edgar-contract · claude-sonnet-5 — 30 cells re-run in cached_context_5m, cached_context_1h; 105/105 cells
+      cached_context_1h fixed cost $0.0000 → $0.2116
 ```
 
 ### 7. Push, which is what deploys
