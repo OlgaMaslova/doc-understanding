@@ -25,7 +25,7 @@
       "provenance": "arXiv:2312.00752v2 (Gu and Dao, 2023)",
       "model": "claude-sonnet-5",
       "file": "arxiv-paper.claude-sonnet-5.json",
-      "computed_at": "2026-08-13T11:25:41Z",
+      "computed_at": "2026-08-13T12:05:22Z",
       "provenance_state": "measured",
       "cells": 105,
       "cells_expected": 105
@@ -40,7 +40,7 @@
       "provenance": "SEC EDGAR \u2014 Ocuphire Pharma, Inc. (CIK 0001228627), Form 8-K filed 2021-06-23, Exhibit 10.1",
       "model": "claude-sonnet-5",
       "file": "edgar-contract.claude-sonnet-5.json",
-      "computed_at": "2026-08-12T13:18:50Z",
+      "computed_at": "2026-08-13T12:13:54Z",
       "provenance_state": "measured",
       "cells": 105,
       "cells_expected": 105
@@ -167,6 +167,6 @@
   },
   "model": "claude-opus-5, claude-sonnet-5",
   "pricing_snapshot": "2026-08-13",
-  "computed_at": "2026-08-13T11:33:47Z",
+  "computed_at": "2026-08-13T12:13:54Z",
   "partial": true
 }
