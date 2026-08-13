@@ -10,6 +10,10 @@ side, and see exactly what each one cost you.
 
 ## This branch is the static build
 
+**Deployed at
+[olgamaslova.github.io/doc-understanding](https://olgamaslova.github.io/doc-understanding/)**
+— that page is this branch, built.
+
 `static-pages` is the branch that gets deployed to GitHub Pages. It is `main` with
 the in-browser run flow removed: no `/api` routes, no shelling out to Python, no
 `RunPanel`. Everything the site shows is written at build time out of the committed
