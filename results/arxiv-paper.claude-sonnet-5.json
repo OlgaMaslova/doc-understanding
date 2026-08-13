@@ -8,8 +8,8 @@
   "tokens": 25061,
   "chars": 62611,
   "model": "claude-sonnet-5",
-  "pricing_snapshot": "2026-08-12",
-  "computed_at": "2026-08-12T09:25:22Z",
+  "pricing_snapshot": "2026-08-13",
+  "computed_at": "2026-08-13T11:25:41Z",
   "chunking": {
     "chunk_tokens": 500,
     "overlap_tokens": 50
@@ -349,9 +349,9 @@
       "cache_write_count": 0,
       "cache_write_shared": false,
       "cache_read_queries": 0,
-      "marginal_cost_usd": 0.087071,
-      "marginal_min_usd": 0.07785,
-      "marginal_max_usd": 0.101721,
+      "marginal_cost_usd": 0.05804733,
+      "marginal_min_usd": 0.0519,
+      "marginal_max_usd": 0.067814,
       "mean_latency_ms": 9888,
       "median_latency_ms": 8980,
       "max_latency_ms": 21737,
@@ -366,16 +366,16 @@
       "n": 15
     },
     "cached_context_5m": {
-      "fixed_cost_usd": 0.0945,
+      "fixed_cost_usd": 0.063,
       "indexing_cost_usd": 0.0,
-      "cache_write_cost_usd": 0.0945,
-      "cache_write_total_usd": 0.0945,
+      "cache_write_cost_usd": 0.063,
+      "cache_write_total_usd": 0.063,
       "cache_write_count": 1,
       "cache_write_shared": true,
       "cache_read_queries": 14,
-      "marginal_cost_usd": 0.018719,
-      "marginal_min_usd": 0.005205,
-      "marginal_max_usd": 0.036222,
+      "marginal_cost_usd": 0.01247933,
+      "marginal_min_usd": 0.00347,
+      "marginal_max_usd": 0.024148,
       "mean_latency_ms": 10708,
       "median_latency_ms": 10231,
       "max_latency_ms": 22146,
@@ -397,9 +397,9 @@
       "cache_write_count": 0,
       "cache_write_shared": true,
       "cache_read_queries": 15,
-      "marginal_cost_usd": 0.018296,
-      "marginal_min_usd": 0.009855,
-      "marginal_max_usd": 0.030231,
+      "marginal_cost_usd": 0.01219733,
+      "marginal_min_usd": 0.00657,
+      "marginal_max_usd": 0.020154,
       "mean_latency_ms": 9543,
       "median_latency_ms": 7849,
       "max_latency_ms": 18018,
@@ -421,9 +421,9 @@
       "cache_write_count": 0,
       "cache_write_shared": false,
       "cache_read_queries": 0,
-      "marginal_cost_usd": 0.0211184,
-      "marginal_min_usd": 0.01438566,
-      "marginal_max_usd": 0.03758526,
+      "marginal_cost_usd": 0.01407926,
+      "marginal_min_usd": 0.00959066,
+      "marginal_max_usd": 0.02505726,
       "mean_latency_ms": 8459,
       "median_latency_ms": 7705,
       "max_latency_ms": 18902,
@@ -445,9 +445,9 @@
       "cache_write_count": 0,
       "cache_write_shared": false,
       "cache_read_queries": 0,
-      "marginal_cost_usd": 0.02445286,
-      "marginal_min_usd": 0.01526334,
-      "marginal_max_usd": 0.03423961,
+      "marginal_cost_usd": 0.01648273,
+      "marginal_min_usd": 0.01036134,
+      "marginal_max_usd": 0.02300961,
       "mean_latency_ms": 8928,
       "median_latency_ms": 8803,
       "max_latency_ms": 14951,
@@ -465,17 +465,17 @@
       "fixed_cost_usd": 0.0,
       "indexing_cost_usd": 0.0,
       "cache_write_cost_usd": 0.0,
-      "cache_write_total_usd": 0.31065,
-      "cache_write_count": 14,
+      "cache_write_total_usd": 0.222685,
+      "cache_write_count": 15,
       "cache_write_shared": false,
-      "cache_read_queries": 12,
-      "marginal_cost_usd": 0.04333984,
-      "marginal_min_usd": 0.012387,
-      "marginal_max_usd": 0.1099029,
-      "mean_latency_ms": 19204,
+      "cache_read_queries": 13,
+      "marginal_cost_usd": 0.02897309,
+      "marginal_min_usd": 0.008258,
+      "marginal_max_usd": 0.0732686,
+      "mean_latency_ms": 19194,
       "median_latency_ms": 19032,
       "max_latency_ms": 44194,
-      "score": 0.9643,
+      "score": 0.9667,
       "score_by_type": {
         "needle": 1.0,
         "multi_hop": 1.0,
@@ -483,19 +483,19 @@
         "global": 1.0,
         "absent": 1.0
       },
-      "n": 14
+      "n": 15
     },
     "extract": {
-      "fixed_cost_usd": 0.678929,
+      "fixed_cost_usd": 0.638521,
       "indexing_cost_usd": 0.557705,
-      "cache_write_cost_usd": 0.121224,
-      "cache_write_total_usd": 0.121224,
+      "cache_write_cost_usd": 0.080816,
+      "cache_write_total_usd": 0.080816,
       "cache_write_count": 1,
       "cache_write_shared": true,
       "cache_read_queries": 14,
-      "marginal_cost_usd": 0.01135812,
-      "marginal_min_usd": 0.001773,
-      "marginal_max_usd": 0.0173532,
+      "marginal_cost_usd": 0.00757208,
+      "marginal_min_usd": 0.001182,
+      "marginal_max_usd": 0.0115688,
       "mean_latency_ms": 6735,
       "median_latency_ms": 6395,
       "max_latency_ms": 11199,
@@ -553,13 +553,13 @@
         "calls": 1
       },
       "cost": {
-        "input": 0.075675,
-        "output": 0.004995,
+        "input": 0.05045,
+        "output": 0.00333,
         "cache_read": 0.0,
         "cache_write": 0.0,
         "embed": 0.0,
         "rerank": 0.0,
-        "total": 0.08067
+        "total": 0.05378
       },
       "latency_ms": 5347,
       "ttft_ms": 2096,
@@ -617,13 +617,13 @@
         "calls": 1
       },
       "cost": {
-        "input": 0.075678,
-        "output": 0.004725,
+        "input": 0.050452,
+        "output": 0.00315,
         "cache_read": 0.0,
         "cache_write": 0.0,
         "embed": 0.0,
         "rerank": 0.0,
-        "total": 0.080403
+        "total": 0.053602
       },
       "latency_ms": 5615,
       "ttft_ms": 1784,
@@ -681,13 +681,13 @@
         "calls": 1
       },
       "cost": {
-        "input": 0.075681,
-        "output": 0.017055,
+        "input": 0.050454,
+        "output": 0.01137,
         "cache_read": 0.0,
         "cache_write": 0.0,
         "embed": 0.0,
         "rerank": 0.0,
-        "total": 0.092736
+        "total": 0.061824
       },
       "latency_ms": 11116,
       "ttft_ms": 7558,
@@ -749,13 +749,13 @@
         "calls": 1
       },
       "cost": {
-        "input": 0.075735,
-        "output": 0.01185,
+        "input": 0.05049,
+        "output": 0.0079,
         "cache_read": 0.0,
         "cache_write": 0.0,
         "embed": 0.0,
         "rerank": 0.0,
-        "total": 0.087585
+        "total": 0.05839
       },
       "latency_ms": 8980,
       "ttft_ms": 4731,
@@ -825,13 +825,13 @@
         "calls": 1
       },
       "cost": {
-        "input": 0.075702,
-        "output": 0.008595,
+        "input": 0.050468,
+        "output": 0.00573,
         "cache_read": 0.0,
         "cache_write": 0.0,
         "embed": 0.0,
         "rerank": 0.0,
-        "total": 0.084297
+        "total": 0.056198
       },
       "latency_ms": 8712,
       "ttft_ms": 3151,
@@ -893,13 +893,13 @@
         "calls": 1
       },
       "cost": {
-        "input": 0.075705,
-        "output": 0.011415,
+        "input": 0.05047,
+        "output": 0.00761,
         "cache_read": 0.0,
         "cache_write": 0.0,
         "embed": 0.0,
         "rerank": 0.0,
-        "total": 0.08712
+        "total": 0.05808
       },
       "latency_ms": 9233,
       "ttft_ms": 4689,
@@ -953,13 +953,13 @@
         "calls": 1
       },
       "cost": {
-        "input": 0.075702,
-        "output": 0.00762,
+        "input": 0.050468,
+        "output": 0.00508,
         "cache_read": 0.0,
         "cache_write": 0.0,
         "embed": 0.0,
         "rerank": 0.0,
-        "total": 0.083322
+        "total": 0.055548
       },
       "latency_ms": 6938,
       "ttft_ms": 3770,
@@ -1021,13 +1021,13 @@
         "calls": 1
       },
       "cost": {
-        "input": 0.075699,
-        "output": 0.014955,
+        "input": 0.050466,
+        "output": 0.00997,
         "cache_read": 0.0,
         "cache_write": 0.0,
         "embed": 0.0,
         "rerank": 0.0,
-        "total": 0.090654
+        "total": 0.060436
       },
       "latency_ms": 11845,
       "ttft_ms": 7595,
@@ -1097,13 +1097,13 @@
         "calls": 1
       },
       "cost": {
-        "input": 0.075702,
-        "output": 0.01866,
+        "input": 0.050468,
+        "output": 0.01244,
         "cache_read": 0.0,
         "cache_write": 0.0,
         "embed": 0.0,
         "rerank": 0.0,
-        "total": 0.094362
+        "total": 0.062908
       },
       "latency_ms": 14000,
       "ttft_ms": 8451,
@@ -1185,13 +1185,13 @@
         "calls": 1
       },
       "cost": {
-        "input": 0.075663,
-        "output": 0.01095,
+        "input": 0.050442,
+        "output": 0.0073,
         "cache_read": 0.0,
         "cache_write": 0.0,
         "embed": 0.0,
         "rerank": 0.0,
-        "total": 0.086613
+        "total": 0.057742
       },
       "latency_ms": 9594,
       "ttft_ms": 2482,
@@ -1333,13 +1333,13 @@
         "calls": 1
       },
       "cost": {
-        "input": 0.075669,
-        "output": 0.02286,
+        "input": 0.050446,
+        "output": 0.01524,
         "cache_read": 0.0,
         "cache_write": 0.0,
         "embed": 0.0,
         "rerank": 0.0,
-        "total": 0.098529
+        "total": 0.065686
       },
       "latency_ms": 17946,
       "ttft_ms": 1870,
@@ -1465,13 +1465,13 @@
         "calls": 1
       },
       "cost": {
-        "input": 0.075711,
-        "output": 0.02601,
+        "input": 0.050474,
+        "output": 0.01734,
         "cache_read": 0.0,
         "cache_write": 0.0,
         "embed": 0.0,
         "rerank": 0.0,
-        "total": 0.101721
+        "total": 0.067814
       },
       "latency_ms": 21737,
       "ttft_ms": 8664,
@@ -1525,13 +1525,13 @@
         "calls": 1
       },
       "cost": {
-        "input": 0.07566,
-        "output": 0.00219,
+        "input": 0.05044,
+        "output": 0.00146,
         "cache_read": 0.0,
         "cache_write": 0.0,
         "embed": 0.0,
         "rerank": 0.0,
-        "total": 0.07785
+        "total": 0.0519
       },
       "latency_ms": 5361,
       "ttft_ms": 2934,
@@ -1577,13 +1577,13 @@
         "calls": 1
       },
       "cost": {
-        "input": 0.075672,
-        "output": 0.00249,
+        "input": 0.050448,
+        "output": 0.00166,
         "cache_read": 0.0,
         "cache_write": 0.0,
         "embed": 0.0,
         "rerank": 0.0,
-        "total": 0.078162
+        "total": 0.052108
       },
       "latency_ms": 4148,
       "ttft_ms": 1872,
@@ -1665,13 +1665,13 @@
         "calls": 1
       },
       "cost": {
-        "input": 0.075696,
-        "output": 0.006345,
+        "input": 0.050464,
+        "output": 0.00423,
         "cache_read": 0.0,
         "cache_write": 0.0,
         "embed": 0.0,
         "rerank": 0.0,
-        "total": 0.082041
+        "total": 0.054694
       },
       "latency_ms": 7753,
       "ttft_ms": 2140,
@@ -1725,13 +1725,13 @@
         "calls": 1
       },
       "cost": {
-        "input": 7.5e-05,
-        "output": 0.00513,
+        "input": 5e-05,
+        "output": 0.00342,
         "cache_read": 0.0,
-        "cache_write": 0.0945,
+        "cache_write": 0.063,
         "embed": 0.0,
         "rerank": 0.0,
-        "total": 0.099705
+        "total": 0.06647
       },
       "latency_ms": 5269,
       "ttft_ms": 1860,
@@ -1784,13 +1784,13 @@
         "calls": 1
       },
       "cost": {
-        "input": 7.8e-05,
-        "output": 0.00306,
-        "cache_read": 0.00756,
+        "input": 5.2e-05,
+        "output": 0.00204,
+        "cache_read": 0.00504,
         "cache_write": 0.0,
         "embed": 0.0,
         "rerank": 0.0,
-        "total": 0.010698
+        "total": 0.007132
       },
       "latency_ms": 4811,
       "ttft_ms": 2092,
@@ -1855,13 +1855,13 @@
         "calls": 1
       },
       "cost": {
-        "input": 8.1e-05,
-        "output": 0.01341,
-        "cache_read": 0.00756,
+        "input": 5.4e-05,
+        "output": 0.00894,
+        "cache_read": 0.00504,
         "cache_write": 0.0,
         "embed": 0.0,
         "rerank": 0.0,
-        "total": 0.021051
+        "total": 0.014034
       },
       "latency_ms": 11182,
       "ttft_ms": 7506,
@@ -1926,13 +1926,13 @@
         "calls": 1
       },
       "cost": {
-        "input": 0.000135,
-        "output": 0.011535,
-        "cache_read": 0.00756,
+        "input": 9e-05,
+        "output": 0.00769,
+        "cache_read": 0.00504,
         "cache_write": 0.0,
         "embed": 0.0,
         "rerank": 0.0,
-        "total": 0.01923
+        "total": 0.01282
       },
       "latency_ms": 11509,
       "ttft_ms": 7331,
@@ -1997,13 +1997,13 @@
         "calls": 1
       },
       "cost": {
-        "input": 0.000102,
-        "output": 0.00591,
-        "cache_read": 0.00756,
+        "input": 6.8e-05,
+        "output": 0.00394,
+        "cache_read": 0.00504,
         "cache_write": 0.0,
         "embed": 0.0,
         "rerank": 0.0,
-        "total": 0.013572
+        "total": 0.009048
       },
       "latency_ms": 8338,
       "ttft_ms": 3284,
@@ -2064,13 +2064,13 @@
         "calls": 1
       },
       "cost": {
-        "input": 0.000105,
-        "output": 0.007455,
-        "cache_read": 0.00756,
+        "input": 7e-05,
+        "output": 0.00497,
+        "cache_read": 0.00504,
         "cache_write": 0.0,
         "embed": 0.0,
         "rerank": 0.0,
-        "total": 0.01512
+        "total": 0.01008
       },
       "latency_ms": 9307,
       "ttft_ms": 5624,
@@ -2127,13 +2127,13 @@
         "calls": 1
       },
       "cost": {
-        "input": 0.000102,
-        "output": 0.00975,
-        "cache_read": 0.00756,
+        "input": 6.8e-05,
+        "output": 0.0065,
+        "cache_read": 0.00504,
         "cache_write": 0.0,
         "embed": 0.0,
         "rerank": 0.0,
-        "total": 0.017412
+        "total": 0.011608
       },
       "latency_ms": 7489,
       "ttft_ms": 4018,
@@ -2206,13 +2206,13 @@
         "calls": 1
       },
       "cost": {
-        "input": 9.9e-05,
-        "output": 0.01788,
-        "cache_read": 0.00756,
+        "input": 6.6e-05,
+        "output": 0.01192,
+        "cache_read": 0.00504,
         "cache_write": 0.0,
         "embed": 0.0,
         "rerank": 0.0,
-        "total": 0.025539
+        "total": 0.017026
       },
       "latency_ms": 13357,
       "ttft_ms": 7710,
@@ -2297,13 +2297,13 @@
         "calls": 1
       },
       "cost": {
-        "input": 0.000102,
-        "output": 0.02856,
-        "cache_read": 0.00756,
+        "input": 6.8e-05,
+        "output": 0.01904,
+        "cache_read": 0.00504,
         "cache_write": 0.0,
         "embed": 0.0,
         "rerank": 0.0,
-        "total": 0.036222
+        "total": 0.024148
       },
       "latency_ms": 18537,
       "ttft_ms": 11245,
@@ -2404,13 +2404,13 @@
         "calls": 1
       },
       "cost": {
-        "input": 6.3e-05,
-        "output": 0.015195,
-        "cache_read": 0.00756,
+        "input": 4.2e-05,
+        "output": 0.01013,
+        "cache_read": 0.00504,
         "cache_write": 0.0,
         "embed": 0.0,
         "rerank": 0.0,
-        "total": 0.022818
+        "total": 0.015212
       },
       "latency_ms": 13000,
       "ttft_ms": 3256,
@@ -2555,13 +2555,13 @@
         "calls": 1
       },
       "cost": {
-        "input": 6.9e-05,
-        "output": 0.02592,
-        "cache_read": 0.00756,
+        "input": 4.6e-05,
+        "output": 0.01728,
+        "cache_read": 0.00504,
         "cache_write": 0.0,
         "embed": 0.0,
         "rerank": 0.0,
-        "total": 0.033549
+        "total": 0.022366
       },
       "latency_ms": 22146,
       "ttft_ms": 6454,
@@ -2690,13 +2690,13 @@
         "calls": 1
       },
       "cost": {
-        "input": 0.000111,
-        "output": 0.01941,
-        "cache_read": 0.00756,
+        "input": 7.4e-05,
+        "output": 0.01294,
+        "cache_read": 0.00504,
         "cache_write": 0.0,
         "embed": 0.0,
         "rerank": 0.0,
-        "total": 0.027081
+        "total": 0.018054
       },
       "latency_ms": 15699,
       "ttft_ms": 2086,
@@ -2745,13 +2745,13 @@
         "calls": 1
       },
       "cost": {
-        "input": 6e-05,
-        "output": 0.002415,
-        "cache_read": 0.00756,
+        "input": 4e-05,
+        "output": 0.00161,
+        "cache_read": 0.00504,
         "cache_write": 0.0,
         "embed": 0.0,
         "rerank": 0.0,
-        "total": 0.010035
+        "total": 0.00669
       },
       "latency_ms": 4158,
       "ttft_ms": 1992,
@@ -2812,13 +2812,13 @@
         "calls": 1
       },
       "cost": {
-        "input": 7.2e-05,
-        "output": 0.004695,
-        "cache_read": 0.00756,
+        "input": 4.8e-05,
+        "output": 0.00313,
+        "cache_read": 0.00504,
         "cache_write": 0.0,
         "embed": 0.0,
         "rerank": 0.0,
-        "total": 0.012327
+        "total": 0.008218
       },
       "latency_ms": 5587,
       "ttft_ms": 1669,
@@ -2871,13 +2871,13 @@
         "calls": 1
       },
       "cost": {
-        "input": 9.6e-05,
-        "output": 0.00327,
-        "cache_read": 0.00756,
+        "input": 6.4e-05,
+        "output": 0.00218,
+        "cache_read": 0.00504,
         "cache_write": 0.0,
         "embed": 0.0,
         "rerank": 0.0,
-        "total": 0.010926
+        "total": 0.007284
       },
       "latency_ms": 10231,
       "ttft_ms": 7566,
@@ -2934,13 +2934,13 @@
         "calls": 1
       },
       "cost": {
-        "input": 7.5e-05,
-        "output": 0.005415,
-        "cache_read": 0.00756,
+        "input": 5e-05,
+        "output": 0.00361,
+        "cache_read": 0.00504,
         "cache_write": 0.0,
         "embed": 0.0,
         "rerank": 0.0,
-        "total": 0.01305
+        "total": 0.0087
       },
       "latency_ms": 5289,
       "ttft_ms": 1785,
@@ -2993,13 +2993,13 @@
         "calls": 1
       },
       "cost": {
-        "input": 7.8e-05,
-        "output": 0.0033,
-        "cache_read": 0.00756,
+        "input": 5.2e-05,
+        "output": 0.0022,
+        "cache_read": 0.00504,
         "cache_write": 0.0,
         "embed": 0.0,
         "rerank": 0.0,
-        "total": 0.010938
+        "total": 0.007292
       },
       "latency_ms": 4545,
       "ttft_ms": 2077,
@@ -3060,13 +3060,13 @@
         "calls": 1
       },
       "cost": {
-        "input": 8.1e-05,
-        "output": 0.01029,
-        "cache_read": 0.00756,
+        "input": 5.4e-05,
+        "output": 0.00686,
+        "cache_read": 0.00504,
         "cache_write": 0.0,
         "embed": 0.0,
         "rerank": 0.0,
-        "total": 0.017931
+        "total": 0.011954
       },
       "latency_ms": 10015,
       "ttft_ms": 6041,
@@ -3131,13 +3131,13 @@
         "calls": 1
       },
       "cost": {
-        "input": 0.000135,
-        "output": 0.01293,
-        "cache_read": 0.00756,
+        "input": 9e-05,
+        "output": 0.00862,
+        "cache_read": 0.00504,
         "cache_write": 0.0,
         "embed": 0.0,
         "rerank": 0.0,
-        "total": 0.020625
+        "total": 0.01375
       },
       "latency_ms": 9949,
       "ttft_ms": 5382,
@@ -3214,13 +3214,13 @@
         "calls": 1
       },
       "cost": {
-        "input": 0.000102,
-        "output": 0.008985,
-        "cache_read": 0.00756,
+        "input": 6.8e-05,
+        "output": 0.00599,
+        "cache_read": 0.00504,
         "cache_write": 0.0,
         "embed": 0.0,
         "rerank": 0.0,
-        "total": 0.016647
+        "total": 0.011098
       },
       "latency_ms": 7729,
       "ttft_ms": 1837,
@@ -3277,13 +3277,13 @@
         "calls": 1
       },
       "cost": {
-        "input": 0.000105,
-        "output": 0.00747,
-        "cache_read": 0.00756,
+        "input": 7e-05,
+        "output": 0.00498,
+        "cache_read": 0.00504,
         "cache_write": 0.0,
         "embed": 0.0,
         "rerank": 0.0,
-        "total": 0.015135
+        "total": 0.01009
       },
       "latency_ms": 7339,
       "ttft_ms": 4181,
@@ -3348,13 +3348,13 @@
         "calls": 1
       },
       "cost": {
-        "input": 0.000102,
-        "output": 0.008295,
-        "cache_read": 0.00756,
+        "input": 6.8e-05,
+        "output": 0.00553,
+        "cache_read": 0.00504,
         "cache_write": 0.0,
         "embed": 0.0,
         "rerank": 0.0,
-        "total": 0.015957
+        "total": 0.010638
       },
       "latency_ms": 7849,
       "ttft_ms": 3517,
@@ -3423,13 +3423,13 @@
         "calls": 1
       },
       "cost": {
-        "input": 9.9e-05,
-        "output": 0.01839,
-        "cache_read": 0.00756,
+        "input": 6.6e-05,
+        "output": 0.01226,
+        "cache_read": 0.00504,
         "cache_write": 0.0,
         "embed": 0.0,
         "rerank": 0.0,
-        "total": 0.026049
+        "total": 0.017366
       },
       "latency_ms": 13681,
       "ttft_ms": 8988,
@@ -3498,13 +3498,13 @@
         "calls": 1
       },
       "cost": {
-        "input": 0.000102,
-        "output": 0.019485,
-        "cache_read": 0.00756,
+        "input": 6.8e-05,
+        "output": 0.01299,
+        "cache_read": 0.00504,
         "cache_write": 0.0,
         "embed": 0.0,
         "rerank": 0.0,
-        "total": 0.027147
+        "total": 0.018098
       },
       "latency_ms": 14025,
       "ttft_ms": 8906,
@@ -3597,13 +3597,13 @@
         "calls": 1
       },
       "cost": {
-        "input": 6.3e-05,
-        "output": 0.01155,
-        "cache_read": 0.00756,
+        "input": 4.2e-05,
+        "output": 0.0077,
+        "cache_read": 0.00504,
         "cache_write": 0.0,
         "embed": 0.0,
         "rerank": 0.0,
-        "total": 0.019173
+        "total": 0.012782
       },
       "latency_ms": 10757,
       "ttft_ms": 2326,
@@ -3748,13 +3748,13 @@
         "calls": 1
       },
       "cost": {
-        "input": 6.9e-05,
-        "output": 0.01977,
-        "cache_read": 0.00756,
+        "input": 4.6e-05,
+        "output": 0.01318,
+        "cache_read": 0.00504,
         "cache_write": 0.0,
         "embed": 0.0,
         "rerank": 0.0,
-        "total": 0.027399
+        "total": 0.018266
       },
       "latency_ms": 17513,
       "ttft_ms": 1800,
@@ -3851,13 +3851,13 @@
         "calls": 1
       },
       "cost": {
-        "input": 0.000111,
-        "output": 0.02256,
-        "cache_read": 0.00756,
+        "input": 7.4e-05,
+        "output": 0.01504,
+        "cache_read": 0.00504,
         "cache_write": 0.0,
         "embed": 0.0,
         "rerank": 0.0,
-        "total": 0.030231
+        "total": 0.020154
       },
       "latency_ms": 18018,
       "ttft_ms": 9315,
@@ -3906,13 +3906,13 @@
         "calls": 1
       },
       "cost": {
-        "input": 6e-05,
-        "output": 0.002235,
-        "cache_read": 0.00756,
+        "input": 4e-05,
+        "output": 0.00149,
+        "cache_read": 0.00504,
         "cache_write": 0.0,
         "embed": 0.0,
         "rerank": 0.0,
-        "total": 0.009855
+        "total": 0.00657
       },
       "latency_ms": 5189,
       "ttft_ms": 2492,
@@ -3969,13 +3969,13 @@
         "calls": 1
       },
       "cost": {
-        "input": 7.2e-05,
-        "output": 0.00438,
-        "cache_read": 0.00756,
+        "input": 4.8e-05,
+        "output": 0.00292,
+        "cache_read": 0.00504,
         "cache_write": 0.0,
         "embed": 0.0,
         "rerank": 0.0,
-        "total": 0.012012
+        "total": 0.008008
       },
       "latency_ms": 5116,
       "ttft_ms": 1847,
@@ -4040,13 +4040,13 @@
         "calls": 1
       },
       "cost": {
-        "input": 9.6e-05,
-        "output": 0.004635,
-        "cache_read": 0.00756,
+        "input": 6.4e-05,
+        "output": 0.00309,
+        "cache_read": 0.00504,
         "cache_write": 0.0,
         "embed": 0.0,
         "rerank": 0.0,
-        "total": 0.012291
+        "total": 0.008194
       },
       "latency_ms": 6140,
       "ttft_ms": 2045,
@@ -4099,13 +4099,13 @@
         "calls": 1
       },
       "cost": {
-        "input": 0.01182,
-        "output": 0.003105,
+        "input": 0.00788,
+        "output": 0.00207,
         "cache_read": 0.0,
         "cache_write": 0.0,
         "embed": 6.6e-07,
         "rerank": 0.0,
-        "total": 0.01492566
+        "total": 0.00995066
       },
       "latency_ms": 4510,
       "ttft_ms": 1949,
@@ -4175,13 +4175,13 @@
         "calls": 1
       },
       "cost": {
-        "input": 0.012375,
-        "output": 0.01044,
+        "input": 0.00825,
+        "output": 0.00696,
         "cache_read": 0.0,
         "cache_write": 0.0,
         "embed": 8.4e-07,
         "rerank": 0.0,
-        "total": 0.02281584
+        "total": 0.01521084
       },
       "latency_ms": 10983,
       "ttft_ms": 6591,
@@ -4247,13 +4247,13 @@
         "calls": 1
       },
       "cost": {
-        "input": 0.012543,
-        "output": 0.00927,
+        "input": 0.008362,
+        "output": 0.00618,
         "cache_read": 0.0,
         "cache_write": 0.0,
         "embed": 6.6e-07,
         "rerank": 0.0,
-        "total": 0.02181366
+        "total": 0.01454266
       },
       "latency_ms": 7705,
       "ttft_ms": 3933,
@@ -4323,13 +4323,13 @@
         "calls": 1
       },
       "cost": {
-        "input": 0.012339,
-        "output": 0.00495,
+        "input": 0.008226,
+        "output": 0.0033,
         "cache_read": 0.0,
         "cache_write": 0.0,
         "embed": 1.44e-06,
         "rerank": 0.0,
-        "total": 0.01729044
+        "total": 0.01152744
       },
       "latency_ms": 5052,
       "ttft_ms": 1716,
@@ -4391,13 +4391,13 @@
         "calls": 1
       },
       "cost": {
-        "input": 0.011061,
-        "output": 0.00645,
+        "input": 0.007374,
+        "output": 0.0043,
         "cache_read": 0.0,
         "cache_write": 0.0,
         "embed": 1.26e-06,
         "rerank": 0.0,
-        "total": 0.01751226
+        "total": 0.01167526
       },
       "latency_ms": 6917,
       "ttft_ms": 3730,
@@ -4463,13 +4463,13 @@
         "calls": 1
       },
       "cost": {
-        "input": 0.012324,
-        "output": 0.004875,
+        "input": 0.008216,
+        "output": 0.00325,
         "cache_read": 0.0,
         "cache_write": 0.0,
         "embed": 1.14e-06,
         "rerank": 0.0,
-        "total": 0.01720014
+        "total": 0.01146714
       },
       "latency_ms": 5662,
       "ttft_ms": 1915,
@@ -4531,13 +4531,13 @@
         "calls": 1
       },
       "cost": {
-        "input": 0.01323,
-        "output": 0.010095,
+        "input": 0.00882,
+        "output": 0.00673,
         "cache_read": 0.0,
         "cache_write": 0.0,
         "embed": 1.02e-06,
         "rerank": 0.0,
-        "total": 0.02332602
+        "total": 0.01555102
       },
       "latency_ms": 7730,
       "ttft_ms": 4650,
@@ -4619,13 +4619,13 @@
         "calls": 1
       },
       "cost": {
-        "input": 0.011424,
-        "output": 0.02616,
+        "input": 0.007616,
+        "output": 0.01744,
         "cache_read": 0.0,
         "cache_write": 0.0,
         "embed": 1.26e-06,
         "rerank": 0.0,
-        "total": 0.03758526
+        "total": 0.02505726
       },
       "latency_ms": 18902,
       "ttft_ms": 12859,
@@ -4715,13 +4715,13 @@
         "calls": 1
       },
       "cost": {
-        "input": 0.012384,
-        "output": 0.020835,
+        "input": 0.008256,
+        "output": 0.01389,
         "cache_read": 0.0,
         "cache_write": 0.0,
         "embed": 1.26e-06,
         "rerank": 0.0,
-        "total": 0.03322026
+        "total": 0.02214726
       },
       "latency_ms": 14605,
       "ttft_ms": 8064,
@@ -4815,13 +4815,13 @@
         "calls": 1
       },
       "cost": {
-        "input": 0.010101,
-        "output": 0.010725,
+        "input": 0.006734,
+        "output": 0.00715,
         "cache_read": 0.0,
         "cache_write": 0.0,
         "embed": 7.8e-07,
         "rerank": 0.0,
-        "total": 0.02082678
+        "total": 0.01388478
       },
       "latency_ms": 9345,
       "ttft_ms": 2381,
@@ -4943,13 +4943,13 @@
         "calls": 1
       },
       "cost": {
-        "input": 0.010311,
-        "output": 0.01527,
+        "input": 0.006874,
+        "output": 0.01018,
         "cache_read": 0.0,
         "cache_write": 0.0,
         "embed": 8.4e-07,
         "rerank": 0.0,
-        "total": 0.02558184
+        "total": 0.01705484
       },
       "latency_ms": 12079,
       "ttft_ms": 1897,
@@ -5051,13 +5051,13 @@
         "calls": 1
       },
       "cost": {
-        "input": 0.008871,
-        "output": 0.01131,
+        "input": 0.005914,
+        "output": 0.00754,
         "cache_read": 0.0,
         "cache_write": 0.0,
         "embed": 1.32e-06,
         "rerank": 0.0,
-        "total": 0.02018232
+        "total": 0.01345532
       },
       "latency_ms": 9993,
       "ttft_ms": 1699,
@@ -5111,13 +5111,13 @@
         "calls": 1
       },
       "cost": {
-        "input": 0.012234,
-        "output": 0.00231,
+        "input": 0.008156,
+        "output": 0.00154,
         "cache_read": 0.0,
         "cache_write": 0.0,
         "embed": 6.6e-07,
         "rerank": 0.0,
-        "total": 0.01454466
+        "total": 0.00969666
       },
       "latency_ms": 4111,
       "ttft_ms": 1771,
@@ -5171,13 +5171,13 @@
         "calls": 1
       },
       "cost": {
-        "input": 0.011745,
-        "output": 0.00264,
+        "input": 0.00783,
+        "output": 0.00176,
         "cache_read": 0.0,
         "cache_write": 0.0,
         "embed": 6.6e-07,
         "rerank": 0.0,
-        "total": 0.01438566
+        "total": 0.00959066
       },
       "latency_ms": 3971,
       "ttft_ms": 1745,
@@ -5243,13 +5243,13 @@
         "calls": 1
       },
       "cost": {
-        "input": 0.012279,
-        "output": 0.003285,
+        "input": 0.008186,
+        "output": 0.00219,
         "cache_read": 0.0,
         "cache_write": 0.0,
         "embed": 1.14e-06,
         "rerank": 0.0,
-        "total": 0.01556514
+        "total": 0.01037714
       },
       "latency_ms": 5325,
       "ttft_ms": 2458,
@@ -5303,13 +5303,13 @@
         "calls": 1
       },
       "cost": {
-        "input": 0.013299,
-        "output": 0.002715,
+        "input": 0.008866,
+        "output": 0.00181,
         "cache_read": 0.0,
         "cache_write": 0.0,
         "embed": 6.6e-07,
         "rerank": 0.0005606,
-        "total": 0.01657526
+        "total": 0.01123726
       },
       "latency_ms": 3995,
       "ttft_ms": 1603,
@@ -5398,13 +5398,13 @@
         "calls": 1
       },
       "cost": {
-        "input": 0.012897,
-        "output": 0.004425,
+        "input": 0.008598,
+        "output": 0.00295,
         "cache_read": 0.0,
         "cache_write": 0.0,
         "embed": 8.4e-07,
         "rerank": 0.00055805,
-        "total": 0.01788089
+        "total": 0.01210689
       },
       "latency_ms": 5492,
       "ttft_ms": 2050,
@@ -5501,13 +5501,13 @@
         "calls": 1
       },
       "cost": {
-        "input": 0.014487,
-        "output": 0.01554,
+        "input": 0.009658,
+        "output": 0.01036,
         "cache_read": 0.0,
         "cache_write": 0.0,
         "embed": 6.6e-07,
         "rerank": 0.0005832,
-        "total": 0.03061086
+        "total": 0.02060186
       },
       "latency_ms": 10729,
       "ttft_ms": 5500,
@@ -5604,13 +5604,13 @@
         "calls": 1
       },
       "cost": {
-        "input": 0.014397,
-        "output": 0.016935,
+        "input": 0.009598,
+        "output": 0.01129,
         "cache_read": 0.0,
         "cache_write": 0.0,
         "embed": 1.44e-06,
         "rerank": 0.00055915,
-        "total": 0.03189259
+        "total": 0.02144859
       },
       "latency_ms": 10957,
       "ttft_ms": 6553,
@@ -5719,13 +5719,13 @@
         "calls": 1
       },
       "cost": {
-        "input": 0.012846,
-        "output": 0.007485,
+        "input": 0.008564,
+        "output": 0.00499,
         "cache_read": 0.0,
         "cache_write": 0.0,
         "embed": 1.26e-06,
         "rerank": 0.00056435,
-        "total": 0.02089661
+        "total": 0.01411961
       },
       "latency_ms": 8091,
       "ttft_ms": 2871,
@@ -5814,13 +5814,13 @@
         "calls": 1
       },
       "cost": {
-        "input": 0.01311,
-        "output": 0.004005,
+        "input": 0.00874,
+        "output": 0.00267,
         "cache_read": 0.0,
         "cache_write": 0.0,
         "embed": 1.14e-06,
         "rerank": 0.00051155,
-        "total": 0.01762769
+        "total": 0.01192269
       },
       "latency_ms": 6391,
       "ttft_ms": 2683,
@@ -5905,13 +5905,13 @@
         "calls": 1
       },
       "cost": {
-        "input": 0.01413,
-        "output": 0.01362,
+        "input": 0.00942,
+        "output": 0.00908,
         "cache_read": 0.0,
         "cache_write": 0.0,
         "embed": 1.02e-06,
         "rerank": 0.0005769,
-        "total": 0.02832792
+        "total": 0.01907792
       },
       "latency_ms": 9522,
       "ttft_ms": 6649,
@@ -6032,13 +6032,13 @@
         "calls": 1
       },
       "cost": {
-        "input": 0.012735,
-        "output": 0.020955,
+        "input": 0.00849,
+        "output": 0.01397,
         "cache_read": 0.0,
         "cache_write": 0.0,
         "embed": 1.26e-06,
         "rerank": 0.00054835,
-        "total": 0.03423961
+        "total": 0.02300961
       },
       "latency_ms": 14182,
       "ttft_ms": 6958,
@@ -6159,13 +6159,13 @@
         "calls": 1
       },
       "cost": {
-        "input": 0.013614,
-        "output": 0.019575,
+        "input": 0.009076,
+        "output": 0.01305,
         "cache_read": 0.0,
         "cache_write": 0.0,
         "embed": 1.26e-06,
         "rerank": 0.0005583,
-        "total": 0.03374856
+        "total": 0.02268556
       },
       "latency_ms": 14951,
       "ttft_ms": 6426,
@@ -6278,13 +6278,13 @@
         "calls": 1
       },
       "cost": {
-        "input": 0.010686,
-        "output": 0.011985,
+        "input": 0.007124,
+        "output": 0.00799,
         "cache_read": 0.0,
         "cache_write": 0.0,
         "embed": 7.8e-07,
         "rerank": 0.0004633,
-        "total": 0.02313508
+        "total": 0.01557808
       },
       "latency_ms": 8803,
       "ttft_ms": 2352,
@@ -6421,13 +6421,13 @@
         "calls": 1
       },
       "cost": {
-        "input": 0.010986,
-        "output": 0.015345,
+        "input": 0.007324,
+        "output": 0.01023,
         "cache_read": 0.0,
         "cache_write": 0.0,
         "embed": 8.4e-07,
         "rerank": 0.00048385,
-        "total": 0.02681569
+        "total": 0.01803869
       },
       "latency_ms": 13511,
       "ttft_ms": 2223,
@@ -6548,13 +6548,13 @@
         "calls": 1
       },
       "cost": {
-        "input": 0.010701,
-        "output": 0.0192,
+        "input": 0.007134,
+        "output": 0.0128,
         "cache_read": 0.0,
         "cache_write": 0.0,
         "embed": 1.32e-06,
         "rerank": 0.0004819,
-        "total": 0.03038422
+        "total": 0.02041722
       },
       "latency_ms": 13416,
       "ttft_ms": 5962,
@@ -6635,13 +6635,13 @@
         "calls": 1
       },
       "cost": {
-        "input": 0.015816,
-        "output": 0.002595,
+        "input": 0.010544,
+        "output": 0.00173,
         "cache_read": 0.0,
         "cache_write": 0.0,
         "embed": 6.6e-07,
         "rerank": 0.0005496,
-        "total": 0.01896126
+        "total": 0.01282426
       },
       "latency_ms": 4349,
       "ttft_ms": 1922,
@@ -6726,13 +6726,13 @@
         "calls": 1
       },
       "cost": {
-        "input": 0.014526,
-        "output": 0.00534,
+        "input": 0.009684,
+        "output": 0.00356,
         "cache_read": 0.0,
         "cache_write": 0.0,
         "embed": 6.6e-07,
         "rerank": 0.0005667,
-        "total": 0.02043336
+        "total": 0.01381136
       },
       "latency_ms": 5234,
       "ttft_ms": 2664,
@@ -6809,13 +6809,13 @@
         "calls": 1
       },
       "cost": {
-        "input": 0.012756,
-        "output": 0.00195,
+        "input": 0.008504,
+        "output": 0.0013,
         "cache_read": 0.0,
         "cache_write": 0.0,
         "embed": 1.14e-06,
         "rerank": 0.0005562,
-        "total": 0.01526334
+        "total": 0.01036134
       },
       "latency_ms": 4302,
       "ttft_ms": 1844,
@@ -6888,13 +6888,13 @@
         "calls": 2
       },
       "cost": {
-        "input": 0.002832,
-        "output": 0.003075,
+        "input": 0.001888,
+        "output": 0.00205,
         "cache_read": 0.0,
-        "cache_write": 0.00648,
+        "cache_write": 0.00432,
         "embed": 0.0,
         "rerank": 0.0,
-        "total": 0.012387
+        "total": 0.008258
       },
       "latency_ms": 6397,
       "ttft_ms": 5224,
@@ -6958,13 +6958,13 @@
         "calls": 2
       },
       "cost": {
-        "input": 0.002835,
-        "output": 0.003945,
+        "input": 0.00189,
+        "output": 0.00263,
         "cache_read": 0.0,
-        "cache_write": 0.01140375,
+        "cache_write": 0.0076025,
         "embed": 0.0,
         "rerank": 0.0,
-        "total": 0.01818375
+        "total": 0.0121225
       },
       "latency_ms": 6438,
       "ttft_ms": 4545,
@@ -6991,9 +6991,133 @@
       }
     },
     "agentic::arxiv-paper-needle-3": {
-      "error": "invalid literal for int() with base 10: '800, '",
       "arm": "agentic",
-      "question_id": "arxiv-paper-needle-3"
+      "doc_id": "arxiv-paper",
+      "question_id": "arxiv-paper-needle-3",
+      "answer": "Now I have the complete list of Mamba model sizes reported in Table 1 (zero-shot downstream evaluations).\n\n**Mamba model sizes reported in the zero-shot downstream evaluation (Table 1):**\n\n- Mamba-130M (lines 884\u2013886)\n- Mamba-370M (lines 920\u2013922)\n- Mamba-790M (lines 944\u2013946)\n- Mamba-1.4B (lines 1016\u20131018)\n- Mamba-2.8B (lines 1088\u20131091)\n\nThese are compared against various baseline models of similar sizes (e.g., Hybrid H3, Pythia, RWKV, GPT-Neo, OPT, GPT-J) at each size tier, ranging up to GPT-J-6B, OPT-6.7B, Pythia-6.9B, and RWKV-7.4B for the largest tier (lines 1100\u20131146). The text at line 813 also notes that scaling laws (a related but distinct experiment) span \"\u2248125M to \u22481.3B parameters,\" but for the zero-shot downstream evaluation specifically, the five Mamba sizes tested are 130M, 370M, 790M, 1.4B, and 2.8B.",
+      "deltas": [
+        [
+          15535,
+          "Now"
+        ],
+        [
+          16133,
+          " I have the complete list of Mamba model sizes reported in Table 1 (zero-shot downstream evaluations).\n\n**Mamba model sizes reported in the zero-shot"
+        ],
+        [
+          16748,
+          " downstream evaluation (Table 1):**\n\n- Mamba-130M (lines 884\u2013886)\n- Mamba-370M (lines 920\u2013922)\n- Mamba-790M (lines 944\u2013946)\n- Mamba-1.4B (lines 1016\u20131"
+        ],
+        [
+          17187,
+          "018)\n- Mamba-2.8B (lines 1088\u20131091)\n\nThese are compared against various baseline models of similar sizes (e.g., Hybrid H3, Pythia, RWKV, GPT-"
+        ],
+        [
+          17772,
+          "Neo, OPT, GPT-J) at each size tier, ranging up to GPT-J-6B, OPT-6.7B, Pythia-6.9B, and RWKV-7.4B for the"
+        ],
+        [
+          18283,
+          " largest tier (lines 1100\u20131146). The text at line 813 also notes that scaling laws (a related but distinct experiment) span"
+        ],
+        [
+          18878,
+          " \"\u2248125M to \u22481.3B parameters,\" but for the zero-shot downstream evaluation specifically, the five Mamba sizes t"
+        ],
+        [
+          19044,
+          "ested are 130M, 370M, 790M, 1.4B, and 2.8B."
+        ]
+      ],
+      "usage": {
+        "input_tokens": 956,
+        "output_tokens": 898,
+        "cache_read_tokens": 18071,
+        "cache_write_5m_tokens": 6234,
+        "cache_write_1h_tokens": 0,
+        "embed_tokens": 0,
+        "rerank_tokens": 0,
+        "calls": 7
+      },
+      "cost": {
+        "input": 0.001912,
+        "output": 0.00898,
+        "cache_read": 0.0036142,
+        "cache_write": 0.015585,
+        "embed": 0.0,
+        "rerank": 0.0,
+        "total": 0.0300912
+      },
+      "latency_ms": 19056,
+      "ttft_ms": 15535,
+      "notes": {
+        "tool_calls": [
+          {
+            "iteration": 0,
+            "tool": "grep",
+            "input": {
+              "pattern": "zero-shot"
+            }
+          },
+          {
+            "iteration": 0,
+            "tool": "grep",
+            "input": {
+              "pattern": "\\b\\d+[MB] (parameter|model)"
+            }
+          },
+          {
+            "iteration": 1,
+            "tool": "read_lines",
+            "input": {
+              "start": 800,
+              "end": 850
+            }
+          },
+          {
+            "iteration": 2,
+            "tool": "read_lines",
+            "input": {
+              "start": 850,
+              "end": 960
+            }
+          },
+          {
+            "iteration": 3,
+            "tool": "read_lines",
+            "input": {
+              "start": 960,
+              "end": 1020
+            }
+          },
+          {
+            "iteration": 4,
+            "tool": "read_lines",
+            "input": {
+              "start": 1020,
+              "end": 1090
+            }
+          },
+          {
+            "iteration": 5,
+            "tool": "read_lines",
+            "input": {
+              "start": 1090,
+              "end": 1170
+            }
+          }
+        ],
+        "iterations": 7,
+        "hit_iteration_cap": false,
+        "retrieval": "model-driven grep and read over the raw document",
+        "cache_ttl": "5m",
+        "cache_breakpoints": 2,
+        "cache_read_tokens": 18071
+      },
+      "grade": {
+        "grade": "correct",
+        "rationale": "The answer lists exactly the five correct model sizes (130M, 370M, 790M, 1.4B, 2.8B) and correctly distinguishes them from the scaling-law range."
+      }
     },
     "agentic::arxiv-paper-multi_hop-1": {
       "arm": "agentic",
@@ -7045,13 +7169,13 @@
         "calls": 4
       },
       "cost": {
-        "input": 0.002904,
-        "output": 0.021345,
-        "cache_read": 0.0021702,
-        "cache_write": 0.02175,
+        "input": 0.001936,
+        "output": 0.01423,
+        "cache_read": 0.0014468,
+        "cache_write": 0.0145,
         "embed": 0.0,
         "rerank": 0.0,
-        "total": 0.0481692
+        "total": 0.0321128
       },
       "latency_ms": 21475,
       "ttft_ms": 17585,
@@ -7154,13 +7278,13 @@
         "calls": 3
       },
       "cost": {
-        "input": 0.002865,
-        "output": 0.011025,
-        "cache_read": 0.0004851,
-        "cache_write": 0.01876125,
+        "input": 0.00191,
+        "output": 0.00735,
+        "cache_read": 0.0003234,
+        "cache_write": 0.0125075,
         "embed": 0.0,
         "rerank": 0.0,
-        "total": 0.03313635
+        "total": 0.0220909
       },
       "latency_ms": 13000,
       "ttft_ms": 8903,
@@ -7259,13 +7383,13 @@
         "calls": 3
       },
       "cost": {
-        "input": 0.002868,
-        "output": 0.01053,
-        "cache_read": 0.0005682,
-        "cache_write": 0.0101925,
+        "input": 0.001912,
+        "output": 0.00702,
+        "cache_read": 0.0003788,
+        "cache_write": 0.006795,
         "embed": 0.0,
         "rerank": 0.0,
-        "total": 0.0241587
+        "total": 0.0161058
       },
       "latency_ms": 13331,
       "ttft_ms": 10938,
@@ -7352,13 +7476,13 @@
         "calls": 8
       },
       "cost": {
-        "input": 0.002895,
-        "output": 0.015735,
-        "cache_read": 0.0073158,
-        "cache_write": 0.02532,
+        "input": 0.00193,
+        "output": 0.01049,
+        "cache_read": 0.0048772,
+        "cache_write": 0.01688,
         "embed": 0.0,
         "rerank": 0.0,
-        "total": 0.0512658
+        "total": 0.0341772
       },
       "latency_ms": 21074,
       "ttft_ms": 18299,
@@ -7489,13 +7613,13 @@
         "calls": 6
       },
       "cost": {
-        "input": 0.00288,
-        "output": 0.022905,
-        "cache_read": 0.00303,
-        "cache_write": 0.02082,
+        "input": 0.00192,
+        "output": 0.01527,
+        "cache_read": 0.00202,
+        "cache_write": 0.01388,
         "embed": 0.0,
         "rerank": 0.0,
-        "total": 0.049635
+        "total": 0.03309
       },
       "latency_ms": 27234,
       "ttft_ms": 23695,
@@ -7614,13 +7738,13 @@
         "calls": 6
       },
       "cost": {
-        "input": 0.002883,
-        "output": 0.03531,
-        "cache_read": 0.007203,
-        "cache_write": 0.0424875,
+        "input": 0.001922,
+        "output": 0.02354,
+        "cache_read": 0.004802,
+        "cache_write": 0.028325,
         "embed": 0.0,
         "rerank": 0.0,
-        "total": 0.0878835
+        "total": 0.058589
       },
       "latency_ms": 37136,
       "ttft_ms": 31786,
@@ -7780,13 +7904,13 @@
         "calls": 4
       },
       "cost": {
-        "input": 0.002832,
-        "output": 0.01344,
-        "cache_read": 0.0017394,
-        "cache_write": 0.02526,
+        "input": 0.001888,
+        "output": 0.00896,
+        "cache_read": 0.0011596,
+        "cache_write": 0.01684,
         "embed": 0.0,
         "rerank": 0.0,
-        "total": 0.0432714
+        "total": 0.0288476
       },
       "latency_ms": 19032,
       "ttft_ms": 11884,
@@ -7946,13 +8070,13 @@
         "calls": 3
       },
       "cost": {
-        "input": 0.002832,
-        "output": 0.02223,
-        "cache_read": 0.0005355,
-        "cache_write": 0.04044,
+        "input": 0.001888,
+        "output": 0.01482,
+        "cache_read": 0.000357,
+        "cache_write": 0.02696,
         "embed": 0.0,
         "rerank": 0.0,
-        "total": 0.0660375
+        "total": 0.044025
       },
       "latency_ms": 22658,
       "ttft_ms": 9113,
@@ -8112,13 +8236,13 @@
         "calls": 6
       },
       "cost": {
-        "input": 0.002892,
-        "output": 0.036345,
-        "cache_read": 0.0120459,
-        "cache_write": 0.05862,
+        "input": 0.001928,
+        "output": 0.02423,
+        "cache_read": 0.0080306,
+        "cache_write": 0.03908,
         "embed": 0.0,
         "rerank": 0.0,
-        "total": 0.1099029
+        "total": 0.0732686
       },
       "latency_ms": 44194,
       "ttft_ms": 30295,
@@ -8252,13 +8376,13 @@
         "calls": 4
       },
       "cost": {
-        "input": 0.005859,
-        "output": 0.00576,
-        "cache_read": 0.0005049,
-        "cache_write": 0.006885,
+        "input": 0.003906,
+        "output": 0.00384,
+        "cache_read": 0.0003366,
+        "cache_write": 0.00459,
         "embed": 0.0,
         "rerank": 0.0,
-        "total": 0.0190089
+        "total": 0.0126726
       },
       "latency_ms": 14127,
       "ttft_ms": 13597,
@@ -8353,13 +8477,13 @@
         "calls": 4
       },
       "cost": {
-        "input": 0.002841,
-        "output": 0.007065,
-        "cache_read": 0.0012363,
-        "cache_write": 0.01209375,
+        "input": 0.001894,
+        "output": 0.00471,
+        "cache_read": 0.0008242,
+        "cache_write": 0.0080625,
         "embed": 0.0,
         "rerank": 0.0,
-        "total": 0.02323605
+        "total": 0.0154907
       },
       "latency_ms": 12889,
       "ttft_ms": 10989,
@@ -8442,13 +8566,13 @@
         "calls": 3
       },
       "cost": {
-        "input": 0.002859,
-        "output": 0.006885,
-        "cache_read": 0.0006015,
-        "cache_write": 0.01013625,
+        "input": 0.001906,
+        "output": 0.00459,
+        "cache_read": 0.000401,
+        "cache_write": 0.0067575,
         "embed": 0.0,
         "rerank": 0.0,
-        "total": 0.02048175
+        "total": 0.0136545
       },
       "latency_ms": 9880,
       "ttft_ms": 7085,
@@ -8518,13 +8642,13 @@
         "calls": 1
       },
       "cost": {
-        "input": 7.8e-05,
-        "output": 0.001695,
+        "input": 5.2e-05,
+        "output": 0.00113,
         "cache_read": 0.0,
-        "cache_write": 0.121224,
+        "cache_write": 0.080816,
         "embed": 0.0,
         "rerank": 0.0,
-        "total": 0.122997
+        "total": 0.081998
       },
       "latency_ms": 4012,
       "ttft_ms": 2216,
@@ -8569,13 +8693,13 @@
         "calls": 1
       },
       "cost": {
-        "input": 8.1e-05,
-        "output": 0.00141,
-        "cache_read": 0.0060612,
+        "input": 5.4e-05,
+        "output": 0.00094,
+        "cache_read": 0.0040408,
         "cache_write": 0.0,
         "embed": 0.0,
         "rerank": 0.0,
-        "total": 0.0075522
+        "total": 0.0050348
       },
       "latency_ms": 4350,
       "ttft_ms": 2407,
@@ -8632,13 +8756,13 @@
         "calls": 1
       },
       "cost": {
-        "input": 8.4e-05,
-        "output": 0.005055,
-        "cache_read": 0.0060612,
+        "input": 5.6e-05,
+        "output": 0.00337,
+        "cache_read": 0.0040408,
         "cache_write": 0.0,
         "embed": 0.0,
         "rerank": 0.0,
-        "total": 0.0112002
+        "total": 0.0074668
       },
       "latency_ms": 5894,
       "ttft_ms": 2349,
@@ -8711,13 +8835,13 @@
         "calls": 1
       },
       "cost": {
-        "input": 0.000138,
-        "output": 0.00759,
-        "cache_read": 0.0060612,
+        "input": 9.2e-05,
+        "output": 0.00506,
+        "cache_read": 0.0040408,
         "cache_write": 0.0,
         "embed": 0.0,
         "rerank": 0.0,
-        "total": 0.0137892
+        "total": 0.0091928
       },
       "latency_ms": 7652,
       "ttft_ms": 2203,
@@ -8798,13 +8922,13 @@
         "calls": 1
       },
       "cost": {
-        "input": 0.000105,
-        "output": 0.00861,
-        "cache_read": 0.0060612,
+        "input": 7e-05,
+        "output": 0.00574,
+        "cache_read": 0.0040408,
         "cache_write": 0.0,
         "embed": 0.0,
         "rerank": 0.0,
-        "total": 0.0147762
+        "total": 0.0098508
       },
       "latency_ms": 8553,
       "ttft_ms": 2100,
@@ -8853,13 +8977,13 @@
         "calls": 1
       },
       "cost": {
-        "input": 0.000108,
-        "output": 0.00252,
-        "cache_read": 0.0060612,
+        "input": 7.2e-05,
+        "output": 0.00168,
+        "cache_read": 0.0040408,
         "cache_write": 0.0,
         "embed": 0.0,
         "rerank": 0.0,
-        "total": 0.0086892
+        "total": 0.0057928
       },
       "latency_ms": 4760,
       "ttft_ms": 2595,
@@ -8912,13 +9036,13 @@
         "calls": 1
       },
       "cost": {
-        "input": 0.000105,
-        "output": 0.007215,
-        "cache_read": 0.0060612,
+        "input": 7e-05,
+        "output": 0.00481,
+        "cache_read": 0.0040408,
         "cache_write": 0.0,
         "embed": 0.0,
         "rerank": 0.0,
-        "total": 0.0133812
+        "total": 0.0089208
       },
       "latency_ms": 6870,
       "ttft_ms": 4149,
@@ -8979,13 +9103,13 @@
         "calls": 1
       },
       "cost": {
-        "input": 0.000102,
-        "output": 0.004935,
-        "cache_read": 0.0060612,
+        "input": 6.8e-05,
+        "output": 0.00329,
+        "cache_read": 0.0040408,
         "cache_write": 0.0,
         "embed": 0.0,
         "rerank": 0.0,
-        "total": 0.0110982
+        "total": 0.0073988
       },
       "latency_ms": 6395,
       "ttft_ms": 2724,
@@ -9062,13 +9186,13 @@
         "calls": 1
       },
       "cost": {
-        "input": 0.000105,
-        "output": 0.01017,
-        "cache_read": 0.0060612,
+        "input": 7e-05,
+        "output": 0.00678,
+        "cache_read": 0.0040408,
         "cache_write": 0.0,
         "embed": 0.0,
         "rerank": 0.0,
-        "total": 0.0163362
+        "total": 0.0108908
       },
       "latency_ms": 8320,
       "ttft_ms": 1856,
@@ -9145,13 +9269,13 @@
         "calls": 1
       },
       "cost": {
-        "input": 6.6e-05,
-        "output": 0.0069,
-        "cache_read": 0.0060612,
+        "input": 4.4e-05,
+        "output": 0.0046,
+        "cache_read": 0.0040408,
         "cache_write": 0.0,
         "embed": 0.0,
         "rerank": 0.0,
-        "total": 0.0130272
+        "total": 0.0086848
       },
       "latency_ms": 10106,
       "ttft_ms": 4203,
@@ -9240,13 +9364,13 @@
         "calls": 1
       },
       "cost": {
-        "input": 7.2e-05,
-        "output": 0.01122,
-        "cache_read": 0.0060612,
+        "input": 4.8e-05,
+        "output": 0.00748,
+        "cache_read": 0.0040408,
         "cache_write": 0.0,
         "embed": 0.0,
         "rerank": 0.0,
-        "total": 0.0173532
+        "total": 0.0115688
       },
       "latency_ms": 10029,
       "ttft_ms": 1939,
@@ -9343,13 +9467,13 @@
         "calls": 1
       },
       "cost": {
-        "input": 0.000114,
-        "output": 0.01095,
-        "cache_read": 0.0060612,
+        "input": 7.6e-05,
+        "output": 0.0073,
+        "cache_read": 0.0040408,
         "cache_write": 0.0,
         "embed": 0.0,
         "rerank": 0.0,
-        "total": 0.0171252
+        "total": 0.0114168
       },
       "latency_ms": 11199,
       "ttft_ms": 2035,
@@ -9398,13 +9522,13 @@
         "calls": 1
       },
       "cost": {
-        "input": 6.3e-05,
-        "output": 0.00192,
-        "cache_read": 0.0060612,
+        "input": 4.2e-05,
+        "output": 0.00128,
+        "cache_read": 0.0040408,
         "cache_write": 0.0,
         "embed": 0.0,
         "rerank": 0.0,
-        "total": 0.0080442
+        "total": 0.0053628
       },
       "latency_ms": 4460,
       "ttft_ms": 2250,
@@ -9453,13 +9577,13 @@
         "calls": 1
       },
       "cost": {
-        "input": 7.5e-05,
-        "output": 0.002415,
-        "cache_read": 0.0060612,
+        "input": 5e-05,
+        "output": 0.00161,
+        "cache_read": 0.0040408,
         "cache_write": 0.0,
         "embed": 0.0,
         "rerank": 0.0,
-        "total": 0.0085512
+        "total": 0.0057008
       },
       "latency_ms": 4503,
       "ttft_ms": 2186,
@@ -9504,13 +9628,13 @@
         "calls": 1
       },
       "cost": {
-        "input": 9.9e-05,
-        "output": 0.001515,
-        "cache_read": 0.0060612,
+        "input": 6.6e-05,
+        "output": 0.00101,
+        "cache_read": 0.0040408,
         "cache_write": 0.0,
         "embed": 0.0,
         "rerank": 0.0,
-        "total": 0.0076752
+        "total": 0.0051168
       },
       "latency_ms": 3933,
       "ttft_ms": 2218,

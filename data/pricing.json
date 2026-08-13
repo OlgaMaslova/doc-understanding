@@ -1,6 +1,6 @@
 {
-  "snapshot_date": "2026-08-12",
-  "note": "All prices USD per million tokens. Cache writes are priced by TTL: 1.25x input for the 5-minute cache, 2x input for the 1-hour cache. Cache reads are 0.1x input at either TTL. claude-sonnet-5 is priced at its sticker rate; an introductory rate ($2/$10 per MTok) applies through 2026-08-31, so real spend on it may come in below projections until then. context_window is input tokens; a document larger than it cannot run the full-context or cached approaches on that model. Update this file and re-run precompute when prices drift; the UI displays snapshot_date.",
+  "snapshot_date": "2026-08-13",
+  "note": "All prices USD per million tokens. Cache writes are priced by TTL: 1.25x input for the 5-minute cache, 2x input for the 1-hour cache. Cache reads are 0.1x input at either TTL. claude-sonnet-5 is $2/$10: the rate announced at launch as introductory through 2026-08-31 became the standard price, and the scheduled increase to $3/$15 was cancelled. context_window is input tokens; a document larger than it cannot run the full-context or cached approaches on that model. Update this file and re-run precompute when prices drift; the UI displays snapshot_date.",
   "models": {
     "claude-opus-5": {
       "label": "Claude Opus 5",
@@ -14,11 +14,11 @@
     "claude-sonnet-5": {
       "label": "Claude Sonnet 5",
       "context_window": 1000000,
-      "input_per_mtok": 3.0,
-      "output_per_mtok": 15.0,
-      "cache_write_5m_per_mtok": 3.75,
-      "cache_write_1h_per_mtok": 6.0,
-      "cache_read_per_mtok": 0.3
+      "input_per_mtok": 2.0,
+      "output_per_mtok": 10.0,
+      "cache_write_5m_per_mtok": 2.5,
+      "cache_write_1h_per_mtok": 4.0,
+      "cache_read_per_mtok": 0.2
     },
     "claude-haiku-4-5": {
       "label": "Claude Haiku 4.5",

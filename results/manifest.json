@@ -25,9 +25,9 @@
       "provenance": "arXiv:2312.00752v2 (Gu and Dao, 2023)",
       "model": "claude-sonnet-5",
       "file": "arxiv-paper.claude-sonnet-5.json",
-      "computed_at": "2026-08-12T09:25:22Z",
-      "provenance_state": "partial",
-      "cells": 104,
+      "computed_at": "2026-08-13T11:25:41Z",
+      "provenance_state": "measured",
+      "cells": 105,
       "cells_expected": 105
     },
     {
@@ -166,7 +166,7 @@
     "hallucinated": 0.0
   },
   "model": "claude-opus-5, claude-sonnet-5",
-  "pricing_snapshot": "2026-08-12",
-  "computed_at": "2026-08-12T13:18:50Z",
+  "pricing_snapshot": "2026-08-13",
+  "computed_at": "2026-08-13T11:33:47Z",
   "partial": true
 }
