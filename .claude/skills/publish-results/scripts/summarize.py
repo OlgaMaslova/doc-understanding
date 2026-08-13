@@ -7,9 +7,14 @@ what it replaced. All of that is in results/manifest.json, which records one ent
 per (document, model) result set with its cell counts — so the message can be
 derived rather than remembered.
 
-Run with results/ and data/docs/ already staged, on the static-pages branch:
+Run with results/ and data/docs/ already staged, on either branch:
 
     python3 .claude/skills/publish-results/scripts/summarize.py
+    python3 .claude/skills/publish-results/scripts/summarize.py --verb Record
+
+The default verb suits the publish commit on static-pages. Use `--verb Record` for
+the commit that lands a fresh run on main, where nothing is being published yet —
+the same manifest diff, described as what it is.
 
 Prints a commit message on stdout — subject line, blank line, one bullet per
 changed result set. Writes nothing and commits nothing; piping it into a file and
@@ -58,6 +63,11 @@ def label(entry: dict) -> str:
 
 
 def main() -> int:
+    verb = "Publish"
+    args = sys.argv[1:]
+    if args[:1] == ["--verb"] and len(args) > 1:
+        verb = args[1]
+
     old = by_pair(read_manifest("HEAD"))
     new = by_pair(read_manifest(None))
 
@@ -75,8 +85,7 @@ def main() -> int:
 
     if not (added or removed or changed):
         print(
-            "The staged manifest matches the committed one: these measurements are "
-            "already published.",
+            "The staged manifest matches the committed one: nothing new here.",
             file=sys.stderr,
         )
         return 1
@@ -86,21 +95,31 @@ def main() -> int:
     # because a subject line listing four documents is unreadable in a log.
     if len(added) == 1 and not removed:
         doc, model = added[0]
-        subject = f"Publish {doc} measured with {model}"
+        subject = f"{verb} {doc} measured with {model}"
     elif len(added) == 2:
         # Two is still readable in a log, and the document names are the part
         # someone scanning history is looking for.
-        subject = "Publish " + " and ".join(sorted(doc for doc, _ in added))
+        subject = f"{verb} " + " and ".join(sorted(doc for doc, _ in added))
     elif added:
-        subject = f"Publish {len(added)} new result sets"
+        subject = f"{verb} {len(added)} new result sets"
     elif changed and not removed:
-        subject = (
-            f"Publish more cells for {changed[0][0]}"
-            if len(changed) == 1
-            else f"Publish more cells for {len(changed)} result sets"
-        )
+        # A set that filled in is worth saying so: "104 → 105, now complete" is the
+        # news, and the reader should not have to open the manifest to find it.
+        completed = [
+            k
+            for k in changed
+            if new[k].get("cells") == new[k].get("cells_expected")
+            and old[k].get("cells") != old[k].get("cells_expected")
+        ]
+        if len(changed) == 1 and completed:
+            doc, model = changed[0]
+            subject = f"{verb} the completed matrix for {doc} · {model}"
+        elif len(changed) == 1:
+            subject = f"{verb} more cells for {changed[0][0]}"
+        else:
+            subject = f"{verb} more cells for {len(changed)} result sets"
     else:
-        subject = "Publish updated measurements"
+        subject = f"{verb} updated measurements"
 
     lines = [subject, ""]
     for key in sorted(added):
