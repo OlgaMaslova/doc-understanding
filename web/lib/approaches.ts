@@ -72,3 +72,8 @@ const WORDS = [
 export function numberWord(n: number): string {
   return WORDS[n] ?? String(n);
 }
+
+/** Sentence-case a derived word, since these often open a sentence. */
+export function cap(word: string): string {
+  return word.charAt(0).toUpperCase() + word.slice(1);
+}

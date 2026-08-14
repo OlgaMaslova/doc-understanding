@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ApproachGuide } from "@/components/ApproachGuide";
 import { Methodology } from "@/components/Methodology";
 import { RunItYourself } from "@/components/RunItYourself";
+import { cap, groupApproaches, numberWord } from "@/lib/approaches";
 import { loadManifestIfPresent } from "@/lib/results";
 
 /**
@@ -44,10 +45,13 @@ export default async function HowItWorksPage() {
         <h1 className="text-2xl font-medium leading-snug text-text sm:text-3xl">
           How it works
         </h1>
+        {/* Derived, like the count in the guide below it: the arm set depends on
+            the providers this build's results were measured with, and a hardcoded
+            number word goes stale the first time someone adds one. */}
         <p className="text-base leading-relaxed text-text-dim">
-          Seven ways to get a document in front of a model, one answer key, and a
-          judge. This page is the part you should be able to check before believing
-          any number the charts show you.
+          {cap(numberWord(groupApproaches(arms).length))} ways to get a document in
+          front of a model, one answer key, and a judge. This page is the part you
+          should be able to check before believing any number the charts show you.
         </p>
       </header>
 

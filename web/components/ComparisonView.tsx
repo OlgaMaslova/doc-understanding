@@ -85,8 +85,6 @@ function Field({
 }
 
 export function ComparisonView({ manifest, docs, catalogue }: Props) {
-  const armIds = useMemo(() => manifest.arms.map((a) => a.id), [manifest.arms]);
-
   // Result sets grouped by document. A document measured with two models is one
   // entry in the document picker and two in the model picker under it.
   const byDoc = useMemo(() => {
@@ -132,6 +130,29 @@ export function ComparisonView({ manifest, docs, catalogue }: Props) {
   );
   /** Every model this document has been measured with. */
   const variants = byDoc.get(doc.doc_id) ?? [doc];
+
+  /**
+   * The approaches this result set actually holds, described.
+   *
+   * `manifest.arms` is the union across every file on disk, and the cached-context
+   * arms differ by provider — a model whose provider picks the cache lifetime has
+   * one where Anthropic has two. Rendering the union would give whichever result
+   * set is selected a card, a chart series and a table row for an approach its
+   * model never ran, all of them permanently blank. The manifest records each
+   * result set's own arms; falling back to the union covers a manifest written
+   * before it did.
+   */
+  const arms = useMemo(() => {
+    const entry = manifest.docs.find(
+      (d) => d.doc_id === doc.doc_id && d.model === doc.model,
+    );
+    const measured = new Set<string>(entry?.arms ?? []);
+    return measured.size
+      ? manifest.arms.filter((a) => measured.has(a.id))
+      : manifest.arms;
+  }, [manifest.arms, manifest.docs, doc.doc_id, doc.model]);
+
+  const armIds = useMemo(() => arms.map((a) => a.id), [arms]);
 
   const [selectedQuestionId, setSelectedQuestionId] = useState(
     doc.questions[0]?.id ?? "",
@@ -663,7 +684,7 @@ export function ComparisonView({ manifest, docs, catalogue }: Props) {
         ) : null}
 
         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-          {manifest.arms.map((arm) => (
+          {arms.map((arm) => (
             <ArmCard
               key={arm.id}
               arm={arm}
@@ -767,7 +788,7 @@ export function ComparisonView({ manifest, docs, catalogue }: Props) {
             .
           </p>
         </div>
-        <CostChart economics={doc.economics} arms={manifest.arms} />
+        <CostChart economics={doc.economics} arms={arms} />
       </section>
 
       <section aria-labelledby="accuracy-heading" className="space-y-3">
@@ -781,7 +802,7 @@ export function ComparisonView({ manifest, docs, catalogue }: Props) {
           </p>
         </div>
         <Heatmap
-          arms={manifest.arms}
+          arms={arms}
           questionTypes={manifest.question_types}
           questions={doc.questions}
           cells={doc.cells}
@@ -815,7 +836,7 @@ export function ComparisonView({ manifest, docs, catalogue }: Props) {
               </tr>
             </thead>
             <tbody>
-              {manifest.arms.map((arm) => {
+              {arms.map((arm) => {
                 const e = doc.economics[arm.id];
                 return (
                   <tr key={arm.id}>

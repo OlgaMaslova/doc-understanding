@@ -1,11 +1,13 @@
 import Link from "next/link";
 
 import { ComparisonView } from "@/components/ComparisonView";
+import { ModelComparison } from "@/components/ModelComparison";
 import { Overview } from "@/components/Overview";
 import { RepoLink } from "@/components/RepoLink";
 import { loadCatalogue } from "@/lib/catalogue";
 import { loadDocLean, loadManifestIfPresent } from "@/lib/results";
 import { groupApproaches, numberWord } from "@/lib/approaches";
+import { compareModels } from "@/lib/models";
 
 /**
  * The page, on the branch that deploys as a static site.
@@ -37,6 +39,12 @@ export default async function Home() {
   const approaches = approachCount
     ? `${numberWord(approachCount)} extraction approaches`
     : "several extraction approaches";
+
+  // The model comparison, when the committed results support one: two models that
+  // have each measured the same document completely. Null on a build with one model,
+  // or none — which is why it is a section that appears rather than a section with
+  // placeholders in it.
+  const comparison = manifest ? compareModels(manifest, docs) : null;
 
   // Questions per document, for the overview. Read off a measured set rather than
   // asserted as fifteen: the set is data, and a copy of questions.yaml with a
@@ -102,6 +110,8 @@ export default async function Home() {
           questionsPerDoc={questionsPerDoc}
         />
       ) : null}
+
+      {comparison ? <ModelComparison comparison={comparison} /> : null}
 
       <p className="mt-6 text-sm text-text-dim">
         <Link

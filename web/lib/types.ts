@@ -5,8 +5,14 @@
  */
 
 /**
- * Six approaches, seven measured arms: caching is one approach run at both cache
- * lifetimes, because the TTL is the thing that breaks it.
+ * Every arm any model can run, in the pipeline's canonical order.
+ *
+ * Six approaches, seven measured arms on a model whose provider lets a request
+ * choose a cache lifetime: caching is one approach run at both lifetimes, because
+ * the TTL is the thing that breaks it. A provider that caches on its own runs
+ * `cached_context_auto` in place of both, so no single result set uses all eight
+ * ids — the cached variants are mutually exclusive, and each result set records
+ * which ones it holds.
  *
  * "Arm" is the pipeline's word and the JSON is keyed by it, so it stays in these
  * types. The UI says "approach"; `lib/approaches.ts` translates.
@@ -15,6 +21,7 @@ export const ARM_IDS = [
   "full_context",
   "cached_context_5m",
   "cached_context_1h",
+  "cached_context_auto",
   "naive_rag",
   "hybrid_rag",
   "agentic",
@@ -141,7 +148,13 @@ export interface DocResults {
   pricing_snapshot: string;
   computed_at: string;
   chunking: { chunk_tokens: number; overlap_tokens: number };
-  fixed_costs: Record<ArmId, { usage: UsageBreakdown; cost: CostBreakdown }>;
+  /**
+   * Partial because a result set only holds the arms its model runs: the cached
+   * variants are alternatives, so no file carries every id in `ARM_IDS`.
+   */
+  fixed_costs: Partial<
+    Record<ArmId, { usage: UsageBreakdown; cost: CostBreakdown }>
+  >;
   questions: Question[];
   economics: Partial<Record<ArmId, ArmEconomics>>;
   cells: Record<string, Cell | FailedCell>;
@@ -170,6 +183,13 @@ export interface Manifest {
     provenance: string;
     /** The model this result set was measured with. */
     model: string;
+    /**
+     * The arms this result set holds. Per result set, not per manifest: the arm
+     * a model measures caching with depends on its provider, so two files in one
+     * manifest can have different sets and the union would have the results view
+     * draw rows nothing was ever measured for.
+     */
+    arms: ArmId[];
     /** Filename of this result set inside results/, as written by the pipeline. */
     file: string;
     computed_at: string;
