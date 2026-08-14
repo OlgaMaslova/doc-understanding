@@ -21,12 +21,13 @@ from dataclasses import dataclass
 from typing import Any
 
 from . import arms as arms_pkg
+from .arms import cached_context
 from .chunking import CHUNK_TOKENS, chunk_document
 from .contextual import BATCH as CONTEXT_BATCH
 from .documents import BY_ID, load_text
 from .paths import DOCS
 from .grading import JUDGE_MODEL
-from .pricing import ARM_MODEL, INDEX_MODEL, Usage, price
+from .pricing import ARM_MODEL, INDEX_MODEL, Usage, cache_style_of, price
 
 # Output tokens per query. This has to include thinking, not just the visible
 # answer: thinking is on by default on this model and is billed at the output
@@ -111,24 +112,32 @@ def project(doc_id: str, questions: int) -> list[Projection]:
         )
     )
 
-    # Both cache lifetimes are measured, so both are projected. The per-query cost
-    # is identical — the cache-read rate does not depend on the TTL — and the only
-    # difference is the price of warming the cache.
-    for ttl, field in (("5m", "cache_write_5m_tokens"), ("1h", "cache_write_1h_tokens")):
-        out.append(
-            Projection(
-                f"cached_context_{ttl}",
-                cost(Usage(**{field: tokens})),
-                cost(
-                    Usage(
-                        cache_read_tokens=tokens,
-                        input_tokens=OVERHEAD_TOKENS,
-                        output_tokens=ANSWER_TOKENS,
-                    )
-                ),
-                questions,
-            )
+    # Whichever cache variants this model can actually run — both lifetimes when
+    # the request gets to choose one, otherwise the single provider-default arm.
+    # The per-query cost is identical across all of them (the cache-read rate does
+    # not depend on the lifetime); what differs is the price of warming the cache,
+    # which is where the auto variant's intercept goes to zero: that provider bills
+    # the first query's uncached remainder as ordinary input and charges no write
+    # premium, so there is no separate warm to project.
+    per_query_cached = cost(
+        Usage(
+            cache_read_tokens=tokens,
+            input_tokens=OVERHEAD_TOKENS,
+            output_tokens=ANSWER_TOKENS,
         )
+    )
+    cache_writes = {
+        "5m": "cache_write_5m_tokens",
+        "1h": "cache_write_1h_tokens",
+        "auto": None,
+    }
+    for ttl in cached_context.TTLS:
+        arm = cached_context.arm_id(ttl)
+        if arm not in arms_pkg.ARM_ORDER:
+            continue
+        field = cache_writes[ttl]
+        warm = cost(Usage(**{field: tokens})) if field else 0.0
+        out.append(Projection(arm, warm, per_query_cached, questions))
 
     out.append(
         Projection(
@@ -178,19 +187,26 @@ def project(doc_id: str, questions: int) -> list[Projection]:
     # a flat figure understates this arm by roughly threefold. With the prefix
     # cached, each turn reads everything before it and pays fresh only for the new
     # turn.
+    # A provider that caches automatically charges no write premium, so the same
+    # token flow carries no write line — matching what the arm actually records.
+    warms = cache_style_of(ARM_MODEL) == "explicit_ttl"
+
+    def write(tokens: int) -> dict[str, int]:
+        return {"cache_write_5m_tokens": tokens} if warms else {}
+
     history = AGENTIC_SEED_TOKENS
     agentic = Usage()
     for turn in range(AGENTIC_ITERATIONS):
         if turn == 0:
             agentic = agentic + Usage(
-                input_tokens=history, cache_write_5m_tokens=history, calls=1
+                input_tokens=history, calls=1, **write(history)
             )
         else:
             agentic = agentic + Usage(
                 cache_read_tokens=history - AGENTIC_TOKENS_PER_TURN,
                 input_tokens=AGENTIC_TOKENS_PER_TURN,
-                cache_write_5m_tokens=AGENTIC_TOKENS_PER_TURN,
                 calls=1,
+                **write(AGENTIC_TOKENS_PER_TURN),
             )
         history += AGENTIC_TOKENS_PER_TURN
     agentic = agentic + Usage(output_tokens=ANSWER_TOKENS + AGENTIC_ITERATIONS * 200)
@@ -312,17 +328,17 @@ def main() -> None:
             projections = [p for p in projections if p.arm in set(args.arm)]
         tokens = doc_tokens(doc_id)
         print(f"\n{doc_id}  ~{tokens:,} tokens  x {args.questions} questions")
-        print(f"  {'arm':16} {'indexing':>10} {'per query':>11} {'run total':>11}")
+        print(f"  {'arm':20} {'indexing':>10} {'per query':>11} {'run total':>11}")
         for p in projections:
             print(
-                f"  {p.arm:16} {p.fixed_usd:>10.4f} {p.per_query_usd:>11.5f} "
+                f"  {p.arm:20} {p.fixed_usd:>10.4f} {p.per_query_usd:>11.5f} "
                 f"{p.total_usd:>11.4f}"
             )
         subtotal = sum(p.total_usd for p in projections)
         judge = judge_cost(args.questions, arms=len(projections))
-        print(f"  {'arms subtotal':16} {'':>10} {'':>11} {subtotal:>11.4f}")
-        print(f"  {'grading':16} {'':>10} {'':>11} {judge:>11.4f}")
-        print(f"  {'document total':16} {'':>10} {'':>11} {subtotal + judge:>11.4f}")
+        print(f"  {'arms subtotal':20} {'':>10} {'':>11} {subtotal:>11.4f}")
+        print(f"  {'grading':20} {'':>10} {'':>11} {judge:>11.4f}")
+        print(f"  {'document total':20} {'':>10} {'':>11} {subtotal + judge:>11.4f}")
         grand += subtotal + judge
 
     print(f"\nprojected total for this run: ${grand:.2f}")

@@ -223,6 +223,11 @@ def run(*, doc_id: str, document: str, question_id: str, question: str) -> ArmRe
             started_at=t0,
             max_tokens=MAX_TOKENS,
             cache_ttl=CACHE_TTL,
+            # Scoped per question, not per document: each question starts a fresh
+            # conversation, so the prefix worth caching is this loop's own growing
+            # history. Sharing a scope across questions would let one question read
+            # another's turns and report a cache hit it never paid for.
+            cache_scope=f"{ARM}:{doc_id}:{question_id}",
         )
         refusal_guard(capture)
         total = total + capture.usage

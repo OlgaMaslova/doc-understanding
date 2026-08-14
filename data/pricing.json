@@ -1,9 +1,13 @@
 {
   "snapshot_date": "2026-08-13",
-  "note": "All prices USD per million tokens. Cache writes are priced by TTL: 1.25x input for the 5-minute cache, 2x input for the 1-hour cache. Cache reads are 0.1x input at either TTL. claude-sonnet-5 is $2/$10: the rate announced at launch as introductory through 2026-08-31 became the standard price, and the scheduled increase to $3/$15 was cancelled. context_window is input tokens; a document larger than it cannot run the full-context or cached approaches on that model. Update this file and re-run precompute when prices drift; the UI displays snapshot_date.",
+  "note": "All prices USD per million tokens. Anthropic cache writes are priced by TTL: 1.25x input for the 5-minute cache, 2x input for the 1-hour cache. Cache reads are 0.1x input at either TTL. claude-sonnet-5 is $2/$10: the rate announced at launch as introductory through 2026-08-31 became the standard price, and the scheduled increase to $3/$15 was cancelled. context_window is input tokens; a document larger than it cannot run the full-context or cached approaches on that model. Update this file and re-run precompute when prices drift; the UI displays snapshot_date.",
+  "note_snapshot_dates": "snapshot_date is when the Anthropic rates were last read. An entry may carry its own rates_snapshot_date when it was read on a different day; that one wins for that model. Adding a provider must never restate another provider's rates as freshly verified.",
+  "note_cache_styles": "cache is how the provider exposes prompt caching, and it decides which cached-context arms a model can run. 'explicit_ttl': the request chooses a lifetime, so both cached_context_5m and cached_context_1h are measurable, each paying its own write premium. 'auto': the provider caches every prompt automatically at one undisclosed lifetime with no write premium and no opt-out, so the two TTL variants collapse into cached_context_auto and there are no cache_write rates to quote. Arms that must not read a warm cache send a unique isolation key per request instead (see arms/openai_compat.py).",
   "models": {
     "claude-opus-5": {
       "label": "Claude Opus 5",
+      "provider": "anthropic",
+      "cache": "explicit_ttl",
       "context_window": 1000000,
       "input_per_mtok": 5.0,
       "output_per_mtok": 25.0,
@@ -13,6 +17,8 @@
     },
     "claude-sonnet-5": {
       "label": "Claude Sonnet 5",
+      "provider": "anthropic",
+      "cache": "explicit_ttl",
       "context_window": 1000000,
       "input_per_mtok": 2.0,
       "output_per_mtok": 10.0,
@@ -22,12 +28,25 @@
     },
     "claude-haiku-4-5": {
       "label": "Claude Haiku 4.5",
+      "provider": "anthropic",
+      "cache": "explicit_ttl",
       "context_window": 200000,
       "input_per_mtok": 1.0,
       "output_per_mtok": 5.0,
       "cache_write_5m_per_mtok": 1.25,
       "cache_write_1h_per_mtok": 2.0,
       "cache_read_per_mtok": 0.1
+    },
+    "deepseek-v4-flash": {
+      "label": "DeepSeek V4 Flash",
+      "provider": "fireworks",
+      "wire_model_id": "accounts/fireworks/models/deepseek-v4-flash",
+      "cache": "auto",
+      "rates_snapshot_date": "2026-08-14",
+      "context_window": 1048576,
+      "input_per_mtok": 0.14,
+      "output_per_mtok": 0.28,
+      "cache_read_per_mtok": 0.028
     }
   },
   "voyage": {

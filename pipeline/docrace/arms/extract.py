@@ -189,6 +189,10 @@ def run(
             }
         ],
         cache_ttl=CACHE_TTL,
+        # The record is byte-identical for every question about this document, so
+        # one scope per document lets question 2 onward read what question 1 warmed
+        # — the auto-caching analogue of the breakpoint above.
+        cache_scope=f"{ARM}:{doc_id}",
     )
     refusal_guard(capture)
     return result_from(

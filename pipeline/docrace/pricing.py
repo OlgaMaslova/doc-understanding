@@ -66,13 +66,54 @@ def snapshot_date() -> str:
     return pricing()["snapshot_date"]
 
 
-def model_rates(model: str) -> dict[str, float]:
+def model_rates(model: str) -> dict[str, Any]:
     rates = pricing()["models"].get(model)
     if rates is None:
         raise KeyError(
             f"{model} has no entry in {PRICING_FILE.name}; add one before pricing its usage"
         )
     return rates
+
+
+def model_snapshot_date(model: str) -> str:
+    """When this model's rates were read.
+
+    Per-model, because adding a provider means reading that provider's rate card
+    on the day you add it — and bumping the file's single date would silently
+    assert the other providers' rates were re-verified too. An entry without its
+    own date belongs to the file-level snapshot.
+    """
+    return model_rates(model).get("rates_snapshot_date") or snapshot_date()
+
+
+def provider_of(model: str) -> str:
+    """Which API serves this model. Absent means Anthropic, the original provider."""
+    return model_rates(model).get("provider", "anthropic")
+
+
+def wire_model_id(model: str) -> str:
+    """The id to send on the wire, which is not always the id we key on.
+
+    Fireworks model ids are paths (`accounts/fireworks/models/...`) and would
+    turn `results/<doc>.<model>.json` into a nested path, so the rate card keys
+    on a short name and carries the wire id beside it.
+    """
+    return model_rates(model).get("wire_model_id", model)
+
+
+def cache_style_of(model: str) -> str:
+    """How this model's provider exposes prompt caching.
+
+    Drives which cached-context arms exist for a run — see the `note_cache_styles`
+    entry in the rate card, and `arms.arms_for`.
+    """
+    style = model_rates(model).get("cache", "explicit_ttl")
+    if style not in ("explicit_ttl", "auto", "none"):
+        raise SystemExit(
+            f"{model} declares cache={style!r} in {PRICING_FILE.name}; expected "
+            "'explicit_ttl', 'auto', or 'none'."
+        )
+    return style
 
 
 @dataclass
@@ -188,13 +229,36 @@ def price(usage: Usage, model: str = ARM_MODEL) -> Cost:
     def per_mtok(tokens: int, rate: float) -> float:
         return (tokens / 1_000_000) * rate
 
+    def write_rate(tokens: int, field: str) -> float:
+        """Price a cache write, refusing to invent a rate for a provider without one.
+
+        An auto-caching provider bills the uncached remainder as ordinary input and
+        charges no write premium, so its entry carries no write rates at all. Zero
+        tokens is therefore free and correct. Non-zero tokens against a missing rate
+        means an arm attributed a write to a provider that cannot report one — and
+        defaulting that to $0 would print "warming this cache is free" as if it were
+        measured. Fail instead.
+        """
+        if not tokens:
+            return 0.0
+        rate = m.get(field)
+        if rate is None:
+            raise KeyError(
+                f"{model} recorded {tokens} {field.replace('_per_mtok', '')} tokens "
+                f"but has no {field} in {PRICING_FILE.name} (cache="
+                f"{m.get('cache', 'explicit_ttl')!r}). A provider that caches "
+                "automatically has no write premium to quote, so this usage cannot "
+                "be priced — the arm should be recording these as input tokens."
+            )
+        return per_mtok(tokens, rate)
+
     return Cost(
         input=per_mtok(usage.input_tokens, m["input_per_mtok"]),
         output=per_mtok(usage.output_tokens, m["output_per_mtok"]),
         cache_read=per_mtok(usage.cache_read_tokens, m["cache_read_per_mtok"]),
         cache_write=(
-            per_mtok(usage.cache_write_5m_tokens, m["cache_write_5m_per_mtok"])
-            + per_mtok(usage.cache_write_1h_tokens, m["cache_write_1h_per_mtok"])
+            write_rate(usage.cache_write_5m_tokens, "cache_write_5m_per_mtok")
+            + write_rate(usage.cache_write_1h_tokens, "cache_write_1h_per_mtok")
         ),
         embed=per_mtok(usage.embed_tokens, v["embed_per_mtok"]),
         rerank=per_mtok(usage.rerank_tokens, v["rerank_per_mtok"]),

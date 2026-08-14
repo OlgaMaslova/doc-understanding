@@ -24,6 +24,15 @@ entirely in how often you pay to warm the cache. Running both makes that
 visible: if the 5-minute variant re-writes partway through a fifteen-question
 run, the results record it, and the "Cache TTL" column in the arm table stops
 being an assertion.
+
+**Not every provider lets you choose.** A provider that caches automatically has
+one undisclosed lifetime, no way to opt out, and no write premium — so there is
+no TTL to vary and no warm to price separately. Those models run a third variant,
+`cached_context_auto`, and its cost curve is a genuinely different shape rather
+than a relabelled one: with no write premium the intercept sits at zero, so
+cached full context is cheaper than uncached from the very first query instead of
+after enough queries to amortise a warm. Which variants a model can run is
+decided in `arms.arms_for`, off the rate card's `cache` field.
 """
 
 from __future__ import annotations
@@ -41,8 +50,11 @@ from .base import (
 
 # One arm id per lifetime, so each gets its own measured cells, its own line on
 # the cost chart, and its own row in the accuracy heatmap — where the two should
-# agree, since the prompts are identical.
-TTLS: tuple[str, ...] = ("5m", "1h")
+# agree, since the prompts are identical. `auto` is the provider-chosen lifetime,
+# and is never measured alongside the other two: a model has either the choice or
+# it doesn't.
+TTLS: tuple[str, ...] = ("5m", "1h", "auto")
+EXPLICIT_TTLS: tuple[str, ...] = ("5m", "1h")
 ARMS: dict[str, str] = {ttl: f"cached_context_{ttl}" for ttl in TTLS}
 
 # Kept for anything that refers to the arm generically.
@@ -91,6 +103,16 @@ def _system(document: str, ttl: str) -> list[dict[str, Any]]:
     # There is no maximum size behind a single breakpoint, so even the largest
     # document needs exactly one — and splitting would only create extra entries
     # at prefix lengths nothing ever asks for.
+    #
+    # The `auto` variant carries neither: there is no breakpoint to place, and no
+    # sibling variant to keep its entries apart from, so the marker line would be
+    # inert text inside the prompt. Its separation happens provider-side, via the
+    # isolation key `run` passes as `cache_scope`.
+    if ttl == "auto":
+        return [
+            {"type": "text", "text": ANSWER_SYSTEM},
+            {"type": "text", "text": f"<document>\n{document}\n</document>"},
+        ]
     return [
         {"type": "text", "text": ANSWER_SYSTEM},
         _lifetime_marker(ttl),
@@ -114,6 +136,10 @@ def run(
         system=_system(document, ttl),
         messages=[{"role": "user", "content": question}],
         cache_ttl=ttl,
+        # Stable across the questions of one document so the second question reads
+        # what the first one warmed — the whole point of the arm. Inert on
+        # Anthropic, where the `cache_control` breakpoint above does this job.
+        cache_scope=f"{arm_id(ttl)}:{doc_id}" if ttl == "auto" else None,
     )
     refusal_guard(capture)
     return result_from(
@@ -124,10 +150,15 @@ def run(
         notes={
             "context": "entire document, cached",
             "cache_ttl": ttl,
+            # Recorded so a reader can tell a chosen lifetime from an imposed one
+            # without knowing which provider served the run.
+            "cache_lifetime_chosen": ttl != "auto",
             "cache_hit": capture.usage.cache_read_tokens > 0,
             # A write on anything but the first question of a run means the cache
             # lapsed and was warmed again. For the 5-minute variant that is the
-            # finding, not a glitch.
+            # finding, not a glitch. Always zero on `auto`: that provider bills the
+            # uncached remainder as ordinary input and charges no write premium, so
+            # there is no write to count.
             "cache_written": capture.usage.cache_write_tokens > 0,
             **truncation_note(capture),
         },

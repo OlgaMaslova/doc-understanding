@@ -35,7 +35,16 @@ from .contextual import build_contextual_chunks
 from .documents import BY_ID, load_meta, load_text
 from .grading import CREDIT, GRADE_META, grade_answer
 from .paths import INDEX_CACHE, RESULTS
-from .pricing import ARM_MODEL, INDEX_MODEL, Cost, Usage, price, snapshot_date
+from .pricing import (
+    ARM_MODEL,
+    INDEX_MODEL,
+    Cost,
+    Usage,
+    cache_style_of,
+    model_snapshot_date,
+    price,
+    snapshot_date,
+)
 from .questions import Question, TYPE_META, load_questions
 from .retrieval import Index
 
@@ -525,7 +534,10 @@ def precompute_doc(
         "tokens": meta["tokens"],
         "chars": meta["chars"],
         "model": ARM_MODEL,
-        "pricing_snapshot": snapshot_date(),
+        # Recorded so the manifest and the UI can describe this matrix without
+        # re-deriving the arm set from the model — see `arms_of`.
+        "arms": list(arms_pkg.ARM_ORDER),
+        "pricing_snapshot": model_snapshot_date(ARM_MODEL),
         "computed_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         "chunking": {"chunk_tokens": CHUNK_TOKENS, "overlap_tokens": OVERLAP_TOKENS},
         "fixed_costs": {
@@ -554,10 +566,17 @@ def precompute_doc(
     # as "warming this cache is free" rather than "this run did not measure it".
     # The usual cause is a still-live entry from an earlier run of the same arm —
     # re-run it outside the lifetime, or wait it out, to price the warm.
+    #
+    # Only meaningful where writes are a billable line item. On a provider that
+    # caches automatically there is no write premium at all, so zero writes is the
+    # correct and permanent state, and warning about it every run would train
+    # people to ignore the warning that matters.
+    warn_unmeasured_warm = cache_style_of(ARM_MODEL) == "explicit_ttl"
     for arm in arms_pkg.ARM_ORDER:
         e = payload["economics"].get(arm)
         if (
-            arm in arms_pkg.ARM_CACHE_SHARED_ACROSS_QUERIES
+            warn_unmeasured_warm
+            and arm in arms_pkg.ARM_CACHE_SHARED_ACROSS_QUERIES
             and e
             and e["cache_write_count"] == 0
         ):
@@ -567,6 +586,29 @@ def precompute_doc(
                 "not free"
             )
 
+
+
+def arms_of(data: dict[str, Any]) -> list[str]:
+    """Which arms one result set was measured with.
+
+    Not `ARM_ORDER`: that is the arm set of whichever model the *current* process
+    is configured for, and the manifest describes every file on disk. Reading it
+    for all of them would judge a seven-arm Claude matrix against a six-arm open
+    model's expectations, or vice versa, and mislabel complete matrices as partial.
+
+    Runs record their own arm list. Files written before that did are resolved from
+    the model in their header, which is what the rate card keys on anyway.
+    """
+    recorded = data.get("arms")
+    if recorded:
+        return list(recorded)
+    try:
+        return list(arms_pkg.arms_for(data.get("model") or ""))
+    except KeyError:
+        # A result set naming a model the rate card no longer carries. Its cells
+        # are still real; fall back to the widest set so it reads as partial rather
+        # than silently complete.
+        return list(arms_pkg.ALL_ARMS)
 
 
 def provenance_of(data: dict[str, Any], arms: int, questions: int) -> dict[str, Any]:
@@ -599,6 +641,15 @@ def write_manifest() -> None:
     """
     docs = []
     seen: set[tuple[str, str]] = set()
+    # The union of every arm any result set on disk was measured with, so the UI
+    # can describe a Claude file's cache-TTL rows and an open model's single
+    # provider-default row from one manifest.
+    #
+    # Seeded empty, not from this run's ARM_ORDER: an arm no result set used has no
+    # cells behind it, and listing it would have the UI draw a row that is
+    # permanently blank. Describing arms before anything is measured is
+    # `presets.py`'s job, and it reads the rate card directly.
+    present_arms: set[str] = set()
     for path in sorted(RESULTS.glob("*.json")):
         if path.name == "manifest.json":
             continue
@@ -611,6 +662,8 @@ def write_manifest() -> None:
             )
         seen.add(pair)
         questions = len(data.get("questions") or [])
+        arms = arms_of(data)
+        present_arms.update(arms)
         docs.append(
             {
                 "doc_id": data["doc_id"],
@@ -621,9 +674,12 @@ def write_manifest() -> None:
                 "license": data.get("license", ""),
                 "provenance": data.get("provenance", ""),
                 "model": data.get("model", ""),
+                # Per result set, because two files in the same manifest can have
+                # different arm sets — see `arms_of`.
+                "arms": arms,
                 "file": path.name,
                 "computed_at": data.get("computed_at", ""),
-                **provenance_of(data, len(arms_pkg.ARM_ORDER), questions),
+                **provenance_of(data, len(arms), questions),
             }
         )
     docs.sort(key=lambda d: (d["tokens"], d["doc_id"], d["model"]))
@@ -640,7 +696,10 @@ def write_manifest() -> None:
                 # strategies without pretending they are one measurement.
                 "variant_of": arms_pkg.ARM_VARIANT_GROUP.get(arm),
             }
-            for arm in arms_pkg.ARM_ORDER
+            # Every arm any result set uses, not just this run's: the manifest has
+            # to describe the files already on disk too.
+            for arm in arms_pkg.ALL_ARMS
+            if arm in present_arms
         ],
         "question_types": [
             {"id": t, **TYPE_META[t]} for t in TYPE_META

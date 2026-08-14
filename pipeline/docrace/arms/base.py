@@ -12,7 +12,7 @@ from dataclasses import dataclass, field
 from typing import Any, Iterable
 
 from ..client import anthropic_client
-from ..pricing import ARM_MODEL, Cost, Usage, price
+from ..pricing import ARM_MODEL, Cost, Usage, price, provider_of
 
 # Thinking is on by default on this model and counts against max_tokens along
 # with the response text. A budget sized for the answer alone would truncate
@@ -83,13 +83,44 @@ def stream_answer(
     started_at: float | None = None,
     extra: dict | None = None,
     cache_ttl: str = "5m",
+    cache_scope: str | None = None,
 ) -> StreamCapture:
     """Stream one message, capturing text deltas with millisecond arrival times.
 
     Streaming is not optional here: at these `max_tokens` a non-streaming
     request risks an HTTP timeout, and the delta timings are the raw material
     replay mode runs on.
+
+    `cache_scope` names the cache entry this request may share. It is inert on
+    Anthropic, where caching is opt-in per request and driven by the
+    `cache_control` breakpoints the caller already placed. It is load-bearing on a
+    provider that caches everything automatically: `None` forces a miss, and a
+    string keeps one arm's entries to itself so it pays its own warm. Arms that
+    intend to read a cache pass a scope; arms that must not, leave it unset.
     """
+    if provider_of(model) != "anthropic":
+        from . import openai_compat
+
+        text, deltas, usage, latency_ms, ttft_ms, message = openai_compat.stream(
+            system=system,
+            messages=messages,
+            tools=tools,
+            model=model,
+            max_tokens=max_tokens,
+            started_at=started_at,
+            extra=extra,
+            cache_scope=cache_scope,
+        )
+        return StreamCapture(
+            text=text,
+            deltas=deltas,
+            usage=usage,
+            latency_ms=latency_ms,
+            ttft_ms=ttft_ms,
+            stop_reason=message.stop_reason,
+            raw=message,
+        )
+
     client = anthropic_client()
     t0 = started_at if started_at is not None else time.perf_counter()
     deltas: list[tuple[int, str]] = []
