@@ -17,7 +17,7 @@
  */
 
 import { runPipeline } from "./runner";
-import type { Manifest } from "./types";
+import { ARM_IDS, type ArmId, type Manifest } from "./types";
 
 export interface PresetQuestion {
   id: string;
@@ -33,11 +33,22 @@ export interface PresetModel {
   context_window: number | null;
   input_per_mtok: number;
   output_per_mtok: number;
+  /**
+   * The arms this model can actually run, which is not the same set for every
+   * model: caching is measured at both lifetimes where a request may choose one,
+   * and as a single provider-default arm where it may not. Offering a reader an
+   * arm outside this list produces a run the pipeline refuses to price.
+   */
+  arms: ArmId[];
   default: boolean;
 }
 
 export interface Presets {
-  /** Same shape as `Manifest["arms"]`, from the same `ARM_META`. */
+  /**
+   * Every arm any model can run — same shape as `Manifest["arms"]`, from the same
+   * `ARM_META`. This is the catalogue, not a runnable set: use `armsFor` to narrow
+   * it to one model before showing it as a choice.
+   */
   arms: Manifest["arms"];
   question_types: Manifest["question_types"];
   grades: Manifest["grades"];
@@ -85,7 +96,17 @@ export async function loadPresets(): Promise<Presets> {
       question_types: parsed.question_types ?? [],
       grades: parsed.grades ?? [],
       credit: parsed.credit ?? ({} as Manifest["credit"]),
-      models: parsed.models ?? [],
+      // A model whose entry names no arms is one from a pipeline older than
+      // per-model arm sets. Every arm is offered for it, which is what this app
+      // did before the field existed — wrong for an auto-caching provider, but
+      // the estimator still refuses those, so the worst case is the old behaviour
+      // rather than a silently wrong run.
+      models: (parsed.models ?? []).map((m) => ({
+        ...m,
+        arms: (m.arms ?? []).filter((a): a is ArmId =>
+          (ARM_IDS as readonly string[]).includes(a),
+        ),
+      })),
       index_model: parsed.index_model ?? "",
       judge_model: parsed.judge_model ?? "",
       questions: parsed.questions ?? {},

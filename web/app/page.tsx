@@ -1,12 +1,14 @@
 import Link from "next/link";
 
+import { ModelComparison } from "@/components/ModelComparison";
 import { Overview } from "@/components/Overview";
 import { Workbench } from "@/components/Workbench";
 import type { DocStatus } from "@/components/RunPanel";
 import { loadCatalogue } from "@/lib/catalogue";
 import { loadPresets } from "@/lib/presets";
 import { loadDocLean, loadManifestIfPresent } from "@/lib/results";
-import { groupApproaches, numberWord } from "@/lib/approaches";
+import { armsFor, groupApproaches, numberWord } from "@/lib/approaches";
+import { compareModels } from "@/lib/models";
 import { resultKey } from "@/lib/types";
 
 /**
@@ -56,8 +58,11 @@ export default async function Home() {
 
   // Arm and question-type metadata comes from the presets dump when there is no
   // manifest to read it from — same values, same shapes, so the sections above the
-  // fork render identically either way.
-  const arms = manifest?.arms.length ? manifest.arms : presets.arms;
+  // fork render identically either way. Narrowed to the default model's arms: the
+  // dump catalogues every cached-context variant any provider supports, and those
+  // are alternatives to one another, so listing all of them would describe an
+  // approach twice over to a reader who has not chosen a model yet.
+  const arms = manifest?.arms.length ? manifest.arms : armsFor(presets);
   const questionTypes = manifest?.question_types.length
     ? manifest.question_types
     : presets.question_types;
@@ -68,6 +73,12 @@ export default async function Home() {
   // with a shorter one should say so instead of being contradicted by the page.
   const questionsPerDoc =
     presets.questions[catalogue[0]?.doc_id ?? ""]?.length ?? 0;
+
+  // The model comparison, when the files on disk support one: two models that have
+  // each measured the same document completely. Null on a clone that has run one
+  // model, or none — which is why it is a section that appears rather than a
+  // section with placeholders in it.
+  const comparison = manifest ? compareModels(manifest, docs) : null;
 
   // Completeness is reported per document, next to the document, not as a page-level
   // banner. A scoped run leaves an incomplete matrix and a two-cell aggregate must not
@@ -124,6 +135,8 @@ export default async function Home() {
           questionsPerDoc={questionsPerDoc}
         />
       ) : null}
+
+      {comparison ? <ModelComparison comparison={comparison} /> : null}
 
       <p className="mt-6 text-sm text-text-dim">
         <Link

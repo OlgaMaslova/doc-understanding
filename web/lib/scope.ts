@@ -20,10 +20,16 @@ export interface ScopeError {
   error: string;
 }
 
+/** A model a scope may name, and the arms it can run. From the presets dump. */
+export interface KnownModel {
+  id: string;
+  arms: ArmId[];
+}
+
 export function parseScope(
   body: unknown,
   knownDocs: string[],
-  knownModels: string[],
+  knownModels: KnownModel[],
 ): Scope | ScopeError {
   if (typeof body !== "object" || body === null) {
     return { error: "Expected a JSON object with doc and arms." };
@@ -33,10 +39,13 @@ export function parseScope(
   // The model reaches the subprocess as an environment variable, so it is checked
   // against the rate card's closed list like everything else — and the pipeline
   // re-validates on its side, so this is the polite refusal, not the boundary.
-  const model = raw.model ?? knownModels[0];
-  if (typeof model !== "string" || !knownModels.includes(model)) {
+  const model = raw.model ?? knownModels[0]?.id;
+  const known = knownModels.find((m) => m.id === model);
+  if (typeof model !== "string" || !known) {
     return {
-      error: `Unknown model ${JSON.stringify(raw.model)}. Known: ${knownModels.join(", ")}.`,
+      error:
+        `Unknown model ${JSON.stringify(raw.model)}. Known: ` +
+        `${knownModels.map((m) => m.id).join(", ")}.`,
     };
   }
 
@@ -57,6 +66,17 @@ export function parseScope(
     if (typeof arm !== "string" || !(ARM_IDS as readonly string[]).includes(arm)) {
       return {
         error: `Unknown arm ${JSON.stringify(arm)}. Known: ${ARM_IDS.join(", ")}.`,
+      };
+    }
+    // A real arm, but not one this model has: the cached-context arms differ by
+    // provider, so a selection made under one model can name an arm another cannot
+    // run. The pipeline refuses these too — this is the refusal that can say which
+    // model it was about, rather than an estimator exit code the browser relays.
+    if (known.arms.length && !known.arms.includes(arm as ArmId)) {
+      return {
+        error:
+          `${model} cannot run ${arm} — the cached-context approaches depend on how ` +
+          `the provider exposes caching. It runs: ${known.arms.join(", ")}.`,
       };
     }
     // Duplicates would double-count in the estimate and are always a mistake.

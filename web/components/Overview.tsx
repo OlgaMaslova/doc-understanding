@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 import { ARM_COLOR, GRADE_COLOR, tokens } from "@/lib/format";
-import { groupApproaches, numberWord } from "@/lib/approaches";
+import { cap, groupApproaches, numberWord } from "@/lib/approaches";
 import type { GradeId, Manifest } from "@/lib/types";
 
 /**
@@ -36,11 +36,6 @@ interface Props {
   docs: { domain: string; tokens: number }[];
   /** Questions per document, when the preset set is known. Zero hides the figure. */
   questionsPerDoc: number;
-}
-
-/** Sentence-case a derived word, since these open their sentences. */
-function cap(s: string): string {
-  return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
 /** The grade scale in rubric order, best to worst — the heatmap's colour ramp. */

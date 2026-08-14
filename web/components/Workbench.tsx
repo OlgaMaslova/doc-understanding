@@ -7,6 +7,7 @@ import { ComparisonView } from "./ComparisonView";
 import { RunPanel, type DocStatus } from "./RunPanel";
 import { tokens } from "@/lib/format";
 import type { CatalogueDoc } from "@/lib/catalogue";
+import { armsFor } from "@/lib/approaches";
 import type { Presets } from "@/lib/presets";
 import type { LeanDoc } from "@/lib/results";
 import { resultKey, type Manifest } from "@/lib/types";
@@ -144,7 +145,7 @@ export function Workbench({
           </span>
           <span className="mt-2 block text-xs text-text-faint">
             {catalogue.length
-              ? `${catalogue.length} document${catalogue.length === 1 ? "" : "s"} ready · ${presets.arms.length} approaches`
+              ? `${catalogue.length} document${catalogue.length === 1 ? "" : "s"} ready · ${armsFor(presets).length} approaches`
               : "No documents fetched yet"}
           </span>
         </button>

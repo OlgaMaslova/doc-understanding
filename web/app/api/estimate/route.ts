@@ -31,7 +31,7 @@ export async function POST(request: Request) {
   const scope = parseScope(
     body,
     catalogue.map((d) => d.doc_id),
-    presets.models.map((m) => m.id),
+    presets.models,
   );
   if (isScopeError(scope)) {
     return Response.json({ error: scope.error }, { status: 400 });

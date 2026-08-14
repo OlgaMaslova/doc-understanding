@@ -4,8 +4,15 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { ARM_COLOR, GRADE_COLOR, TYPE_ORDER, tokens, usd } from "@/lib/format";
 import type { CatalogueDoc } from "@/lib/catalogue";
+import { armsFor, defaultModel } from "@/lib/approaches";
 import type { Presets, PresetQuestion } from "@/lib/presets";
-import { resultKey, type ArmId, type GradeId, type QuestionType } from "@/lib/types";
+import {
+  ARM_IDS,
+  resultKey,
+  type ArmId,
+  type GradeId,
+  type QuestionType,
+} from "@/lib/types";
 
 /**
  * The run stage: measure a document with your own keys.
@@ -82,11 +89,37 @@ type CellState =
   | { status: "done"; grade: GradeId; costUsd: number; latencyMs: number }
   | { status: "failed"; error: string };
 
-const DEFAULT_ARMS: ArmId[] = [
-  "full_context",
-  "cached_context_5m",
-  "cached_context_1h",
-];
+const isCached = (arm: string) => arm.startsWith("cached_context");
+
+/**
+ * What a run starts with: full context and every cached variant the model has.
+ *
+ * Derived rather than listed, because the cached arms are model-dependent — a
+ * provider that picks its own cache lifetime measures one variant where Anthropic
+ * measures two. A hardcoded default would name arms the chosen model cannot run.
+ */
+function defaultArms(available: ArmId[]): ArmId[] {
+  return available.filter((arm) => arm === "full_context" || isCached(arm));
+}
+
+/**
+ * Carry a selection across a model change.
+ *
+ * Arms the new model cannot run are dropped, but "cached context" is one choice
+ * on every model — only the lifetimes differ — so a selection that included any
+ * cached variant keeps the new model's variants instead of silently losing the
+ * approach. Canonical order, so the same selection always produces the same argv.
+ */
+function reconcile(selected: ArmId[], available: ArmId[]): ArmId[] {
+  const runnable = new Set<ArmId>(available);
+  const kept = selected.filter((arm) => runnable.has(arm));
+  if (selected.some(isCached) && !kept.some(isCached)) {
+    kept.push(...available.filter(isCached));
+  }
+  return [...new Set(kept)].sort(
+    (a, b) => ARM_IDS.indexOf(a) - ARM_IDS.indexOf(b),
+  );
+}
 
 const key = (arm: string, question: string) => `${arm}::${question}`;
 
@@ -110,10 +143,14 @@ export function RunPanel({
   const [docId, setDocId] = useState(
     initialDocId ?? catalogue[0]?.doc_id ?? "",
   );
-  const [arms, setArms] = useState<ArmId[]>(DEFAULT_ARMS);
   const [modelId, setModelId] = useState(
-    () =>
-      presets.models.find((m) => m.default)?.id ?? presets.models[0]?.id ?? "",
+    () => defaultModel(presets)?.id ?? "",
+  );
+  // What was ticked, which is not quite what will run: the arms available depend on
+  // the model, so the selection is reconciled against it below rather than rewritten
+  // here. Keeping the raw picks means switching model and back restores them.
+  const [picked, setPicked] = useState<ArmId[]>(() =>
+    defaultArms(armsFor(presets).map((a) => a.id)),
   );
   const [force, setForce] = useState(false);
   const [phase, setPhase] = useState<Phase>("idle");
@@ -146,6 +183,29 @@ export function RunPanel({
   }, [log, phase]);
 
   useEffect(() => () => abortRef.current?.abort(), []);
+
+  // The approaches this model can be measured with. Not every model runs the same
+  // set: caching is measured at both lifetimes where the request chooses one, and
+  // as a single provider-default arm where the provider chooses. Offering the union
+  // would let a reader pick an arm the pipeline refuses to price, and the refusal
+  // would arrive as an estimator error after they asked what it would cost.
+  const availableArms = useMemo(
+    () => armsFor(presets, modelId),
+    [presets, modelId],
+  );
+  const availableIds = useMemo(
+    () => availableArms.map((a) => a.id),
+    [availableArms],
+  );
+
+  // The selection that will actually run. Derived from the picks and the model
+  // rather than rewritten when the model changes, for the same reason the quote is
+  // keyed on the scope instead of cleared by an effect: a change of model is not an
+  // event to react to, it is a different answer to the same question.
+  const arms = useMemo(
+    () => reconcile(picked, availableIds),
+    [picked, availableIds],
+  );
 
   const questions: PresetQuestion[] = useMemo(
     () => presets.questions[docId] ?? [],
@@ -517,15 +577,15 @@ export function RunPanel({
           <div className="flex gap-x-3 text-xs">
             <button
               type="button"
-              onClick={() => setArms(presets.arms.map((a) => a.id))}
+              onClick={() => setPicked(availableIds)}
               disabled={busy}
               className="text-text-faint underline decoration-dotted hover:text-text-dim disabled:opacity-40"
             >
-              All {presets.arms.length}
+              All {availableArms.length}
             </button>
             <button
               type="button"
-              onClick={() => setArms(DEFAULT_ARMS)}
+              onClick={() => setPicked(defaultArms(availableIds))}
               disabled={busy}
               className="text-text-faint underline decoration-dotted hover:text-text-dim disabled:opacity-40"
             >
@@ -534,7 +594,7 @@ export function RunPanel({
           </div>
         </div>
         <div className="grid gap-1.5 sm:grid-cols-2 lg:grid-cols-3">
-          {presets.arms.map((arm) => {
+          {availableArms.map((arm) => {
             const on = arms.includes(arm.id);
             return (
               <label
@@ -551,10 +611,11 @@ export function RunPanel({
                   checked={on}
                   disabled={busy}
                   onChange={() =>
-                    setArms((current) =>
-                      current.includes(arm.id)
-                        ? current.filter((a) => a !== arm.id)
-                        : [...current, arm.id],
+                    // Toggled against the reconciled selection, not the raw picks:
+                    // the box shows the former, so unticking has to remove what the
+                    // reader sees ticked.
+                    setPicked(
+                      on ? arms.filter((a) => a !== arm.id) : [...arms, arm.id],
                     )
                   }
                   className="mt-0.5 shrink-0 accent-accent disabled:opacity-40"
@@ -569,6 +630,14 @@ export function RunPanel({
             );
           })}
         </div>
+        {availableIds.includes("cached_context_auto") ? (
+          <p className="max-w-3xl text-xs leading-relaxed text-text-faint">
+            {model?.label ?? "This model"} caches on its provider&apos;s terms rather
+            than the request&apos;s, so the two cache-lifetime approaches are replaced
+            by one at whatever lifetime the provider picks. Same tokens, same
+            question set — a lapse just cannot be measured on it.
+          </p>
+        ) : null}
       </div>
 
       {/* Not a control — the questions are not a choice. Shown because a reader

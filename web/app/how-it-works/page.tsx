@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ApproachGuide } from "@/components/ApproachGuide";
 import { Methodology } from "@/components/Methodology";
 import { RunEvals } from "@/components/RunEvals";
+import { armsFor, cap, groupApproaches, numberWord } from "@/lib/approaches";
 import { loadPresets } from "@/lib/presets";
 import { loadManifestIfPresent } from "@/lib/results";
 
@@ -33,7 +34,11 @@ export default async function HowItWorksPage() {
     loadPresets(),
   ]);
 
-  const arms = manifest?.arms.length ? manifest.arms : presets.arms;
+  // The default model's arms, not the whole catalogue: the catalogue holds every
+  // cached-context variant any provider supports, and they are alternatives to each
+  // other rather than separate approaches. One model's set is a set that could
+  // actually be run.
+  const arms = manifest?.arms.length ? manifest.arms : armsFor(presets);
   const grades = manifest?.grades.length ? manifest.grades : presets.grades;
   const credit = manifest?.credit ?? presets.credit;
 
@@ -49,10 +54,13 @@ export default async function HowItWorksPage() {
         <h1 className="text-2xl font-medium leading-snug text-text sm:text-3xl">
           How it works
         </h1>
+        {/* Derived, like the count in the guide below it: the arm set depends on
+            the providers a clone has measured with, and a hardcoded number word
+            goes stale the first time someone adds one. */}
         <p className="text-base leading-relaxed text-text-dim">
-          Seven ways to get a document in front of a model, one answer key, and a
-          judge. This page is the part you should be able to check before believing
-          any number the charts show you.
+          {cap(numberWord(groupApproaches(arms).length))} ways to get a document in
+          front of a model, one answer key, and a judge. This page is the part you
+          should be able to check before believing any number the charts show you.
         </p>
       </header>
 

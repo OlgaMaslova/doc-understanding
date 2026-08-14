@@ -1,4 +1,38 @@
+import type { PresetModel, Presets } from "./presets";
 import type { Manifest } from "./types";
+
+/**
+ * The model a run defaults to — the rate card's default, else the first row.
+ *
+ * Here rather than beside `Presets` in `lib/presets.ts` for a bundling reason:
+ * that module loads the pipeline through `node:child_process`, so a client
+ * component importing a *value* from it breaks the build. Everything in this file
+ * is pure and the `Presets` import above is types only, which is erased.
+ */
+export function defaultModel(presets: Presets): PresetModel | undefined {
+  return presets.models.find((m) => m.default) ?? presets.models[0];
+}
+
+/**
+ * The approaches one model can be measured with, described.
+ *
+ * `presets.arms` is the catalogue of every arm any model runs, and two of its
+ * entries — the cache-lifetime variants — are alternatives to a third rather than
+ * additions to it. Anything that presents arms as a choice, or counts them as
+ * "the approaches", has to narrow to a model first or it describes a run nobody
+ * can make.
+ *
+ * An unknown model, or one whose entry predates per-model arm sets, gets the whole
+ * catalogue: no narrowing is better than an empty picker.
+ */
+export function armsFor(presets: Presets, modelId?: string): Manifest["arms"] {
+  const model = modelId
+    ? presets.models.find((m) => m.id === modelId)
+    : defaultModel(presets);
+  if (!model?.arms.length) return presets.arms;
+  const runnable = new Set<string>(model.arms);
+  return presets.arms.filter((arm) => runnable.has(arm.id));
+}
 
 /**
  * An approach a reader is choosing between, plus the measured runs behind it.
@@ -71,4 +105,9 @@ const WORDS = [
  */
 export function numberWord(n: number): string {
   return WORDS[n] ?? String(n);
+}
+
+/** Sentence-case a derived word, since these often open a sentence. */
+export function cap(word: string): string {
+  return word.charAt(0).toUpperCase() + word.slice(1);
 }

@@ -24,12 +24,15 @@ export function percent(fraction: number): string {
 }
 
 /**
- * Categorical colours for the seven measured arms.
+ * Categorical colours for the measured arms.
  *
- * The three full-context arms share one hue at three values, because they send
- * identical tokens and differ only in what those tokens cost. The palette should
- * say that before the copy does — and it makes the two cache lifetimes read as
- * one approach measured twice rather than two unrelated approaches.
+ * The full-context arms share one hue at four values, because they send identical
+ * tokens and differ only in what those tokens cost. The palette should say that
+ * before the copy does — and it makes the cache lifetimes read as one approach
+ * measured twice rather than two unrelated approaches. The fourth value is the
+ * provider-default lifetime, which no result set holds alongside the other two:
+ * a model's provider either takes a lifetime from the request or picks its own,
+ * so `cached_context_auto` and the two TTL arms never share a chart.
  *
  * Every value here clears 4.5:1 against --bg-raised, because these are not only
  * fills: they colour the chart's 11px series labels, the "cheapest at" row, and
@@ -43,6 +46,7 @@ export const ARM_COLOR: Record<ArmId, string> = {
   full_context: "#e46b58",
   cached_context_5m: "#eb8368",
   cached_context_1h: "#f5b8a4",
+  cached_context_auto: "#f0a08a",
   naive_rag: "#7cb9d9",
   hybrid_rag: "#2b99d0",
   agentic: "#9c83cd",
