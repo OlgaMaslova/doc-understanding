@@ -33,14 +33,19 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from docrace import arms as arms_pkg  # noqa: E402
-from docrace.paths import RESULTS  # noqa: E402
+from docrace.paths import PRICING_FILE, RESULTS  # noqa: E402
 from docrace.precompute import (  # noqa: E402
     LEGACY_INDEX_MODEL,
     DocAssets,
     derive_economics,
     write_manifest,
 )
-from docrace.pricing import Usage, model_rates, price, snapshot_date  # noqa: E402
+from docrace.pricing import (  # noqa: E402
+    Usage,
+    model_rates,
+    model_snapshot_date,
+    price,
+)
 from docrace.questions import Question  # noqa: E402
 
 
@@ -71,12 +76,19 @@ def reprice(data: dict) -> dict:
         for arm, entry in (data.get("fixed_costs") or {}).items()
         if entry.get("usage")
     }
+    # The arm set of *this file*, not of this process. Which cached-context arm a
+    # result set holds depends on its model's provider, so repricing a DeepSeek set
+    # under Claude's arm order drops `cached_context_auto` and writes two TTL
+    # variants that provider cannot run — a corruption that survives as data long
+    # after the run that caused it. `arms_for` derives it from the model; the file's
+    # own `arms` list is preferred where it has one, since that is what was measured.
+    arms = data.get("arms") or list(arms_pkg.arms_for(model))
     data["fixed_costs"] = {
         arm: {
             "usage": fixed_usage.get(arm, Usage()).to_dict(),
             "cost": price(fixed_usage.get(arm, Usage()), index_model).to_dict(),
         }
-        for arm in arms_pkg.ARM_ORDER
+        for arm in arms
     }
 
     # Economics are derived from the cell costs above, so they have to be rebuilt
@@ -93,8 +105,12 @@ def reprice(data: dict) -> dict:
         index_model=index_model,
     )
     questions = [Question(**q) for q in data["questions"]]
-    data["economics"] = derive_economics(cells, assets, questions)
-    data["pricing_snapshot"] = snapshot_date()
+    data["economics"] = derive_economics(cells, assets, questions, arms)
+    # Per-model, matching what precompute stamps. `snapshot_date()` is the file-level
+    # date, and using it here silently backdated any model carrying its own — the
+    # rate card records when each provider's prices were read, and a reprice does not
+    # re-read them.
+    data["pricing_snapshot"] = model_snapshot_date(model)
     return data
 
 
@@ -134,7 +150,9 @@ def main() -> None:
 
     verb = "would reprice" if args.dry_run else "repriced"
     print(
-        f"{verb} {len(paths)} result set(s) at the {snapshot_date()} rate card; "
+        # Not "at the <date> rate card": each set is repriced at its own model's
+        # snapshot, and naming one date would assert the others were re-read too.
+        f"{verb} {len(paths)} result set(s) against {PRICING_FILE.name}; "
         f"{changed} changed"
     )
     if not args.dry_run:

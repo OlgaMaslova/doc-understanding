@@ -17,7 +17,7 @@
     "agentic",
     "extract"
   ],
-  "pricing_snapshot": "2026-08-13",
+  "pricing_snapshot": "2026-08-14",
   "computed_at": "2026-08-14T13:41:28Z",
   "chunking": {
     "chunk_tokens": 500,
@@ -45,28 +45,7 @@
         "total": 0.0
       }
     },
-    "cached_context_5m": {
-      "usage": {
-        "input_tokens": 0,
-        "output_tokens": 0,
-        "cache_read_tokens": 0,
-        "cache_write_5m_tokens": 0,
-        "cache_write_1h_tokens": 0,
-        "embed_tokens": 0,
-        "rerank_tokens": 0,
-        "calls": 0
-      },
-      "cost": {
-        "input": 0.0,
-        "output": 0.0,
-        "cache_read": 0.0,
-        "cache_write": 0.0,
-        "embed": 0.0,
-        "rerank": 0.0,
-        "total": 0.0
-      }
-    },
-    "cached_context_1h": {
+    "cached_context_auto": {
       "usage": {
         "input_tokens": 0,
         "output_tokens": 0,
@@ -359,6 +338,30 @@
       "mean_latency_ms": 14109,
       "median_latency_ms": 10557,
       "max_latency_ms": 35528,
+      "score": 0.9667,
+      "score_by_type": {
+        "needle": 1.0,
+        "multi_hop": 1.0,
+        "aggregation": 1.0,
+        "global": 0.8333,
+        "absent": 1.0
+      },
+      "n": 15
+    },
+    "cached_context_auto": {
+      "fixed_cost_usd": 0.0,
+      "indexing_cost_usd": 0.0,
+      "cache_write_cost_usd": 0.0,
+      "cache_write_total_usd": 0.0,
+      "cache_write_count": 0,
+      "cache_write_shared": true,
+      "cache_read_queries": 3,
+      "marginal_cost_usd": 0.00414946,
+      "marginal_min_usd": 0.00161375,
+      "marginal_max_usd": 0.00489958,
+      "mean_latency_ms": 9616,
+      "median_latency_ms": 8714,
+      "max_latency_ms": 16107,
       "score": 0.9667,
       "score_by_type": {
         "needle": 1.0,

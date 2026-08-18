@@ -18,7 +18,7 @@ import pickle
 import sys
 import time
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, Iterable
 
 from . import arms as arms_pkg
 from .arms import (
@@ -307,9 +307,18 @@ def run_arm(arm: str, assets: DocAssets, q: Question) -> ArmResult:
 
 
 def derive_economics(
-    cells: dict[str, Any], assets: DocAssets, questions: list[Question]
+    cells: dict[str, Any],
+    assets: DocAssets,
+    questions: list[Question],
+    arms: Iterable[str] | None = None,
 ) -> dict[str, Any]:
     """Per-arm fixed and marginal cost, latency, and score.
+
+    `arms` defaults to this process's set, which is right for a live run. Anything
+    rebuilding a result set from disk has to pass the arm set *that file* was
+    measured with: the cached-context arms differ by provider, so deriving an
+    open model's economics under Claude's arm order drops its `cached_context_auto`
+    entry and invents two TTL variants its provider cannot run.
 
     The split between fixed and marginal is what the cost chart plots: a fixed
     cost is the y-intercept, a marginal cost is the slope. Getting it right is
@@ -324,7 +333,7 @@ def derive_economics(
     fixed would make agentic search look far cheaper per query than it is.
     """
     out: dict[str, Any] = {}
-    for arm in arms_pkg.ARM_ORDER:
+    for arm in arms if arms is not None else arms_pkg.ARM_ORDER:
         rows = [
             c
             for key, c in cells.items()
