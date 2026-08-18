@@ -25,6 +25,17 @@ export type LeanCell =
       calls: number;
       grade: string;
       rationale: string;
+      /**
+       * Whether the run produced anything to grade at all.
+       *
+       * A wrong answer and no answer are both marked incorrect, but they are
+       * different failures — one model reasoned to the wrong place, the other
+       * never arrived. Keeping them apart is what lets the page say which kind of
+       * failure a model actually has.
+       */
+      answered: boolean;
+      /** True when the run stopped because it hit its own tool-call ceiling. */
+      capped: boolean;
     }
   | { error: string };
 
@@ -172,6 +183,8 @@ export async function loadDocLean(docId: string, model?: string): Promise<LeanDo
           calls: cell.usage.calls,
           grade: cell.grade.grade,
           rationale: cell.grade.rationale,
+          answered: cell.answer.trim().length > 0,
+          capped: cell.notes.hit_iteration_cap === true,
         };
   }
   return { ...doc, cells };
