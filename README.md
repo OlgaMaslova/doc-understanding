@@ -405,14 +405,48 @@ python3 -m venv .venv && .venv/bin/pip install -e .
 
 The model the approaches answer with is `DOCRACE_MODEL` (default `claude-opus-5`;
 any model with a rate-card entry in `data/pricing.json` — the UI offers the same
-list as a dropdown). Indexing and grading stay on `claude-opus-5` whichever you
-pick, so a run compares answering models and nothing else. Results are stored per
-model — `results/<doc>.<model>.json` — so measuring with a second model adds a
-file next to the first, and the results page lets you switch between them.
+list as a dropdown). Results are stored per model —
+`results/<doc>.<model>.json` — so measuring with a second model adds a file next
+to the first, and the results page lets you switch between them. A run that pins
+indexing gets its own file too, `<doc>.<model>.idx-<index-model>.json`, so the two
+never overwrite each other.
 
 ```sh
 DOCRACE_MODEL=claude-haiku-4-5 .venv/bin/python -m docrace.precompute --doc arxiv-paper
 ```
+
+Grading stays on `claude-opus-5` whichever model you pick, so the accuracy axis
+means the same thing in every column.
+
+**Indexing follows the answering model, and you can pin it.** Contextual
+retrieval and extract-then-query each build an index before the first question —
+a model writes a situating prefix for every chunk, or fills the schema — and on a
+large document that is the largest single line on the bill. It runs on
+`DOCRACE_INDEX_MODEL`, which defaults to `DOCRACE_MODEL`:
+
+```sh
+# Everything on DeepSeek, which is what "a DeepSeek run costs $X" should mean.
+DOCRACE_MODEL=deepseek-v4-flash .venv/bin/python -m docrace.precompute --doc form-10k
+
+# Answer with DeepSeek but hold the index still, to compare answering models
+# against one fixed index. The bill is then partly Opus's.
+DOCRACE_MODEL=deepseek-v4-flash DOCRACE_INDEX_MODEL=claude-opus-5 \
+  .venv/bin/python -m docrace.precompute --doc form-10k
+```
+
+The difference is not small. On the 10-K, 15 questions, all approaches: following
+projects at **$2.08**, pinning to Opus at **$12.61** — because the contextual pass
+sends a 223k-token document to the index model 32 times, once per batch of chunks.
+It changes accuracy too, not just cost: a weaker index model writes weaker
+prefixes, so the chunks retrieved for a question differ. Two result sets that
+disagree here are not comparable on those two approaches, which is why each result
+file records `index_model`, and why the results page names it when it differs from
+the answering model.
+
+The five result sets committed to this repository were all measured before this
+was a choice, and all have `"index_model": "claude-opus-5"` — including the
+DeepSeek and Sonnet ones. Their contextual-retrieval and extract-then-query
+numbers are Opus-indexed; the other four approaches are unaffected.
 
 Useful flags: `--doc` / `--arm` / `--question` to narrow, `--force` to re-run
 cells that already have good results, `--rebuild-index` to regenerate indexes and extractions (this

@@ -49,6 +49,13 @@ from .questions import Question, TYPE_META, load_questions
 from .retrieval import Index
 
 
+# Result sets written before indexing became a choice carry no `index_model`, and
+# every one of them was indexed with Opus, which was pinned at the time. The
+# fallback is therefore a fact about those files rather than a guess — the same
+# one `indexModelOf` applies on the web side.
+LEGACY_INDEX_MODEL = "claude-opus-5"
+
+
 @dataclass
 class DocAssets:
     """Everything the arms need for one document, built once per run."""
@@ -65,11 +72,17 @@ class DocAssets:
     # Fixed costs paid before the first query. These are the y-intercepts on the
     # cost chart, and the reason arm 4 and arm 6 are not free.
     fixed_usage: dict[str, Usage]
+    # Carried rather than read from the module so that anything rebuilding a
+    # result set from disk — `scripts/reprice.py` — prices its indexing at the
+    # model that actually wrote it, which is not necessarily this process's.
+    index_model: str = INDEX_MODEL
 
     def fixed_cost(self, arm: str) -> Cost:
-        # Indexing always runs on INDEX_MODEL regardless of DOCRACE_MODEL (see
-        # pricing.py), so its usage is priced at that model's rates.
-        return price(self.fixed_usage.get(arm, Usage()), INDEX_MODEL)
+        # Indexing runs on INDEX_MODEL, which follows DOCRACE_MODEL unless it was
+        # pinned (see pricing.py), so its usage is priced at that model's rates
+        # rather than the arm model's. The two are the same by default and differ
+        # only when someone deliberately held the index fixed across a comparison.
+        return price(self.fixed_usage.get(arm, Usage()), self.index_model)
 
     def require_naive_index(self) -> Index:
         if self.naive_index is None:
@@ -112,13 +125,26 @@ def emit(kind: str, **fields: Any) -> None:
     sys.stderr.flush()
 
 
-def _cache_path(doc_id: str, name: str):
+def _cache_path(doc_id: str, name: str, *, model: str | None = None):
+    """Where a built index lives on disk.
+
+    The model belongs in the key for anything an LLM wrote. Contextual prefixes
+    and extraction records differ by the model that produced them, so a key of
+    document alone would hand a DeepSeek run an index Opus wrote and report it as
+    free — the artifact would be real, the provenance a fiction, and the fixed
+    cost the run prints would belong to a different model.
+
+    The naive index is the exception and stays unscoped: it is Voyage embeddings
+    over raw chunks with no LLM in the path, so it is the same artifact whatever
+    the index model is, and re-embedding per model would be paying for nothing.
+    """
     INDEX_CACHE.mkdir(parents=True, exist_ok=True)
-    return INDEX_CACHE / f"{doc_id}.{name}.pkl"
+    stem = f"{doc_id}.{model}.{name}" if model else f"{doc_id}.{name}"
+    return INDEX_CACHE / f"{stem}.pkl"
 
 
-def _cached(doc_id: str, name: str, build, *, force: bool = False):
-    path = _cache_path(doc_id, name)
+def _cached(doc_id: str, name: str, build, *, force: bool = False, model: str | None = None):
+    path = _cache_path(doc_id, name, model=model)
     if path.exists() and not force:
         print(f"  {name}: cached")
         return pickle.loads(path.read_bytes())
@@ -181,12 +207,19 @@ def build_assets(
 
         def build_contextual() -> tuple[Index, Usage]:
             prefixed, usage = build_contextual_chunks(
-                text, chunk_texts, progress=_progress("contextual prefixes")
+                text,
+                chunk_texts,
+                doc_id=doc_id,
+                progress=_progress("contextual prefixes"),
             )
             return Index.build(prefixed), usage
 
         contextual_index, contextual_usage = _cached(
-            doc_id, "contextual-index", build_contextual, force=force
+            doc_id,
+            "contextual-index",
+            build_contextual,
+            force=force,
+            model=INDEX_MODEL,
         )
         # Arm 4 pays for the contextual prefixes plus embedding the prefixed
         # chunks — the real indexing bill, and it scales with document size.
@@ -200,6 +233,7 @@ def build_assets(
                 text, source.domain, progress=_progress("extraction windows")
             ),
             force=force,
+            model=INDEX_MODEL,
         )
         # Arm 6 pays for one map-reduce pass over the whole document.
         fixed_usage[extract.ARM] = extraction_usage
@@ -355,15 +389,29 @@ def derive_economics(
     return out
 
 
-def results_path(doc_id: str, model: str = ARM_MODEL):
-    """One file per (document, model): results/{doc_id}.{model}.json.
+def results_path(
+    doc_id: str, model: str = ARM_MODEL, index_model: str | None = None
+):
+    """One file per distinct measurement: results/{doc_id}.{model}[.idx-{index}].json.
 
     The model is in the filename, not just the header, so measuring the same
     document with a second model produces a sibling file instead of a conflict
-    with the first one's cells.
+    with the first one's cells. The index model is the same argument one step
+    further out: contextual retrieval and extract-then-query are downstream of it
+    in *both* axes, so the same document answered by the same model over two
+    different indexes is two result sets, not one, and merging them into a file
+    with a single `index_model` header would make that header a lie about half
+    the cells in it.
+
+    The suffix appears only when indexing was pinned to something other than the
+    answering model. A run where indexing follows — the default — writes the plain
+    two-part name, because `{doc}.{model}.{model}.json` says nothing the shorter
+    name does not, and the common path should not pay for the rare one.
     """
     RESULTS.mkdir(parents=True, exist_ok=True)
-    return RESULTS / f"{doc_id}.{model}.json"
+    index_model = index_model if index_model is not None else INDEX_MODEL
+    suffix = "" if index_model == model else f".idx-{index_model}"
+    return RESULTS / f"{doc_id}.{model}{suffix}.json"
 
 
 def migrate_legacy_results() -> None:
@@ -400,13 +448,25 @@ def load_existing(doc_id: str) -> dict[str, Any]:
     if not path.exists():
         return {}
     existing = json.loads(path.read_text())
-    prior = existing.get("model")
     # Only reachable through a hand-renamed file: the filename and the header
-    # disagree about the model, and resuming would mix two models' cells.
+    # disagree, and resuming would mix two configurations' cells. Checked for the
+    # index model too, and with the same fallback the readers use — a file with no
+    # `index_model` was written when indexing was pinned to Opus, so resuming one
+    # under a different index model is exactly the mix this refuses.
+    prior = existing.get("model")
     if prior and prior != ARM_MODEL:
         raise SystemExit(
             f"{doc_id}: results/{path.name} is named for {ARM_MODEL} but its "
             f"header says {prior!r}. Fix the filename or the header before running."
+        )
+    prior_index = existing.get("index_model", LEGACY_INDEX_MODEL)
+    if prior_index != INDEX_MODEL:
+        raise SystemExit(
+            f"{doc_id}: results/{path.name} was indexed with {prior_index!r} but "
+            f"this run indexes with {INDEX_MODEL!r}. Those are different "
+            f"measurements on the contextual and extract approaches. Rename the "
+            f"file to results/{results_path(doc_id, ARM_MODEL, prior_index).name} "
+            f"if its header is right, or fix the header."
         )
     return existing
 
@@ -534,6 +594,13 @@ def precompute_doc(
         "tokens": meta["tokens"],
         "chars": meta["chars"],
         "model": ARM_MODEL,
+        # The model that wrote the contextual prefixes and the extraction record,
+        # which is the answering model unless the run pinned it. Recorded because
+        # arms 4 and 6 are downstream of it in both axes — a cheaper index model
+        # is a cheaper y-intercept *and* a different set of retrieved chunks — so
+        # two result sets that differ here are not comparable on those arms, and
+        # nothing in the numbers themselves would tell a reader that.
+        "index_model": INDEX_MODEL,
         # Recorded so the manifest and the UI can describe this matrix without
         # re-deriving the arm set from the model — see `arms_of`.
         "arms": list(arms_pkg.ARM_ORDER),
@@ -654,11 +721,18 @@ def write_manifest() -> None:
         if path.name == "manifest.json":
             continue
         data = json.loads(path.read_text())
-        pair = (data["doc_id"], data.get("model", ""))
+        # Three parts, because two files can share a document and an answering
+        # model and still be separate measurements — see `results_path`.
+        pair = (
+            data["doc_id"],
+            data.get("model", ""),
+            data.get("index_model", LEGACY_INDEX_MODEL),
+        )
         if pair in seen:
             raise SystemExit(
                 f"results/ holds more than one file for {pair[0]} measured with "
-                f"{pair[1]}; results/{path.name} is the duplicate. Merge or remove it."
+                f"{pair[1]} over a {pair[2]} index; results/{path.name} is the "
+                f"duplicate. Merge or remove it."
             )
         seen.add(pair)
         questions = len(data.get("questions") or [])
@@ -674,6 +748,11 @@ def write_manifest() -> None:
                 "license": data.get("license", ""),
                 "provenance": data.get("provenance", ""),
                 "model": data.get("model", ""),
+                # Absent on result sets measured before indexing became a choice,
+                # and every one of those was indexed with Opus. Defaulted here so
+                # the UI reads one shape; see `indexModelOf` for the same fallback
+                # on the reader's side.
+                "index_model": data.get("index_model", LEGACY_INDEX_MODEL),
                 # Per result set, because two files in the same manifest can have
                 # different arm sets — see `arms_of`.
                 "arms": arms,
@@ -682,7 +761,7 @@ def write_manifest() -> None:
                 **provenance_of(data, len(arms), questions),
             }
         )
-    docs.sort(key=lambda d: (d["tokens"], d["doc_id"], d["model"]))
+    docs.sort(key=lambda d: (d["tokens"], d["doc_id"], d["model"], d["index_model"]))
     # One model reads as itself; a mix names every contributor.
     doc_models = sorted({d["model"] for d in docs if d["model"]})
     manifest = {

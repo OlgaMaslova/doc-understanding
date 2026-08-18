@@ -17,18 +17,50 @@ from .paths import PRICING_FILE
 
 DEFAULT_ARM_MODEL = "claude-opus-5"
 
-# Fixed on purpose, not configurable alongside ARM_MODEL:
+# JUDGE_MODEL (in grading.py) is the one model still fixed, and for a reason that
+# does not apply to indexing: the answer key is only comparable across arms and
+# models if the same judge graded everything. A cheaper judge for a cheaper arm
+# model would make the accuracy axis mean different things per column.
 #
-#   INDEX_MODEL — contextual prefixes and extractions are cached on disk keyed by
-#   document only, so a model switch would silently reuse artifacts written by a
-#   different model, or pay to regenerate them without saying why. And keeping the
-#   index constant isolates the variable: a run compares *answering* models, not
-#   answering-plus-indexing bundles.
+# INDEX_MODEL used to be pinned here too, on the argument that holding the index
+# constant isolates the variable — a run comparing *answering* models rather than
+# answering-plus-indexing bundles. That argument was wrong in the way that matters
+# to someone reading a bill: the contextual pass is the largest single line item on
+# a big document, so pinning it to Opus made a "DeepSeek run" on the 10-K cost $8.51
+# in Opus tokens and $0.60 in DeepSeek ones. The projection said $12.61 and the
+# model picker said DeepSeek, and nothing reconciled the two.
 #
-#   JUDGE_MODEL (in grading.py) — the answer key is only comparable across arms and
-#   models if the same judge graded everything. A cheaper judge for a cheaper arm
-#   model would make the accuracy axis mean different things per column.
-INDEX_MODEL = "claude-opus-5"
+# So it is now a choice, defaulting to the answering model. Both readings are
+# legitimate and they answer different questions:
+#
+#   follow (default) — what does this whole stack cost and score on this model?
+#     The honest answer for someone deciding what to deploy.
+#   pin to one model — how much of the difference between two columns is the
+#     answering model alone? The controlled experiment, with indexing held fixed.
+#
+# Whichever it is, it is recorded in the result payload as `index_model`, because
+# the two are not comparable and a reader cannot tell them apart from the numbers.
+
+
+def _resolve_index_model() -> str:
+    """The model that writes contextual prefixes and extraction records.
+
+    Follows `DOCRACE_MODEL` unless `DOCRACE_INDEX_MODEL` pins it. Validated against
+    the rate card for the same reason the arm model is: an index built by a model
+    this file cannot price produces a fixed cost that is silently wrong, and the
+    fixed cost is the whole point of arms 4 and 6.
+    """
+    load_env()
+    model = (os.environ.get("DOCRACE_INDEX_MODEL") or "").strip()
+    if not model:
+        return ARM_MODEL
+    known = pricing()["models"]
+    if model not in known:
+        raise SystemExit(
+            f"DOCRACE_INDEX_MODEL={model!r} has no entry in {PRICING_FILE.name}. "
+            f"Known models: {', '.join(known)}. Add a rate-card entry before indexing with it."
+        )
+    return model
 
 
 @lru_cache(maxsize=1)
@@ -60,6 +92,7 @@ def _resolve_arm_model() -> str:
 
 
 ARM_MODEL = _resolve_arm_model()
+INDEX_MODEL = _resolve_index_model()
 
 
 def snapshot_date() -> str:

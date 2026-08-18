@@ -11,6 +11,9 @@ before the first query. It shows up as arm 4's y-intercept on the cost chart.
 
 Implementation notes that matter for cost:
 - The document is sent once as a cached prefix and read back on every batch.
+  On a provider that caches automatically there is no breakpoint to place, so the
+  batches share an isolation scope instead — same effect, different spelling; see
+  `structured.py`.
 - Chunks are batched, so a 400-chunk document is ~20 calls rather than 400.
 - Structured outputs guarantee we get back exactly one prefix per chunk, keyed
   by index, instead of prose we would have to parse.
@@ -18,11 +21,10 @@ Implementation notes that matter for cost:
 
 from __future__ import annotations
 
-import json
 from typing import Any
 
-from .client import anthropic_client
 from .pricing import INDEX_MODEL, Usage
+from .structured import structured_json
 
 BATCH = 20
 CACHE_TTL = "1h"
@@ -72,10 +74,9 @@ def _batch_prompt(batch: list[tuple[int, str]]) -> str:
 
 
 def build_contextual_chunks(
-    document: str, chunk_texts: list[str], *, progress=None
+    document: str, chunk_texts: list[str], *, doc_id: str = "document", progress=None
 ) -> tuple[list[str], Usage]:
     """Return prefixed chunk texts plus the indexing usage that produced them."""
-    client = anthropic_client()
     system = [
         {"type": "text", "text": SYSTEM},
         {
@@ -84,26 +85,33 @@ def build_contextual_chunks(
             "cache_control": {"type": "ephemeral", "ttl": CACHE_TTL},
         },
     ]
+    # Every batch of this pass shares the document prefix and nothing else does,
+    # so the scope is the pass. Keyed by index model as well as document: two
+    # models indexing the same document are two separate prefixes, and sharing a
+    # scope between them would report cache hits that cannot have happened.
+    scope = f"contextual-{doc_id}-{INDEX_MODEL}"
 
     contexts: dict[int, str] = {}
     total = Usage()
+    batches = -(-len(chunk_texts) // BATCH)
 
     for start in range(0, len(chunk_texts), BATCH):
         batch = [
             (i, chunk_texts[i])
             for i in range(start, min(start + BATCH, len(chunk_texts)))
         ]
-        message = client.messages.create(
-            model=INDEX_MODEL,
-            max_tokens=4_000,
+        parsed, usage = structured_json(
             system=system,
             messages=[{"role": "user", "content": _batch_prompt(batch)}],
-            output_config={"format": {"type": "json_schema", "schema": SCHEMA}},
+            schema=SCHEMA,
+            model=INDEX_MODEL,
+            max_tokens=4_000,
+            label=f"contextual batch {start // BATCH + 1}/{batches}",
+            cache_scope=scope,
         )
-        total = total + Usage.from_message_usage(message.usage, ttl=CACHE_TTL)
+        total = total + usage
 
-        text = next(b.text for b in message.content if b.type == "text")
-        for entry in json.loads(text)["prefixes"]:
+        for entry in parsed["prefixes"]:
             contexts[int(entry["index"])] = entry["context"].strip()
 
         if progress:

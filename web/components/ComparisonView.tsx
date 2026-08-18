@@ -8,6 +8,7 @@ import { Heatmap } from "./Heatmap";
 import { ARM_COLOR, percent, seconds, tokens, usd } from "@/lib/format";
 import type { CatalogueDoc } from "@/lib/catalogue";
 import type { LeanDoc } from "@/lib/results";
+import { indexModelOf } from "@/lib/types";
 import type { ArmId, Manifest, Question, QuestionType } from "@/lib/types";
 
 interface Props {
@@ -111,24 +112,35 @@ export function ComparisonView({
     initialDocId && byDoc.has(initialDocId) ? initialDocId : docs[0].doc_id,
   );
   /**
-   * The model whose result set is shown. Model names are shared across documents,
-   * so the choice survives switching documents; a document never measured with the
-   * selected model falls back to its freshest set. Derived, not synced: like the
-   * question id below, the fallback is a pure function of the current document.
+   * Which result set is shown, as the answering model and the model that indexed
+   * it. Both, because one document can hold two sets that answer with the same
+   * model over different indexes, and the model name alone would not choose
+   * between them. The pair is shared across documents, so the choice survives
+   * switching document; a document never measured that way falls back to its
+   * freshest set. Derived, not synced: like the question id below, the fallback is
+   * a pure function of the current document.
    */
-  const [selectedModel, setSelectedModel] = useState<string | undefined>(
-    initialModel,
-  );
+  const [selected, setSelected] = useState<
+    { model: string; indexModel?: string } | undefined
+  >(initialModel ? { model: initialModel } : undefined);
 
   const variantFor = useCallback(
     (id: string): LeanDoc => {
       const variants = byDoc.get(id) ?? [];
-      return (
-        variants.find((v) => v.model === selectedModel) ??
-        variants.reduce((a, b) => (a.computed_at >= b.computed_at ? a : b))
-      );
+      const freshest = (list: LeanDoc[]) =>
+        list.reduce((a, b) => (a.computed_at >= b.computed_at ? a : b));
+      const sameModel = selected
+        ? variants.filter((v) => v.model === selected.model)
+        : [];
+      const exact = selected?.indexModel
+        ? sameModel.filter((v) => indexModelOf(v) === selected.indexModel)
+        : sameModel;
+      // Falls back outward rather than failing: exact pair, then any set from that
+      // answering model, then the freshest this document has.
+      const pool = exact.length ? exact : sameModel.length ? sameModel : variants;
+      return freshest(pool);
     },
-    [byDoc, selectedModel],
+    [byDoc, selected],
   );
 
   const doc = useMemo(
@@ -183,13 +195,13 @@ export function ComparisonView({
 
   useEffect(() => stop, [stop]);
 
-  // One replay per (document, model, question). When any of the three changes,
+  // One replay per (document, model, index model, question). When any of the four changes,
   // the cards reset during the same render — the pattern React documents for
   // deriving state from a changed input — and the effect below starts the new
   // stream. Resetting inside the effect instead was flagged as a cascading
   // render, and resetting inside the click handlers left the arrival case
   // blank: the first question is preselected, and nobody clicks it.
-  const runKey = `${docId}|${doc.model}|${questionId}`;
+  const runKey = `${docId}|${doc.model}|${indexModelOf(doc)}|${questionId}`;
   const [prevRunKey, setPrevRunKey] = useState(runKey);
   if (runKey !== prevRunKey) {
     setPrevRunKey(runKey);
@@ -207,6 +219,7 @@ export function ComparisonView({
       const params = new URLSearchParams({
         doc: docId,
         model: doc.model,
+        index: indexModelOf(doc),
         question: targetQuestionId,
         instant: "1",
       });
@@ -276,7 +289,7 @@ export function ComparisonView({
 
       source.onerror = () => stop();
     },
-    [docId, doc.model, stop],
+    [docId, doc, stop],
   );
 
   // The one place a replay starts. Question clicks only update the selection,
@@ -356,8 +369,23 @@ export function ComparisonView({
         <div className="flex flex-wrap items-center gap-3">
           <p className="text-xs text-text-faint">
             Measured with{" "}
-            <span className="font-mono text-text-dim">{doc.model}</span> ·
-            replayed from disk, nothing here calls an API
+            <span className="font-mono text-text-dim">{doc.model}</span>
+            {indexModelOf(doc) === doc.model ? null : (
+              <>
+                , indexed with{" "}
+                <span
+                  className="font-mono text-text-dim"
+                  title={
+                    "Contextual retrieval and extract-then-query build their index " +
+                    "with this model, so their cost and their retrieved context " +
+                    "come from it rather than from the answering model."
+                  }
+                >
+                  {indexModelOf(doc)}
+                </span>
+              </>
+            )}{" "}
+            · replayed from disk, nothing here calls an API
           </p>
           <button
             type="button"
@@ -474,17 +502,22 @@ export function ComparisonView({
             </p>
             <div className="flex flex-wrap gap-2">
               {variants.map((v) => {
-                const active = v.model === doc.model;
+                const vIndex = indexModelOf(v);
+                const active =
+                  v.model === doc.model && vIndex === indexModelOf(doc);
                 const m = manifest.docs.find(
-                  (x) => x.doc_id === v.doc_id && x.model === v.model,
+                  (x) =>
+                    x.doc_id === v.doc_id &&
+                    x.model === v.model &&
+                    x.index_model === vIndex,
                 );
                 return (
                   <button
-                    key={v.model}
+                    key={`${v.model}::${vIndex}`}
                     type="button"
                     onClick={() => {
                       stop();
-                      setSelectedModel(v.model);
+                      setSelected({ model: v.model, indexModel: vIndex });
                     }}
                     aria-pressed={active}
                     className={`rounded-md border px-3 py-1.5 text-left transition-colors ${
@@ -496,6 +529,14 @@ export function ComparisonView({
                     <span className="block font-mono text-xs text-text">
                       {v.model}
                     </span>
+                    {vIndex === v.model ? null : (
+                      <span
+                        className="block font-mono text-[11px] text-text-faint"
+                        title="Contextual retrieval and extract-then-query were indexed with this model, so those two approaches carry its cost and its retrieval quality."
+                      >
+                        idx {vIndex}
+                      </span>
+                    )}
                     <span className="tnum block text-[11px] text-text-faint">
                       {v.computed_at.slice(0, 10)}
                       {m && m.provenance_state === "partial" ? (

@@ -9,7 +9,7 @@ import { loadPresets } from "@/lib/presets";
 import { loadDocLean, loadManifestIfPresent } from "@/lib/results";
 import { armsFor, groupApproaches, numberWord } from "@/lib/approaches";
 import { compareModels } from "@/lib/models";
-import { resultKey } from "@/lib/types";
+import { indexModelOf, resultKey } from "@/lib/types";
 
 /**
  * The page is a funnel with a fork in it: what the approaches are, how they are
@@ -27,19 +27,25 @@ export default async function Home() {
     loadPresets(),
   ]);
 
-  // One lean result set per (document, model) pair — a document measured with two
-  // models is two entries, and the results view offers the choice.
+  // One lean result set per (document, model, index model) triple — a document
+  // measured with two models, or with one model over two indexes, is two entries,
+  // and the results view offers the choice.
   const docs = manifest
-    ? await Promise.all(manifest.docs.map((d) => loadDocLean(d.doc_id, d.model)))
+    ? await Promise.all(
+        manifest.docs.map((d) =>
+          loadDocLean(d.doc_id, d.model, d.index_model),
+        ),
+      )
     : [];
 
-  // Completeness per result set, for the run stage's picker. Keyed by (document,
-  // model) because that is what results/ stores: a document fully measured with one
-  // model is still unmeasured for another. Derived from the manifest, never
-  // asserted: the manifest reports what the files actually contain.
+  // Completeness per result set, for the run stage's picker. Keyed the way results/
+  // stores them: a document fully measured with one model is still unmeasured for
+  // another, and one measured over an Opus index is still unmeasured over its own.
+  // Derived from the manifest, never asserted: the manifest reports what the files
+  // actually contain.
   const status: Record<string, DocStatus> = {};
   for (const d of manifest?.docs ?? []) {
-    status[resultKey(d.doc_id, d.model)] = {
+    status[resultKey(d.doc_id, d.model, d.index_model)] = {
       cells: d.cells,
       cellsExpected: d.cells_expected,
       state: d.provenance_state,
@@ -51,7 +57,8 @@ export default async function Home() {
   // pipeline retries them by default, so the run stage must price and queue them.
   const measured: Record<string, string[]> = {};
   for (const doc of docs) {
-    measured[resultKey(doc.doc_id, doc.model)] = Object.entries(doc.cells)
+    measured[resultKey(doc.doc_id, doc.model, indexModelOf(doc))] =
+      Object.entries(doc.cells)
       .filter(([, cell]) => !("error" in cell))
       .map(([key]) => key);
   }

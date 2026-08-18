@@ -54,8 +54,11 @@ export interface Presets {
   grades: Manifest["grades"];
   credit: Manifest["credit"];
   models: PresetModel[];
-  /** Fixed whatever model is chosen — indexing and grading; see pricing.py. */
-  index_model: string;
+  /**
+   * Fixed whatever model is chosen; see pricing.py. Indexing used to be listed
+   * beside it and is not any more — it is a per-run choice now, so it belongs to
+   * a scope rather than to the presets.
+   */
   judge_model: string;
   /** Questions by document id. */
   questions: Record<string, PresetQuestion[]>;
@@ -67,7 +70,6 @@ const EMPTY: Presets = {
   grades: [],
   credit: {} as Manifest["credit"],
   models: [],
-  index_model: "",
   judge_model: "",
   questions: {},
 };
@@ -107,7 +109,6 @@ export async function loadPresets(): Promise<Presets> {
           (ARM_IDS as readonly string[]).includes(a),
         ),
       })),
-      index_model: parsed.index_model ?? "",
       judge_model: parsed.judge_model ?? "",
       questions: parsed.questions ?? {},
     };

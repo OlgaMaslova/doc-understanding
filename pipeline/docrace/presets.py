@@ -30,7 +30,7 @@ import json
 
 from . import arms as arms_pkg
 from .grading import CREDIT, GRADE_META, JUDGE_MODEL
-from .pricing import DEFAULT_ARM_MODEL, INDEX_MODEL, pricing
+from .pricing import DEFAULT_ARM_MODEL, pricing
 from .questions import TYPE_META, load_questions
 
 
@@ -61,10 +61,13 @@ def presets(doc_id: str | None = None) -> dict:
         "grades": [{"id": g, **GRADE_META[g]} for g in GRADE_META],
         "credit": CREDIT,
         # The models a run may answer with — every entry in the rate card, since
-        # the rate card is exactly the set the pipeline can price. Indexing and
-        # grading stay on fixed models whatever is chosen (see pricing.py), and
-        # naming them here lets the UI say so instead of implying the whole
-        # pipeline switches.
+        # the rate card is exactly the set the pipeline can price. The same list
+        # serves the indexing picker: anything priceable can write an index, and a
+        # model is only barred from indexing a particular document by its context
+        # window, which the UI checks per document rather than per model.
+        #
+        # Grading is the one thing that stays fixed whatever is chosen (see
+        # pricing.py), and naming it here lets the UI say so.
         #
         # Each carries its own arm set, because the cached-context arms a model has
         # depend on how its provider exposes caching: a request that gets to choose
@@ -84,7 +87,11 @@ def presets(doc_id: str | None = None) -> dict:
             }
             for mid, m in pricing()["models"].items()
         ],
-        "index_model": INDEX_MODEL,
+        # No `index_model` here on purpose. It used to be a single fixed value the
+        # UI could print; it is now per-run, chosen alongside the answering model,
+        # so a preset value would be a default masquerading as a fact. The default
+        # is "whatever answers", which the UI expresses by preselecting the
+        # answering model rather than by reading a value from here.
         "judge_model": JUDGE_MODEL,
         "questions": by_doc,
     }

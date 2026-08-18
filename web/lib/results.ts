@@ -123,28 +123,43 @@ export async function loadManifestIfPresent(): Promise<Manifest | null> {
 }
 
 /**
- * One (document, model) result set.
+ * One result set: a document, the model that answered, the model that indexed.
  *
  * Results are stored per model — measuring a document with a second model adds a
- * sibling file rather than replacing the first. Without `model`, the most
- * recently measured set for the document is returned, which is what "show me
- * this document" should mean when nobody named a model.
+ * sibling file rather than replacing the first — and per index model on top of
+ * that, since two indexes over one answering model are two measurements. Without
+ * `model`, the most recently measured set for the document is returned, which is
+ * what "show me this document" should mean when nobody named one.
+ *
+ * `indexModel` narrows further, and is only needed where two sets share an
+ * answering model. Omitting it takes the freshest of those, so a caller that
+ * knows nothing about indexing still gets a coherent set rather than an error.
  */
-export async function loadDoc(docId: string, model?: string): Promise<DocResults> {
-  // Guard against traversal: the pair has to be one the manifest knows about,
+export async function loadDoc(
+  docId: string,
+  model?: string,
+  indexModel?: string,
+): Promise<DocResults> {
+  // Guard against traversal: the entry has to be one the manifest knows about,
   // and the filename read is the one the pipeline wrote into the manifest.
   const manifest = await loadManifest();
   const entries = manifest.docs.filter((d) => d.doc_id === docId);
   if (!entries.length) {
     throw new Error(`Unknown document: ${docId}`);
   }
-  const entry = model
-    ? entries.find((d) => d.model === model)
-    : entries.reduce((a, b) => (a.computed_at >= b.computed_at ? a : b));
-  if (!entry) {
-    throw new Error(`No results for ${docId} measured with ${model}`);
+  const freshest = (list: typeof entries) =>
+    list.reduce((a, b) => (a.computed_at >= b.computed_at ? a : b));
+  const candidates = model ? entries.filter((d) => d.model === model) : entries;
+  const narrowed = indexModel
+    ? candidates.filter((d) => d.index_model === indexModel)
+    : candidates;
+  if (!narrowed.length) {
+    throw new Error(
+      `No results for ${docId} measured with ${model ?? "any model"}` +
+        (indexModel ? ` over a ${indexModel} index` : ""),
+    );
   }
-  return readJson<DocResults>(path.basename(entry.file));
+  return readJson<DocResults>(path.basename(freshest(narrowed).file));
 }
 
 export async function loadCell(
@@ -169,8 +184,12 @@ export async function loadCell(
  * neither is needed for that: the charts run on numbers, and the comparison cards
  * receive their text over SSE.
  */
-export async function loadDocLean(docId: string, model?: string): Promise<LeanDoc> {
-  const doc = await loadDoc(docId, model);
+export async function loadDocLean(
+  docId: string,
+  model?: string,
+  indexModel?: string,
+): Promise<LeanDoc> {
+  const doc = await loadDoc(docId, model, indexModel);
   const cells: LeanDoc["cells"] = {};
   for (const [key, cell] of Object.entries(doc.cells)) {
     cells[key] = isFailed(cell)

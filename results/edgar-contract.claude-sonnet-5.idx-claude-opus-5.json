@@ -8,6 +8,7 @@
   "tokens": 52750,
   "chars": 150497,
   "model": "claude-sonnet-5",
+  "index_model": "claude-opus-5",
   "pricing_snapshot": "2026-08-13",
   "computed_at": "2026-08-13T12:13:54Z",
   "chunking": {

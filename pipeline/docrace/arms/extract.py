@@ -17,9 +17,9 @@ from __future__ import annotations
 import json
 from typing import Any
 
-from ..client import anthropic_client
 from ..paths import SCHEMAS
 from ..pricing import ARM_MODEL, INDEX_MODEL, Usage
+from ..structured import structured_json
 from .base import (
     ArmResult,
     refusal_guard,
@@ -41,6 +41,12 @@ WINDOW_OVERLAP_CHARS = 4_000
 # a cent, and it removes any chance of the cache lapsing partway through a run and
 # quietly re-billing the record at full price.
 CACHE_TTL = "1h"
+
+# The extraction windows are the longest structured outputs in the pipeline, and
+# a truncated one is unusable rather than merely short. Sized for the schema, not
+# for the model: it is a ceiling that only the largest records approach, and every
+# model this runs on can hold it.
+MAX_EXTRACT_TOKENS = 64_000
 
 EXTRACT_SYSTEM = (
     "You extract structured facts from a document into a fixed schema.\n\n"
@@ -91,32 +97,18 @@ def _windows(document: str) -> list[str]:
     return out
 
 
-def _check_complete(message, label: str) -> None:
-    """A truncated structured output is invalid JSON; fail with the cause."""
-    if message.stop_reason != "end_turn":
-        raise RuntimeError(
-            f"{label} stopped with {message.stop_reason!r} instead of completing; "
-            f"the structured output is unusable. If this is 'max_tokens', the "
-            f"schema is eliciting more output than the budget allows."
-        )
-
-
 def build_extraction(
     document: str, domain: str, *, progress=None
 ) -> tuple[dict[str, Any], Usage]:
     """Map-reduce the document into the domain schema. This is the fixed cost."""
-    client = anthropic_client()
     schema = load_schema(domain)
-    output_config = {"format": {"type": "json_schema", "schema": schema}}
     total = Usage()
 
     windows = _windows(document)
     partials: list[dict[str, Any]] = []
 
     for i, window in enumerate(windows):
-        with client.messages.stream(
-            model=INDEX_MODEL,
-            max_tokens=64_000,
+        partial, usage = structured_json(
             system=EXTRACT_SYSTEM,
             messages=[
                 {
@@ -128,14 +120,13 @@ def build_extraction(
                     ),
                 }
             ],
-            output_config=output_config,
-        ) as stream:
-            message = stream.get_final_message()
-        _check_complete(message, f"extraction window {i + 1}/{len(windows)}")
-        total = total + Usage.from_message_usage(message.usage)
-        partials.append(
-            json.loads(next(b.text for b in message.content if b.type == "text"))
+            schema=schema,
+            model=INDEX_MODEL,
+            max_tokens=MAX_EXTRACT_TOKENS,
+            label=f"extraction window {i + 1}/{len(windows)}",
         )
+        total = total + usage
+        partials.append(partial)
         if progress:
             progress(i + 1, len(windows))
 
@@ -146,17 +137,15 @@ def build_extraction(
         f'<extraction index="{i + 1}">\n{json.dumps(p, indent=2)}\n</extraction>'
         for i, p in enumerate(partials)
     )
-    with client.messages.stream(
-        model=INDEX_MODEL,
-        max_tokens=64_000,
+    merged, usage = structured_json(
         system=MERGE_SYSTEM,
         messages=[{"role": "user", "content": f"{joined}\n\nMerge these into one record."}],
-        output_config=output_config,
-    ) as stream:
-        message = stream.get_final_message()
-    _check_complete(message, "extraction merge")
-    total = total + Usage.from_message_usage(message.usage)
-    merged = json.loads(next(b.text for b in message.content if b.type == "text"))
+        schema=schema,
+        model=INDEX_MODEL,
+        max_tokens=MAX_EXTRACT_TOKENS,
+        label="extraction merge",
+    )
+    total = total + usage
     return merged, total
 
 

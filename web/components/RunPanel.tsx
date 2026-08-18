@@ -146,6 +146,12 @@ export function RunPanel({
   const [modelId, setModelId] = useState(
     () => defaultModel(presets)?.id ?? "",
   );
+  // null means "follow the answering model", which is the default and the only
+  // setting where the projected cost is entirely what the chosen model charges.
+  // Stored as an override rather than a resolved id so that switching answering
+  // model keeps following, instead of silently pinning the index to whatever was
+  // selected a moment ago.
+  const [indexOverride, setIndexOverride] = useState<string | null>(null);
   // What was ticked, which is not quite what will run: the arms available depend on
   // the model, so the selection is reconciled against it below rather than rewritten
   // here. Keeping the raw picks means switching model and back restores them.
@@ -225,10 +231,14 @@ export function RunPanel({
     [presets.question_types],
   );
 
-  // Per (document, model): the skip set has to match the file this run resumes.
+  const indexModelId = indexOverride ?? modelId;
+
+  // The skip set has to match the file this run resumes, which is identified by
+  // the index model as well: pinning the index sends the run to a different file,
+  // where none of these cells exist and all of them are work to do.
   const doneCells = useMemo(
-    () => new Set(measured[resultKey(docId, modelId)] ?? []),
-    [measured, docId, modelId],
+    () => new Set(measured[resultKey(docId, modelId, indexModelId)] ?? []),
+    [measured, docId, modelId, indexModelId],
   );
 
   // Cells that already have results. The pipeline skips them unless forced, so they
@@ -255,12 +265,36 @@ export function RunPanel({
       selectedDocMeta.tokens > model.context_window,
   );
 
-  const scopeKey = `${docId}|${[...arms].sort().join(",")}|${modelId}|${force}`;
+  const indexModel = presets.models.find((m) => m.id === indexModelId);
+  // Only two approaches have an index, so pinning one is a no-op for a scope
+  // without them — and telling someone their index model is expensive when it
+  // will never be called would be noise.
+  const indexed = arms.filter((a) => a === "hybrid_rag" || a === "extract");
+  // The contextual pass sends the whole document in one prompt, so the index
+  // model needs to hold it. This is a different bound from the answering model's:
+  // extraction windows at 30k tokens fit anywhere, and the retrieval arms only
+  // ever see chunks, so a small-context model can answer for a document it
+  // cannot index.
+  const indexOverContext = Boolean(
+    arms.includes("hybrid_rag") &&
+      indexModel?.context_window &&
+      selectedDocMeta &&
+      selectedDocMeta.tokens > indexModel.context_window,
+  );
+
+  const scopeKey = `${docId}|${[...arms].sort().join(",")}|${modelId}|${indexModelId}|${force}`;
   const quoteIsCurrent = pricedFor === scopeKey;
 
   const body = useMemo(
-    () => JSON.stringify({ doc: docId, arms, model: modelId, force }),
-    [docId, arms, modelId, force],
+    () =>
+      JSON.stringify({
+        doc: docId,
+        arms,
+        model: modelId,
+        index_model: indexModelId,
+        force,
+      }),
+    [docId, arms, modelId, indexModelId, force],
   );
 
   const price = useCallback(async () => {
@@ -486,9 +520,10 @@ export function RunPanel({
         <div className="flex flex-wrap gap-2">
           {catalogue.map((d) => {
             const active = d.doc_id === docId;
-            // Completeness under the *selected model* — results are stored per
-            // model, so "complete" with one model is "not run yet" with another.
-            const st = status[resultKey(d.doc_id, modelId)];
+            // Completeness under the selected models — results are stored per
+            // answering model and per index model, so "complete" with one pair is
+            // "not run yet" with another.
+            const st = status[resultKey(d.doc_id, modelId, indexModelId)];
             return (
               <button
                 key={d.doc_id}
@@ -550,11 +585,11 @@ export function RunPanel({
               ))}
             </select>
             <p className="max-w-md text-xs leading-relaxed text-text-faint">
-              The model every approach answers with. Indexing and grading stay on{" "}
-              <span className="text-text-dim">{presets.index_model}</span> whichever
-              you pick, so a run compares answering models, nothing else. Each
-              model&apos;s results are kept in their own file — running a second
-              model measures afresh instead of overwriting the first.
+              The model every approach answers with. Grading stays on{" "}
+              <span className="text-text-dim">{presets.judge_model}</span> whichever
+              you pick, so the accuracy axis means the same thing in every column.
+              Each model&apos;s results are kept in their own file — running a
+              second model measures afresh instead of overwriting the first.
             </p>
           </div>
           {overContext && model?.context_window && selectedDocMeta ? (
@@ -565,6 +600,82 @@ export function RunPanel({
               will fail — and the retrieval approaches are the only fair test. Drop
               the full-context approaches or pick a larger-context model.
             </p>
+          ) : null}
+
+          {indexed.length > 0 ? (
+            <div className="space-y-2 border-l-2 border-border pl-3">
+              <p className="text-xs uppercase tracking-wide text-text-faint">
+                Indexing model
+              </p>
+              <div className="flex flex-wrap items-center gap-3">
+                <select
+                  value={indexOverride ?? ""}
+                  disabled={busy}
+                  onChange={(e) => setIndexOverride(e.target.value || null)}
+                  aria-label="Model that writes the contextual prefixes and the extraction record"
+                  className="rounded border border-border bg-bg-inset px-2 py-1.5 text-sm text-text disabled:opacity-40"
+                >
+                  <option value="">Same as answering model</option>
+                  {presets.models.map((m) => (
+                    <option key={m.id} value={m.id}>
+                      Pin to {m.label} — ${m.input_per_mtok} in / $
+                      {m.output_per_mtok} out per MTok
+                    </option>
+                  ))}
+                </select>
+                <p className="max-w-md text-xs leading-relaxed text-text-faint">
+                  {indexed.length === 2
+                    ? "Contextual retrieval and extract-then-query"
+                    : indexed[0] === "hybrid_rag"
+                      ? "Contextual retrieval"
+                      : "Extract-then-query"}{" "}
+                  {indexed.length === 2 ? "each build" : "builds"} an index before
+                  the first question — a model writes a situating prefix for every
+                  chunk, or fills the schema. On a large document that is the
+                  biggest single line on the bill, so it is priced at{" "}
+                  <span className="text-text-dim">
+                    {indexModel?.label ?? indexModelId}
+                  </span>
+                  &apos;s rates, not the answering model&apos;s.
+                </p>
+              </div>
+              <p className="max-w-3xl text-xs leading-relaxed text-text-faint">
+                {indexOverride === null ? (
+                  <>
+                    Following the answering model, which is what you want if the
+                    question is <em>what does this model cost me end to end</em>.
+                    Pin it instead to hold the index still across several answering
+                    models — that isolates the answering model as the only variable,
+                    at the price of a bill partly in another model&apos;s rates.
+                  </>
+                ) : (
+                  <>
+                    Pinned. The fixed-cost line will be{" "}
+                    <span className="text-text-dim">
+                      {indexModel?.label ?? indexModelId}
+                    </span>
+                    &apos;s spending inside a run labelled{" "}
+                    <span className="text-text-dim">{model?.label ?? modelId}</span>,
+                    so this result set is comparable with others pinned the same way
+                    and not with ones that followed. The choice is recorded in the
+                    result file either way.
+                  </>
+                )}
+              </p>
+              {indexOverContext &&
+              indexModel?.context_window &&
+              selectedDocMeta ? (
+                <p className="max-w-3xl rounded border border-[#d9a441] bg-[#2a2110] px-3 py-2 text-sm leading-relaxed text-text">
+                  Contextual retrieval sends the whole document to the indexing
+                  model in one prompt, and {selectedDocMeta.domain} is{" "}
+                  {tokens(selectedDocMeta.tokens)} tokens against{" "}
+                  {indexModel.label}&apos;s{" "}
+                  {tokens(indexModel.context_window)}-token context. Indexing will
+                  fail before any question runs. Pick a larger-context indexing
+                  model, or drop contextual retrieval from this run.
+                </p>
+              ) : null}
+            </div>
           ) : null}
         </div>
       ) : null}

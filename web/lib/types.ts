@@ -145,6 +145,15 @@ export interface DocResults {
   tokens: number;
   chars: number;
   model: string;
+  /**
+   * The model that wrote the contextual prefixes and the extraction record. Equal
+   * to `model` on a run that let indexing follow, which is the default.
+   *
+   * Optional because result sets measured before indexing became a choice have no
+   * such field. Those were all indexed with claude-opus-5, which is what a reader
+   * falling back should assume — see `indexModelOf`.
+   */
+  index_model?: string;
   pricing_snapshot: string;
   computed_at: string;
   chunking: { chunk_tokens: number; overlap_tokens: number };
@@ -184,6 +193,13 @@ export interface Manifest {
     /** The model this result set was measured with. */
     model: string;
     /**
+     * The model that built its contextual and extraction indexes. Equal to
+     * `model` unless the run pinned it; defaulted by the writer for result sets
+     * that predate the choice, so unlike `DocResults.index_model` this is always
+     * present.
+     */
+    index_model: string;
+    /**
      * The arms this result set holds. Per result set, not per manifest: the arm
      * a model measures caching with depends on its provider, so two files in one
      * manifest can have different sets and the union would have the results view
@@ -222,6 +238,24 @@ export interface Manifest {
   partial: boolean;
 }
 
+/**
+ * Which model built this result set's indexes.
+ *
+ * Result sets written before indexing was selectable carry no `index_model`, and
+ * every one of them was indexed with Opus — indexing was pinned to it. So the
+ * fallback is a fact about those files, not a guess, and it is worth stating
+ * rather than showing a blank: on arms 4 and 6 an Opus-indexed DeepSeek run and a
+ * DeepSeek-indexed one differ in both cost and accuracy.
+ */
+export const LEGACY_INDEX_MODEL = "claude-opus-5";
+
+export function indexModelOf(doc: {
+  model: string;
+  index_model?: string;
+}): string {
+  return doc.index_model ?? LEGACY_INDEX_MODEL;
+}
+
 export function isFailed(cell: Cell | FailedCell): cell is FailedCell {
   return "error" in cell;
 }
@@ -230,7 +264,19 @@ export function cellKey(arm: ArmId, questionId: string): string {
   return `${arm}::${questionId}`;
 }
 
-/** Key for one (document, model) result set, mirroring the results/ layout. */
-export function resultKey(docId: string, model: string): string {
-  return `${docId}::${model}`;
+/**
+ * Key for one result set, mirroring the results/ layout.
+ *
+ * Three parts, not two. The same document answered by the same model over two
+ * different indexes is two result sets — contextual retrieval and
+ * extract-then-query differ in cost *and* in which chunks they retrieve — so a
+ * two-part key would report one as already measured when the other was asked
+ * for, and offer nothing to run.
+ */
+export function resultKey(
+  docId: string,
+  model: string,
+  indexModel: string,
+): string {
+  return `${docId}::${model}::${indexModel}`;
 }

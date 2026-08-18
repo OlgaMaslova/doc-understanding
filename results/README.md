@@ -5,11 +5,21 @@ committed files are real measurements — currently the arXiv paper's full matri
 (7 arms × 15 questions), answered with `claude-sonnet-5`. The other documents'
 files appear when someone runs them.
 
-One file holds one model's measurements of one document, and the model is in the
-filename: `<doc>.<model>.json`. Measuring a document with a second model adds a
-sibling file rather than touching the first, and the site offers the choice
-wherever a document has more than one. (Files from before this layout — bare
-`<doc>.json` — are renamed automatically the next time the pipeline runs.)
+One file holds one measurement of one document, and what makes it distinct is in
+the filename: `<doc>.<model>.json`, or `<doc>.<model>.idx-<index-model>.json` when
+indexing was pinned to a model other than the one answering. Measuring a document
+a second way adds a sibling file rather than touching the first, and the site
+offers the choice wherever a document has more than one.
+
+The index model earns a place in the filename because two of the six approaches —
+contextual retrieval and extract-then-query — are built by it. Change it and both
+their cost and the chunks they retrieve change, so those are different
+measurements even when the answering model is identical. Every committed file
+here was measured before indexing was selectable, when it was pinned to
+`claude-opus-5`; that is why four of the five carry the `.idx-` suffix.
+
+(Files from before this layout — bare `<doc>.json` — are renamed automatically the
+next time the pipeline runs.)
 
 Nothing here calls an API at request time. The deployed site reads these files
 and serves the recorded answers, which is what makes it instant, deterministic,

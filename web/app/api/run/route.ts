@@ -45,8 +45,15 @@ function pipelineArgs(scope: Scope): string[] {
 
 /** The equivalent CLI invocation, for when the browser refuses a scope. */
 function cliFor(scope: Scope): string {
+  // The index model is printed only when it differs from the answering model,
+  // since setting it to the same value is what omitting it already does — and a
+  // command line that restates the default is one more thing to read.
+  const index =
+    scope.indexModel === scope.model
+      ? ""
+      : `DOCRACE_INDEX_MODEL=${scope.indexModel} `;
   return [
-    `cd pipeline && DOCRACE_MODEL=${scope.model} .venv/bin/python -m docrace.precompute`,
+    `cd pipeline && DOCRACE_MODEL=${scope.model} ${index}.venv/bin/python -m docrace.precompute`,
     `--doc ${scope.doc}`,
     ...scope.arms.map((a) => `--arm ${a}`),
     ...(scope.force ? ["--force"] : []),
@@ -136,7 +143,7 @@ export async function POST(request: Request) {
           "docrace.precompute",
           pipelineArgs(scope),
           request.signal,
-          { DOCRACE_MODEL: scope.model },
+          { DOCRACE_MODEL: scope.model, DOCRACE_INDEX_MODEL: scope.indexModel },
         )) {
           send(event);
         }

@@ -154,10 +154,20 @@ export interface Scope {
   /**
    * The model the arms answer with. Reaches the pipeline as `DOCRACE_MODEL` in
    * the subprocess environment rather than an argv flag, because the pipeline
-   * binds the model into defaults at import time — see pricing.py. Indexing and
-   * grading stay on their fixed models whatever this says.
+   * binds the model into defaults at import time — see pricing.py. Grading stays
+   * on its fixed model whatever this says.
    */
   model: string;
+  /**
+   * The model that writes the contextual prefixes and the extraction record,
+   * as `DOCRACE_INDEX_MODEL`. Normally equal to `model` — that is the default the
+   * panel offers, and the only setting under which a run's cost is what the
+   * chosen model charges. Pinning it to something else buys a controlled
+   * comparison across answering models at the price of a bill that is partly
+   * someone else's rates, which is why it is an explicit choice and is recorded
+   * in the results.
+   */
+  indexModel: string;
   /** Re-run cells that already have results. Maps to `precompute --force`. */
   force: boolean;
 }
@@ -309,6 +319,7 @@ export async function estimateScope(
   let out = "";
   for await (const event of runPipeline("docrace.estimate", args, undefined, {
     DOCRACE_MODEL: scope.model,
+    DOCRACE_INDEX_MODEL: scope.indexModel,
   })) {
     if (event.event === "log") out += `${String(event.text)}\n`;
     if (event.event === "exit" && event.code !== 0) {

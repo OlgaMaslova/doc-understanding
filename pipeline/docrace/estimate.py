@@ -57,7 +57,10 @@ ASSUMPTIONS = f"""assumptions
   extracted record size             {EXTRACT_RECORD_TOKENS} tokens per query, cached
   retrieved context                 top-5 chunks at ~{CHUNK_TOKENS} tokens
   token counts                      chars/{CHARS_PER_TOKEN} unless a committed count exists
-  judge                             one call per cell, priced as a query"""
+  answering model                   {ARM_MODEL}
+  indexing model                    {INDEX_MODEL}, at its own rates
+                                    (contextual prefixes and extraction only)
+  judge                             {JUDGE_MODEL}, one call per cell, priced as a query"""
 
 
 @dataclass
@@ -91,10 +94,30 @@ def project(doc_id: str, questions: int) -> list[Projection]:
         return price(usage, ARM_MODEL).total
 
     def index_cost(usage: Usage) -> float:
-        # Indexing work (contextual prefixes, extraction windows) always runs on
-        # INDEX_MODEL, whatever DOCRACE_MODEL says — see pricing.py for why. Pricing
-        # it at ARM_MODEL would skew every fixed-cost intercept when they differ.
+        # Indexing work (contextual prefixes, extraction windows) runs on
+        # INDEX_MODEL, which follows DOCRACE_MODEL unless the run pinned it — see
+        # pricing.py. Pricing it at ARM_MODEL would skew every fixed-cost intercept
+        # in exactly the case a pinned index is interesting.
         return price(usage, INDEX_MODEL).total
+
+    # An index model whose provider caches on its own has no write premium to pay
+    # and no lifetime to choose: the first call that sends the document is billed
+    # as ordinary input and the rest read it back. Projecting a 1h write against
+    # such a model would invent a line item its bill will never show — and `price`
+    # refuses to quote one, so this is a hard branch, not a rounding choice.
+    index_warms = cache_style_of(INDEX_MODEL) == "explicit_ttl"
+
+    def index_prefix(prefix_tokens: int, reads: int) -> dict[str, int]:
+        """Token flow for a document held across several indexing calls."""
+        if index_warms:
+            return {
+                "cache_write_1h_tokens": prefix_tokens,
+                "cache_read_tokens": prefix_tokens * reads,
+            }
+        return {
+            "input_tokens": prefix_tokens,
+            "cache_read_tokens": prefix_tokens * reads,
+        }
 
     out: list[Projection] = []
 
@@ -162,13 +185,12 @@ def project(doc_id: str, questions: int) -> list[Projection]:
             "hybrid_rag",
             index_cost(
                 Usage(
-                    cache_write_1h_tokens=tokens,
-                    cache_read_tokens=tokens * max(0, batches - 1),
-                    input_tokens=chunks * (CHUNK_TOKENS + 50),
                     output_tokens=chunks * 70,
                     embed_tokens=int(tokens * 1.4),
                     calls=batches,
                 )
+                + Usage(input_tokens=chunks * (CHUNK_TOKENS + 50))
+                + Usage(**index_prefix(tokens, max(0, batches - 1)))
             ),
             cost(
                 Usage(
@@ -221,8 +243,17 @@ def project(doc_id: str, questions: int) -> list[Projection]:
                 Usage(
                     input_tokens=tokens + 400 * windows,
                     output_tokens=EXTRACTION_OUTPUT_TOKENS * windows,
-                    cache_write_1h_tokens=EXTRACT_RECORD_TOKENS,
                     calls=windows,
+                )
+                # Warming the cache over the record, once — and only where warming
+                # is a billable event. The arm's own cache is the answering model's,
+                # so this one line is priced at the index model but sized by the arm.
+                + Usage(
+                    **(
+                        {"cache_write_1h_tokens": EXTRACT_RECORD_TOKENS}
+                        if index_warms
+                        else {}
+                    )
                 )
             ),
             # The record is identical for every question, so it reads from cache.
@@ -317,11 +348,22 @@ def main() -> None:
             )
             payload["total_usd"] += subtotal + judge
         payload["total_usd"] = round(payload["total_usd"], 6)
+        # Named rather than left implicit: the run panel prices a scope through
+        # this, and the indexing model is the one input to the number that the
+        # panel's model picker does not obviously determine.
+        payload["arm_model"] = ARM_MODEL
+        payload["index_model"] = INDEX_MODEL
+        payload["judge_model"] = JUDGE_MODEL
         payload["assumptions"] = ASSUMPTIONS
         print(json.dumps(payload, indent=2))
         return
 
     grand = 0.0
+    note = "" if INDEX_MODEL == ARM_MODEL else "  (pinned)"
+    print(
+        f"\nanswering with {ARM_MODEL}; indexing with {INDEX_MODEL}{note}; "
+        f"grading with {JUDGE_MODEL}"
+    )
     for doc_id in doc_ids:
         projections = project(doc_id, args.questions)
         if args.arm:

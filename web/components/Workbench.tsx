@@ -10,7 +10,7 @@ import type { CatalogueDoc } from "@/lib/catalogue";
 import { armsFor } from "@/lib/approaches";
 import type { Presets } from "@/lib/presets";
 import type { LeanDoc } from "@/lib/results";
-import { resultKey, type Manifest } from "@/lib/types";
+import { indexModelOf, resultKey, type Manifest } from "@/lib/types";
 
 /**
  * The fork, and the two things it forks into.
@@ -173,7 +173,8 @@ export function Workbench({
                     const complete = docs.some(
                       (x) =>
                         x.doc_id === d.doc_id &&
-                        status[resultKey(x.doc_id, x.model)]?.state === "measured",
+                        status[resultKey(x.doc_id, x.model, indexModelOf(x))]
+                          ?.state === "measured",
                     );
                     return `${d.domain} · ${tokens(d.tokens)} tokens${
                       complete ? "" : " · partial"

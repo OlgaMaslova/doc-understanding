@@ -56,9 +56,13 @@ function schedule(cells: [ArmId, Cell][], speedup: number): Scheduled[] {
 export async function GET(request: Request) {
   const url = new URL(request.url);
   const docId = url.searchParams.get("doc");
-  // Results are stored per (document, model). Optional here: without it, the
-  // document's most recently measured set replays.
+  // Results are stored per (document, model, index model). Both optional here:
+  // without them, the document's most recently measured set replays. `index` is
+  // what separates two sets that answered with the same model over different
+  // indexes — the cards would otherwise replay whichever was written last, which
+  // is not necessarily the one the reader is looking at.
   const model = url.searchParams.get("model") ?? undefined;
+  const indexModel = url.searchParams.get("index") ?? undefined;
   const questionId = url.searchParams.get("question");
   const instant = url.searchParams.get("instant") === "1";
 
@@ -68,7 +72,7 @@ export async function GET(request: Request) {
 
   let doc;
   try {
-    doc = await loadDoc(docId, model);
+    doc = await loadDoc(docId, model, indexModel);
   } catch {
     return new Response(
       `No results for document ${docId}${model ? ` measured with ${model}` : ""}`,

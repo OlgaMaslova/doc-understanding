@@ -34,8 +34,13 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from docrace import arms as arms_pkg  # noqa: E402
 from docrace.paths import RESULTS  # noqa: E402
-from docrace.precompute import DocAssets, derive_economics, write_manifest  # noqa: E402
-from docrace.pricing import INDEX_MODEL, Usage, model_rates, price, snapshot_date  # noqa: E402
+from docrace.precompute import (  # noqa: E402
+    LEGACY_INDEX_MODEL,
+    DocAssets,
+    derive_economics,
+    write_manifest,
+)
+from docrace.pricing import Usage, model_rates, price, snapshot_date  # noqa: E402
 from docrace.questions import Question  # noqa: E402
 
 
@@ -51,9 +56,16 @@ def reprice(data: dict) -> dict:
             continue
         cell["cost"] = price(Usage(**cell["usage"]), model).to_dict()
 
-    # Indexing runs on INDEX_MODEL regardless of the answering model (see
-    # pricing.py), so fixed usage is priced at that model's rates — the same split
-    # precompute applies when it writes these entries.
+    # Indexing may have run on a different model from the arms (see pricing.py),
+    # so fixed usage is priced at the model *this file recorded*, never at this
+    # process's. Repricing is a pure re-read of committed usage: taking the index
+    # model from the environment would let `DOCRACE_MODEL=x scripts/reprice.py`
+    # quietly restate every old result set's indexing bill in x's rates.
+    #
+    # Files written before indexing was selectable carry no `index_model` and were
+    # all indexed with Opus, which is what the fallback asserts.
+    index_model = data.get("index_model", LEGACY_INDEX_MODEL)
+    model_rates(index_model)
     fixed_usage = {
         arm: Usage(**entry["usage"])
         for arm, entry in (data.get("fixed_costs") or {}).items()
@@ -62,7 +74,7 @@ def reprice(data: dict) -> dict:
     data["fixed_costs"] = {
         arm: {
             "usage": fixed_usage.get(arm, Usage()).to_dict(),
-            "cost": price(fixed_usage.get(arm, Usage()), INDEX_MODEL).to_dict(),
+            "cost": price(fixed_usage.get(arm, Usage()), index_model).to_dict(),
         }
         for arm in arms_pkg.ARM_ORDER
     }
@@ -78,6 +90,7 @@ def reprice(data: dict) -> dict:
         contextual_index=None,
         extraction=None,
         fixed_usage=fixed_usage,
+        index_model=index_model,
     )
     questions = [Question(**q) for q in data["questions"]]
     data["economics"] = derive_economics(cells, assets, questions)

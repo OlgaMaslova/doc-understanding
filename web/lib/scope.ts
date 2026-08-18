@@ -49,6 +49,20 @@ export function parseScope(
     };
   }
 
+  // Defaults to the answering model rather than to a fixed one: a run that names
+  // no index model is asking "what does this model cost me", and answering that
+  // with someone else's rates in the fixed-cost line is the misreport this field
+  // exists to end. Validated against the same closed list — it reaches the
+  // subprocess environment exactly as the answering model does.
+  const indexModel = raw.index_model ?? model;
+  if (typeof indexModel !== "string" || !knownModels.some((m) => m.id === indexModel)) {
+    return {
+      error:
+        `Unknown index model ${JSON.stringify(raw.index_model)}. Known: ` +
+        `${knownModels.map((m) => m.id).join(", ")}.`,
+    };
+  }
+
   const doc = raw.doc;
   if (typeof doc !== "string" || !knownDocs.includes(doc)) {
     return {
@@ -87,7 +101,7 @@ export function parseScope(
   // produce the same argv and the same cache behaviour.
   arms.sort((a, b) => ARM_IDS.indexOf(a) - ARM_IDS.indexOf(b));
 
-  return { doc, arms, model, force: raw.force === true };
+  return { doc, arms, model, indexModel, force: raw.force === true };
 }
 
 export function isScopeError(v: Scope | ScopeError): v is ScopeError {
