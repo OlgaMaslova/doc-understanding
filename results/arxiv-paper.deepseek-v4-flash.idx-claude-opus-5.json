@@ -8,6 +8,7 @@
   "tokens": 25061,
   "chars": 62611,
   "model": "deepseek-v4-flash",
+  "index_model": "claude-opus-5",
   "arms": [
     "full_context",
     "cached_context_auto",

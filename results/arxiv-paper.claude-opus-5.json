@@ -8,6 +8,7 @@
   "tokens": 25061,
   "chars": 62611,
   "model": "claude-opus-5",
+  "index_model": "claude-opus-5",
   "pricing_snapshot": "2026-08-13",
   "computed_at": "2026-08-11T17:52:51Z",
   "chunking": {
@@ -380,6 +381,28 @@
         "needle": 1.0
       },
       "n": 2
+    },
+    "hybrid_rag": {
+      "fixed_cost_usd": 0.0,
+      "indexing_cost_usd": 0.0,
+      "cache_write_cost_usd": 0.0,
+      "cache_write_total_usd": 0.0,
+      "cache_write_count": 0,
+      "cache_write_shared": false,
+      "cache_read_queries": 0,
+      "marginal_cost_usd": 0.04828818,
+      "marginal_min_usd": 0.03380126,
+      "marginal_max_usd": 0.06275559,
+      "mean_latency_ms": 12576,
+      "median_latency_ms": 12599,
+      "max_latency_ms": 18209,
+      "score": 1.0,
+      "score_by_type": {
+        "needle": 1.0,
+        "multi_hop": 1.0,
+        "aggregation": 1.0
+      },
+      "n": 8
     }
   },
   "cells": {
@@ -679,6 +702,886 @@
       "grade": {
         "grade": "correct",
         "rationale": "Correctly identifies the Pile and 300B tokens, with accurate supporting details on tokenizer and context lengths."
+      }
+    },
+    "hybrid_rag::arxiv-paper-needle-1": {
+      "arm": "hybrid_rag",
+      "doc_id": "arxiv-paper",
+      "question_id": "arxiv-paper-needle-1",
+      "answer": "**5\u00d7 (the body states 4\u20135\u00d7).**\n\nSupport:\n\n- **Abstract:** \"Mamba enjoys fast inference (5\u00d7 higher throughput than Transformers) and linear scaling in sequence length.\"\n- **Section 4.5 (Speed and Memory Benchmarks):** \"Mamba achieves 4-5\u00d7 higher inference throughput than a Transformer of similar size, since without the KV cache it can use much higher batch sizes.\"\n- **Figure 12 caption:** \"(Right) Inference: as a recurrent model, Mamba can achieve 5\u00d7 higher throughput than Transformers.\"\n\nTwo related details from the same passage: the comparison is against a Transformer of *similar size*, and the paper adds that \"a Mamba-6.9B (untrained) would have higher inference throughput than a 5\u00d7 smaller Transformer-1.3B.\" Separately, on the training side, \"our efficient scan is 40\u00d7 faster than a standard implementation\" (PyTorch), and it beats FlashAttention-2 beyond sequence length 2K \u2014 those are scan-speed, not inference-throughput, claims.",
+      "deltas": [
+        [
+          3316,
+          "**5\u00d7 (the body states 4\u20135\u00d7).**\n\nSupport:\n\n- **Abstract:** \"Mamba enjoys fast inference (5\u00d7 higher throughput than Transformers) and linear scaling in sequence"
+        ],
+        [
+          3970,
+          " length.\"\n- **Section 4.5 (Speed and Memory Benchmarks):** \"Mamba achieves 4-5\u00d7 higher inference throughput than a Transformer of similar size, since without the KV cache it can use much higher batch sizes.\"\n- **Figure 12 caption:"
+        ],
+        [
+          4676,
+          "** \"(Right) Inference: as a recurrent model, Mamba can achieve 5\u00d7 higher throughput than Transformers.\"\n\nTwo related details from the same passage: the comparison is against a Transformer of *similar size"
+        ],
+        [
+          5381,
+          "*, and the paper adds that \"a Mamba-6.9B (untrained) would have higher inference throughput than a 5\u00d7 smaller Transformer-1.3B.\" Separately, on the training side, \"our efficient scan is "
+        ],
+        [
+          6892,
+          "40\u00d7 faster than a standard implementation\" (PyTorch), and it beats FlashAttention-2 beyond sequence length 2K \u2014 those are scan-speed, not inference-throughput, claims."
+        ]
+      ],
+      "usage": {
+        "input_tokens": 4433,
+        "output_tokens": 443,
+        "cache_read_tokens": 0,
+        "cache_write_5m_tokens": 0,
+        "cache_write_1h_tokens": 0,
+        "embed_tokens": 11,
+        "rerank_tokens": 11212,
+        "calls": 1
+      },
+      "cost": {
+        "input": 0.022165,
+        "output": 0.011075,
+        "cache_read": 0.0,
+        "cache_write": 0.0,
+        "embed": 6.6e-07,
+        "rerank": 0.0005606,
+        "total": 0.03380126
+      },
+      "latency_ms": 6906,
+      "ttft_ms": 3316,
+      "notes": {
+        "retrieved_chunks": [
+          44,
+          2,
+          1,
+          43,
+          3
+        ],
+        "fused_candidates": [
+          44,
+          43,
+          2,
+          1,
+          7,
+          8,
+          3,
+          21,
+          6,
+          47,
+          15,
+          34,
+          35,
+          12,
+          31,
+          4,
+          10,
+          33,
+          45,
+          36
+        ],
+        "fuse_k": 20,
+        "top_k": 5,
+        "retrieval": "contextual prefixes, BM25 + embeddings fused by reciprocal rank, cross-encoder reranked"
+      },
+      "grade": {
+        "grade": "correct",
+        "rationale": "The answer correctly states 5x (4-5x) higher inference throughput versus a similarly sized Transformer and cites the KV-cache/batch-size reason, while properly distinguishing the separate training-side scan claims."
+      }
+    },
+    "hybrid_rag::arxiv-paper-needle-2": {
+      "arm": "hybrid_rag",
+      "doc_id": "arxiv-paper",
+      "question_id": "arxiv-paper-needle-2",
+      "answer": "**Dataset: the Pile. Tokens: 300B for the models in the zero-shot comparison.**\n\nSupport:\n\n- Section 4.2: \"We use the Pile dataset [pile], and follow the training recipe described in [brown2020language].\" Model sizes mirror GPT3 specifications.\n- Section 4.2.2: \"most importantly Pythia [biderman2023pythia] and RWKV [peng2023rwkv] which were trained with the same tokenizer, dataset, and training length (300B tokens) as our models.\" The Table 1 caption likewise says \"We compare against open source LMs with various tokenizers, trained for up to 300B tokens,\" and \"Pile refers to the validation split.\"\n\nTwo caveats from the excerpts:\n\n1. The 300B figure applies to the models evaluated in Table 1 (Mamba-130M/370M/790M and baselines). For the scaling-law experiment in Section 4.2.1, the paper says only that models of \"\u2248125M to \u22481.3B parameters\" were trained \"under the standard Chinchilla [hoffmann2022empirical] protocol\" \u2014 no explicit token count is given in these excerpts. Detailed training settings are deferred to an appendix (\"All training details are in LABEL:sec:exp-details:lm\"), which is not included here.\n2. The DNA experiments (Section 4.3) use a different corpus \u2014 HG38, \"a single human genome with about 4.5 billion tokens (DNA base pairs) in the training split,\" with 10B tokens consumed in the model-size scaling run and \u2248330B in the context-length run \u2014 but those are not language models.",
+      "deltas": [
+        [
+          4191,
+          "**Dataset: the Pile. Tokens: 300B for the models in the z"
+        ],
+        [
+          4971,
+          "ero-shot comparison.**\n\nSupport:\n\n- Section 4.2: \"We use the Pile dataset [pile], and follow the training recipe described in [brown2020language].\" Model sizes mirror GPT3 specifications.\n-"
+        ],
+        [
+          5651,
+          " Section 4.2.2: \"most importantly Pythia [biderman2023pythia] and RWKV [peng2023rwkv] which were trained with the same tokenizer, dataset, and training length (300B tokens) as our models.\" The Table 1 caption likewise says \"We compare against"
+        ],
+        [
+          6311,
+          " open source LMs with various tokenizers, trained for up to 300B tokens,\" and \"Pile refers to the validation split.\"\n\nTwo caveats from the excerpts:\n\n1. The 300B figure applies to the models evaluated in Table 1 (Mamba-"
+        ],
+        [
+          7015,
+          "130M/370M/790M and baselines). For the scaling-law experiment in Section 4.2.1, the paper says only that models of \""
+        ],
+        [
+          7749,
+          "\u2248125M to \u22481.3B parameters\" were trained \"under the standard Chinchilla [hoffmann2022empirical] protocol\" \u2014 no explicit token count is given in these excerpts. Detailed training sett"
+        ],
+        [
+          8452,
+          "ings are deferred to an appendix (\"All training details are in LABEL:sec:exp-details:lm\"), which is not included here.\n2. The DNA experiments (Section 4.3) use a different corpus \u2014"
+        ],
+        [
+          9132,
+          " HG38, \"a single human genome with about 4.5 billion tokens (DNA base pairs) in the training split,\" with 10B tokens consumed in the model-size scaling run and \u2248330B in the context-length run"
+        ],
+        [
+          9791,
+          " \u2014 but those are not language models."
+        ]
+      ],
+      "usage": {
+        "input_tokens": 4299,
+        "output_tokens": 705,
+        "cache_read_tokens": 0,
+        "cache_write_5m_tokens": 0,
+        "cache_write_1h_tokens": 0,
+        "embed_tokens": 14,
+        "rerank_tokens": 11161,
+        "calls": 1
+      },
+      "cost": {
+        "input": 0.021495,
+        "output": 0.017625,
+        "cache_read": 0.0,
+        "cache_write": 0.0,
+        "embed": 8.4e-07,
+        "rerank": 0.00055805,
+        "total": 0.03967889
+      },
+      "latency_ms": 9810,
+      "ttft_ms": 4191,
+      "notes": {
+        "retrieved_chunks": [
+          37,
+          38,
+          34,
+          35,
+          33
+        ],
+        "fused_candidates": [
+          38,
+          37,
+          39,
+          35,
+          41,
+          40,
+          33,
+          8,
+          7,
+          3,
+          36,
+          34,
+          15,
+          16,
+          32,
+          12,
+          48,
+          30,
+          43,
+          25
+        ],
+        "fuse_k": 20,
+        "top_k": 5,
+        "retrieval": "contextual prefixes, BM25 + embeddings fused by reciprocal rank, cross-encoder reranked"
+      },
+      "grade": {
+        "grade": "correct",
+        "rationale": "Correctly identifies the Pile and 300B tokens, with accurate supporting quotes and appropriate distinction from the DNA experiments."
+      }
+    },
+    "hybrid_rag::arxiv-paper-needle-3": {
+      "arm": "hybrid_rag",
+      "doc_id": "arxiv-paper",
+      "question_id": "arxiv-paper-needle-3",
+      "answer": "**Answer: Table 1 spans roughly 130M to 7.4B parameters, grouped into five size tiers. Mamba itself is reported at five sizes: 130M, 370M, 790M, 1.4B, and 2.8B.**\n\nEnumerating every row in Table 1 as it appears across the excerpts (24 rows, 17 distinct size labels):\n\n**~130\u2013160M tier (3 rows):** Hybrid H3-130M, Pythia-160M, Mamba-130M\n\n**~360\u2013410M tier (3 rows):** Hybrid H3-360M, Pythia-410M, Mamba-370M\n\n**~790M\u20131B tier (2 rows):** Pythia-1B, Mamba-790M\n\n**~1.3\u20131.5B tier (6 rows):** GPT-Neo 1.3B, Hybrid H3-1.3B, OPT-1.3B, Pythia-1.4B, RWKV-1.5B, Mamba-1.4B\n\n**~2.7\u20133B tier (5 rows):** GPT-Neo 2.7B, Hybrid H3-2.7B, OPT-2.7B, Pythia-2.8B, RWKV-3B, Mamba-2.8B \u2014 (6 rows in this tier; total count 24 stands)\n\n**~6\u20137.4B tier (4 rows):** GPT-J-6B, OPT-6.7B, Pythia-6.9B, RWKV-7.4B\n\nTwo caveats:\n\n1. The largest tier (6\u20137.4B) contains **no Mamba row** in these excerpts \u2014 the table ends at RWKV-7.4B, immediately before Section 4.3 (DNA Modeling). This is consistent with the caption's claim that Mamba \"generally matches baselines at twice the model size,\" i.e., Mamba-2.8B is compared against the 6\u20137B baselines.\n2. These sizes are distinct from the scaling-law experiment (Figure 6), which covers \"\u2248125M to \u22481.3B parameters, trained on the Pile.\"\n\nIf you need confirmation that no additional rows (e.g., a larger Mamba) appear elsewhere in the table, that would require the full table rather than these excerpts.",
+      "deltas": [
+        [
+          8564,
+          "**Answer: Table 1 spans roughly 130"
+        ],
+        [
+          9261,
+          "M to 7.4B parameters, grouped into five size tiers. Mamba itself is reported at five sizes: 130M, 370M, 790M, 1.4B, and 2.8B.**\n\nEnumerating every row in Table 1 as"
+        ],
+        [
+          10007,
+          " it appears across the excerpts (24 rows, 17 distinct size labels):\n\n**~130\u2013160M tier (3 rows):** Hybrid H3-130M, Pythia-160M, Mamba"
+        ],
+        [
+          10674,
+          "-130M\n\n**~360\u2013410M tier (3 rows):** Hybrid H3-360M, Pythia-410M, Mamba-370M\n\n**~790M\u20131B tier (2 rows):** Pythia-1B, Mamba-790M\n\n**~1.3\u20131.5B tier (6 rows"
+        ],
+        [
+          11383,
+          "):** GPT-Neo 1.3B, Hybrid H3-1.3B, OPT-1.3B, Pythia-1.4B, RWKV-1.5B, Mamba-1.4B\n\n**~2.7\u20133B tier (5 rows):** GPT-Neo 2.7B"
+        ],
+        [
+          12183,
+          ", Hybrid H3-2.7B, OPT-2.7B, Pythia-2.8B, RWKV-3B, Mamba-2.8B \u2014 (6 rows in this tier; total count 24 st"
+        ],
+        [
+          12791,
+          "ands)\n\n**~6\u20137.4B tier (4 rows):** GPT-J-6B, OPT-6.7B, Pythia-6.9B, RWKV-7.4B\n\nTwo caveats:\n\n1. The largest tier (6\u20137.4B) contains **no Mam"
+        ],
+        [
+          13521,
+          "ba row** in these excerpts \u2014 the table ends at RWKV-7.4B, immediately before Section 4.3 (DNA Modeling). This is consistent with the caption's cla"
+        ],
+        [
+          14233,
+          "im that Mamba \"generally matches baselines at twice the model size,\" i.e., Mamba-2.8B is compared against the 6\u20137B baselines.\n2. These sizes are dist"
+        ],
+        [
+          14910,
+          "inct from the scaling-law experiment (Figure 6), which covers \"\u2248125M to \u22481.3B parameters, trained on the Pile.\"\n\nIf you need confirmation that no addit"
+        ],
+        [
+          15563,
+          "ional rows (e.g., a larger Mamba) appear elsewhere in the table, that would require the full table rather than these excerpts."
+        ]
+      ],
+      "usage": {
+        "input_tokens": 4829,
+        "output_tokens": 1307,
+        "cache_read_tokens": 0,
+        "cache_write_5m_tokens": 0,
+        "cache_write_1h_tokens": 0,
+        "embed_tokens": 11,
+        "rerank_tokens": 11664,
+        "calls": 1
+      },
+      "cost": {
+        "input": 0.024145,
+        "output": 0.032675,
+        "cache_read": 0.0,
+        "cache_write": 0.0,
+        "embed": 6.6e-07,
+        "rerank": 0.0005832,
+        "total": 0.05740386
+      },
+      "latency_ms": 15564,
+      "ttft_ms": 8564,
+      "notes": {
+        "retrieved_chunks": [
+          35,
+          36,
+          37,
+          34,
+          33
+        ],
+        "fused_candidates": [
+          35,
+          34,
+          37,
+          33,
+          49,
+          48,
+          30,
+          43,
+          41,
+          39,
+          29,
+          40,
+          44,
+          8,
+          36,
+          42,
+          3,
+          2,
+          47,
+          1
+        ],
+        "fuse_k": 20,
+        "top_k": 5,
+        "retrieval": "contextual prefixes, BM25 + embeddings fused by reciprocal rank, cross-encoder reranked"
+      },
+      "grade": {
+        "grade": "correct",
+        "rationale": "The answer correctly identifies Mamba's five reported sizes (130M, 370M, 790M, 1.4B, 2.8B) and correctly notes no Mamba at 6\u20137B and that the 125M\u20131.3B range belongs to the scaling-law experiment."
+      }
+    },
+    "hybrid_rag::arxiv-paper-multi_hop-1": {
+      "arm": "hybrid_rag",
+      "doc_id": "arxiv-paper",
+      "question_id": "arxiv-paper-multi_hop-1",
+      "answer": "**Answer: the backing is Table 1, comparing Mamba-2.8B against Pythia-2.8B and Pythia-6.9B (the \"Pythia-3B\" and \"Pythia-7B\" of the introduction), plus the other ~6\u20137B models in that block.**\n\n**The Introduction's claim** (excerpt 8): \"Mamba-3B's quality matches that of Transformers twice its size (e.g. 4 points higher avg. on common sense reasoning compared to Pythia-3B and even exceeding Pythia-7B).\"\n\n**The numbers in Table 1 (Zero-shot Evaluations)** \u2014 the \"Average acc \u2191\" column:\n\n| Model | Average |\n|---|---|\n| Mamba-2.8B | **63.3** |\n| Pythia-2.8B | 59.1 (\u2192 gap of 4.2, the \"4 points\") |\n| Pythia-6.9B | 61.7 (\u2192 Mamba-2.8B exceeds it) |\n\nPer-task, Mamba-2.8B meets or beats Pythia-6.9B on all six:\n- LAMBADA acc: 69.2 vs 67.1\n- HellaSwag: 66.1 vs 64.0\n- PIQA: 75.2 vs 75.2 (tie)\n- Arc-E: 69.7 vs 67.3\n- Arc-C: 36.3 vs 35.5\n- WinoGrande: 63.5 vs 61.3\n\nOn Pile validation perplexity (same tokenizer/dataset), Mamba-2.8B is 6.22 vs Pythia-6.9B's 6.51 and Pythia-2.8B's 6.73.\n\nThree other roughly-2\u00d7 models in the table also fall below Mamba-2.8B's 63.3 average: GPT-J-6B (63.0), OPT-6.7B (62.9), RWKV-7.4B (62.5).\n\nThe same pattern appears at smaller sizes: Mamba-1.4B averages 59.7 vs Pythia-2.8B's 59.1; Mamba-790M averages 57.1 vs Pythia-1.4B's 55.2. Table 1's caption states the generalization: \"For each model size, Mamba is best-in-class on every single evaluation result, and generally matches baselines at twice the model size.\"\n\n**Caveats from the document itself:** the comparison set is described as models \"trained for up to 300B tokens,\" with Pythia and RWKV specifically noted as sharing \"the same tokenizer, dataset, and training length (300B tokens) as our models,\" and \"Mamba and Pythia are trained with context length 2048, while RWKV was trained with context length 1024.\" The excerpts do not state the training-token counts for GPT-J-6B or OPT-6.7B, and the Pile-ppl column is marked \"\u2013\" for them (the caption says Pile ppl compares \"only against models trained on the same dataset and tokenizer\").",
+      "deltas": [
+        [
+          8406,
+          "**Answer: the backing is Table 1, comparing Mamba-2.8B against Pythia-2.8B and Pythia-6.9"
+        ],
+        [
+          9040,
+          "B (the \"Pythia-3B\" and \"Pythia-7B\" of the introduction), plus the other ~6\u20137B models in that block.**\n\n**The Intro"
+        ],
+        [
+          9740,
+          "duction's claim** (excerpt 8): \"Mamba-3B's quality matches that of Transformers twice its size (e.g. 4 points higher avg. on common sense reasoning compared to Pythia-3B and even exceeding Pythia-7B)"
+        ],
+        [
+          10476,
+          ".\"\n\n**The numbers in Table 1 (Zero-shot Evaluations)** \u2014 the \"Average acc \u2191\" column:\n\n| Model | Average |\n|---|---|\n| Mamba-2."
+        ],
+        [
+          11269,
+          "8B | **63.3** |\n| Pythia-2.8B | 59.1 (\u2192 gap of 4.2, the \"4 points\") |\n| Pythia-6.9B | 61.7 (\u2192 Mamba-2.8B exceeds it) |"
+        ],
+        [
+          11884,
+          "\n\nPer-task, Mamba-2.8B meets or beats Pythia-6.9B on all six:\n- LAMBADA acc: 69.2 vs 67.1\n- HellaSwag: 66.1 vs 64.0\n- PIQA: 75.2 vs 75.2 ("
+        ],
+        [
+          12563,
+          "tie)\n- Arc-E: 69.7 vs 67.3\n- Arc-C: 36.3 vs 35.5\n- WinoGrande: 63.5 vs 61.3\n\nOn Pile validation perplexity (same tokenizer/"
+        ],
+        [
+          13318,
+          "dataset), Mamba-2.8B is 6.22 vs Pythia-6.9B's 6.51 and Pythia-2.8B's 6.73.\n\nThree other roughly-2\u00d7 models in the table"
+        ],
+        [
+          13990,
+          " also fall below Mamba-2.8B's 63.3 average: GPT-J-6B (63.0), OPT-6.7B (62.9), RWKV-7.4B (62.5).\n\nThe same pattern appears at smaller sizes: Mamba-1.4B aver"
+        ],
+        [
+          14682,
+          "ages 59.7 vs Pythia-2.8B's 59.1; Mamba-790M averages 57.1 vs Pythia-1.4B's 55.2. Table 1's caption states the generalization: \"For each model size, Mamba is best"
+        ],
+        [
+          15469,
+          "-in-class on every single evaluation result, and generally matches baselines at twice the model size.\"\n\n**Caveats from the document itself:** the comparison set is described as models"
+        ],
+        [
+          16094,
+          " \"trained for up to 300B tokens,\" with Pythia and RWKV specifically noted as sharing \"the same tokenizer, dataset, and training length (300B tokens) as our models"
+        ],
+        [
+          16903,
+          ",\" and \"Mamba and Pythia are trained with context length 2048, while RWKV was trained with context length 1024.\" The excerpts do not state the training-token counts for GPT-J-6B or"
+        ],
+        [
+          18191,
+          " OPT-6.7B, and the Pile-ppl column is marked \"\u2013\" for them (the caption says Pile ppl compares \"only against models trained on the same dataset and tokenizer\")."
+        ]
+      ],
+      "usage": {
+        "input_tokens": 4799,
+        "output_tokens": 1528,
+        "cache_read_tokens": 0,
+        "cache_write_5m_tokens": 0,
+        "cache_write_1h_tokens": 0,
+        "embed_tokens": 24,
+        "rerank_tokens": 11183,
+        "calls": 1
+      },
+      "cost": {
+        "input": 0.023995,
+        "output": 0.0382,
+        "cache_read": 0.0,
+        "cache_write": 0.0,
+        "embed": 1.44e-06,
+        "rerank": 0.00055915,
+        "total": 0.06275559
+      },
+      "latency_ms": 18209,
+      "ttft_ms": 8406,
+      "notes": {
+        "retrieved_chunks": [
+          8,
+          35,
+          1,
+          34,
+          36
+        ],
+        "fused_candidates": [
+          8,
+          35,
+          2,
+          3,
+          33,
+          34,
+          1,
+          32,
+          49,
+          38,
+          44,
+          40,
+          39,
+          43,
+          7,
+          36,
+          25,
+          13,
+          28,
+          12
+        ],
+        "fuse_k": 20,
+        "top_k": 5,
+        "retrieval": "contextual prefixes, BM25 + embeddings fused by reciprocal rank, cross-encoder reranked"
+      },
+      "grade": {
+        "grade": "correct",
+        "rationale": "The answer correctly identifies Pythia-2.8B (59.1) and Pythia-6.9B (61.7) as baselines against Mamba-2.8B's 63.3 average with the 4.2-point gap, tied to the correct model scale, with accurate supporting per-task and perplexity figures."
+      }
+    },
+    "hybrid_rag::arxiv-paper-multi_hop-2": {
+      "arm": "hybrid_rag",
+      "doc_id": "arxiv-paper",
+      "question_id": "arxiv-paper-multi_hop-2",
+      "answer": "**Real numbers by default \u2014 with exactly one exception, the YouTubeMix long-context audio pretraining experiment, which uses the complex parameterization.**\n\n**The default choice (Section 3.6, \"Real vs. Complex\"):**\n> \"We use real values as the default, which work well for all but one of our tasks; we hypothesize that the complex-real tradeoff is related to the continuous-discrete spectrum in data modalities, where complex numbers are helpful for continuous modalities (e.g. audio, video) but not discrete (e.g. text, DNA).\"\n\nThe passage notes this departs from prior SSMs, which mostly use complex state, \"necessary for strong performance on many tasks in perceptual modalities,\" while \"completely real-valued SSMs seem to work fine, and possibly even better, in some settings.\"\n\n**The one experiment that flips the choice (Section 4.4.1, long-context autoregressive pretraining on YouTubeMix piano audio):**\n> \"We note one important detail: this is the only experiment in this paper in which we switched from the real parameterization to complex (Section 3.6).\"\n\n**Supporting evidence for real being fine or better on language:**\n\n- Section 4.6.1 architecture ablation: \"Replacing the complex-valued S4 variant from previous work with a real-valued one does not affect performance much, suggesting that (at least for LM) real-valued SSMs may be a better choice when accounting for hardware efficiency.\" Table 2 bears this out \u2014 H3 arch: S4 (complex) 10.30 vs. S4 (real) 10.34; Mamba arch: S4 (complex) 10.54 vs. S4 (real) 10.56.\n- Figure 14 (parameterization of **A**), once the SSM is selective: complex S4D-Lin (**A**\u2099 = \u2212\u00bd + ni) gives perplexity 9.16, versus real initializations at 8.85 (**A**\u2099 = \u22121/2), 8.71 (S4D-Real, **A**\u2099 = \u2212(n+1)), and 8.71 (random, **A**\u2099 ~ exp(\ud835\udca9(0,1))). Section 4.6.2 summarizes: \"On language modeling, we find that simpler real-valued diagonal initializations (S4D-Real, row 3) instead of more standard complex-valued parameterizations (S4D-Lin, row 1) perform better.\"\n\nOne caveat on scope: Section 4.4.1 says additional audio ablations appear in an appendix section not included in these excerpts, so I cannot report what those complex-vs-real audio ablations showed.",
+      "deltas": [
+        [
+          3157,
+          "**Real numbers by default \u2014 with exactly one exception,"
+        ],
+        [
+          3900,
+          " the YouTubeMix long-context audio pretraining experiment, which uses the complex parameterization.**\n\n**The default choice (Section 3.6, \"Real vs. Complex\"):**"
+        ],
+        [
+          4576,
+          "\n> \"We use real values as the default, which work well for all but one of our tasks; we hypothesize that the complex-real tradeoff is related to the continuous-discrete spectr"
+        ],
+        [
+          5285,
+          "um in data modalities, where complex numbers are helpful for continuous modalities (e.g. audio, video) but not discrete (e.g. text, DNA).\"\n\nThe passage notes this depart"
+        ],
+        [
+          5990,
+          "s from prior SSMs, which mostly use complex state, \"necessary for strong performance on many tasks in perceptual modalities,\" while \"completely real-valued SSMs se"
+        ],
+        [
+          6725,
+          "em to work fine, and possibly even better, in some settings.\"\n\n**The one experiment that flips the choice (Section 4.4.1, long-context autoregressive pretraining on YouTubeMix pi"
+        ],
+        [
+          7449,
+          "ano audio):**\n> \"We note one important detail: this is the only experiment in this paper in which we switched from the real parameterization to complex (Section 3.6).\"\n\n**Supporting evidence for real"
+        ],
+        [
+          8122,
+          " being fine or better on language:**\n\n- Section 4.6.1 architecture ablation: \"Replacing the complex-valued S4 variant from previous work with a real-valued one does not affect performance much"
+        ],
+        [
+          8821,
+          ", suggesting that (at least for LM) real-valued SSMs may be a better choice when accounting for hardware efficiency.\" Table 2 bears this out \u2014 H3 arch: S4 (complex"
+        ],
+        [
+          9600,
+          ") 10.30 vs. S4 (real) 10.34; Mamba arch: S4 (complex) 10.54 vs. S4 (real) 10.56.\n- Figure 14 (parameterization of **A**), once the SSM is selective"
+        ],
+        [
+          10248,
+          ": complex S4D-Lin (**A**\u2099 = \u2212\u00bd + ni) gives perplexity 9.16, versus real initializations at 8.85 (**A**\u2099 = \u22121/2), 8.71"
+        ],
+        [
+          10943,
+          " (S4D-Real, **A**\u2099 = \u2212(n+1)), and 8.71 (random, **A**\u2099 ~ exp(\ud835\udca9(0,1))). Section 4.6.2 summarizes: \"On"
+        ],
+        [
+          11717,
+          " language modeling, we find that simpler real-valued diagonal initializations (S4D-Real, row 3) instead of more standard complex-valued parameterizations (S4D-Lin, row 1) perform better.\"\n\nOne caveat on scope: Section 4"
+        ],
+        [
+          12468,
+          ".4.1 says additional audio ablations appear in an appendix section not included in these excerpts, so I cannot report what those complex-vs-real aud"
+        ],
+        [
+          12572,
+          "io ablations showed."
+        ]
+      ],
+      "usage": {
+        "input_tokens": 4282,
+        "output_tokens": 959,
+        "cache_read_tokens": 0,
+        "cache_write_5m_tokens": 0,
+        "cache_write_1h_tokens": 0,
+        "embed_tokens": 21,
+        "rerank_tokens": 11287,
+        "calls": 1
+      },
+      "cost": {
+        "input": 0.02141,
+        "output": 0.023975,
+        "cache_read": 0.0,
+        "cache_write": 0.0,
+        "embed": 1.26e-06,
+        "rerank": 0.00056435,
+        "total": 0.04595061
+      },
+      "latency_ms": 12599,
+      "ttft_ms": 3157,
+      "notes": {
+        "retrieved_chunks": [
+          28,
+          45,
+          41,
+          44,
+          46
+        ],
+        "fused_candidates": [
+          28,
+          45,
+          10,
+          18,
+          27,
+          11,
+          46,
+          41,
+          44,
+          29,
+          12,
+          19,
+          3,
+          0,
+          26,
+          47,
+          9,
+          4,
+          14,
+          33
+        ],
+        "fuse_k": 20,
+        "top_k": 5,
+        "retrieval": "contextual prefixes, BM25 + embeddings fused by reciprocal rank, cross-encoder reranked"
+      },
+      "grade": {
+        "grade": "correct",
+        "rationale": "Correctly identifies real as default, pins the single exception to the YouTubeMix long-context audio pretraining in 4.4.1, and ties it to the continuous-discrete tradeoff with the supporting language ablations."
+      }
+    },
+    "hybrid_rag::arxiv-paper-multi_hop-3": {
+      "arm": "hybrid_rag",
+      "doc_id": "arxiv-paper",
+      "question_id": "arxiv-paper-multi_hop-3",
+      "answer": "**Answer: it depends on whether \ud835\udc69 and \ud835\udc6a are selective \u2014 a ~1.0 perplexity gain if they are, and essentially nothing (0.07) if they aren't.**\n\nFrom Figure 16 (\u0394 projection fixed to 64, ~350M-parameter LMs at Chinchilla token counts):\n\n**Bottom panel \u2014 selective \ud835\udc69 and \ud835\udc6a:**\n\n| State dimension N | Params (M) | Perplexity |\n|---|---|---|\n| 1 | 367.1 | 9.73 |\n| 2 | 367.4 | 9.40 |\n| 4 | 368.0 | 9.09 |\n| 8 | 369.1 | 8.84 |\n| 16 | 371.5 | 8.71 |\n\nThat is a drop of 1.02 perplexity going from N=1 to N=16. The paper states this directly: \"Of particular note is the dramatic improvement of the selective SSM when the state size N is increased, with over a 1.0 perplexity improvement for a cost of only 1% additional parameters. This validates our core motivation in Sections 3.1 and 3.3.\"\n\n**Top panel \u2014 constant \ud835\udc69 and \ud835\udc6a:**\n\n| State dimension N | Params (M) | Perplexity |\n|---|---|---|\n| 1 | 367.1 | 9.88 |\n| 2 | 367.4 | 9.86 |\n| 4 | 368.0 | 9.82 |\n| 8 | 369.1 | 9.82 |\n| 16 | 371.5 | 9.81 |\n\nOnly 0.07 improvement across the same 16\u00d7 state expansion. Hence the Figure 16 caption: increasing N \"can significantly improve performance for a negligible cost in parameters/FLOPs, but only when \ud835\udc69 and \ud835\udc6a are also selective.\"",
+      "deltas": [
+        [
+          4350,
+          "**Answer: it depends on whether \ud835\udc69 and \ud835\udc6a "
+        ],
+        [
+          5120,
+          "are selective \u2014 a ~1.0 perplexity gain if they are, and essentially nothing (0.07) if they aren't.**\n\nFrom Figure 16 (\u0394 projection fixed to 64,"
+        ],
+        [
+          5834,
+          " ~350M-parameter LMs at Chinchilla token counts):\n\n**Bottom panel \u2014 selective \ud835\udc69 and \ud835\udc6a:**\n\n| State dimension N | Params (M) | Perplexity |\n|---|---|---|"
+        ],
+        [
+          6468,
+          "\n| 1 | 367.1 | 9.73 |\n| 2 | 367.4 | 9.40 |\n| 4 | 368.0 | 9.09 |\n| 8 | 369.1 | 8.84 |\n| 16 | 371.5 | 8.71 |\n\nThat is a drop of"
+        ],
+        [
+          7269,
+          " 1.02 perplexity going from N=1 to N=16. The paper states this directly: \"Of particular note is the dramatic improvement of the selective SSM when the state size N is increased, with over a 1.0 perpl"
+        ],
+        [
+          7932,
+          "exity improvement for a cost of only 1% additional parameters. This validates our core motivation in Sections 3.1 and 3.3.\"\n\n**Top panel \u2014 constant \ud835\udc69 and \ud835\udc6a:**\n\n| State dimension N | Params (M) | Perplexity"
+        ],
+        [
+          8590,
+          " |\n|---|---|---|\n| 1 | 367.1 | 9.88 |\n| 2 | 367.4 | 9.86 |\n| 4 | 368.0 | 9.82 |\n| 8 | 369.1 | 9.82 |\n| 16 | 371.5 | 9"
+        ],
+        [
+          9292,
+          ".81 |\n\nOnly 0.07 improvement across the same 16\u00d7 state expansion. Hence the Figure 16 caption: increasing N \"can significantly improve performance for a negligible cost in parameters/FLOPs, but only when \ud835\udc69 and \ud835\udc6a"
+        ],
+        [
+          9933,
+          " are also selective.\""
+        ]
+      ],
+      "usage": {
+        "input_tokens": 4370,
+        "output_tokens": 809,
+        "cache_read_tokens": 0,
+        "cache_write_5m_tokens": 0,
+        "cache_write_1h_tokens": 0,
+        "embed_tokens": 19,
+        "rerank_tokens": 10231,
+        "calls": 1
+      },
+      "cost": {
+        "input": 0.02185,
+        "output": 0.020225,
+        "cache_read": 0.0,
+        "cache_write": 0.0,
+        "embed": 1.14e-06,
+        "rerank": 0.00051155,
+        "total": 0.04258769
+      },
+      "latency_ms": 9945,
+      "ttft_ms": 4350,
+      "notes": {
+        "retrieved_chunks": [
+          47,
+          46,
+          45,
+          8,
+          44
+        ],
+        "fused_candidates": [
+          47,
+          46,
+          45,
+          44,
+          8,
+          43,
+          22,
+          20,
+          1,
+          19,
+          2,
+          26,
+          15,
+          27,
+          14,
+          33,
+          32,
+          34,
+          38,
+          6
+        ],
+        "fuse_k": 20,
+        "top_k": 5,
+        "retrieval": "contextual prefixes, BM25 + embeddings fused by reciprocal rank, cross-encoder reranked"
+      },
+      "grade": {
+        "grade": "correct",
+        "rationale": "The answer correctly reports the ~1.02 perplexity gain at ~1% extra parameters with the correct per-N numbers and the essential qualifier that it only holds when B and C are selective (0.07 otherwise)."
+      }
+    },
+    "hybrid_rag::arxiv-paper-aggregation-1": {
+      "arm": "hybrid_rag",
+      "doc_id": "arxiv-paper",
+      "question_id": "arxiv-paper-aggregation-1",
+      "answer": "**Six distinct baseline model families** appear in Table 1 (Zero-shot Evaluations), alongside Mamba itself.\n\nEnumerating the non-Mamba rows across the two excerpts covering Table 1 (excerpts 35 and 36, which run from the table header through to the start of Section 4.3):\n\n1. **Hybrid H3** \u2014 130M, 360M, 1.3B, 2.7B (GPT2 tokenizer)\n2. **Pythia** \u2014 160M, 410M, 1B, 1.4B, 2.8B, 6.9B (NeoX tokenizer)\n3. **GPT-Neo** \u2014 1.3B, 2.7B (GPT2)\n4. **OPT** \u2014 1.3B, 2.7B, 6.7B (OPT tokenizer)\n5. **RWKV** \u2014 1.5B, 3B, 7.4B (NeoX)\n6. **GPT-J** \u2014 6B (GPT2)\n\nThe accompanying text singles out two of these as the primary comparisons: \"most importantly Pythia [biderman2023pythia] and RWKV [peng2023rwkv] which were trained with the same tokenizer, dataset, and training length (300B tokens) as our models\" (Section 4.2.2).\n\nTwo caveats on scope:\n- This count covers the **zero-shot downstream evaluation table only**. The scaling-law comparison in Section 4.2.1/Figure 6 uses a different baseline set (Transformer/GPT3 architecture, Transformer++, RWKV, RetNet, and \"other recent subquadratic architectures\"), and Section 2 lists linear attention, H3, Hyena, and RetNet as architectural baselines.\n- The excerpts give the full span of Table 1 from its header to Section 4.3, so the enumeration should be complete; however, I am working from excerpts rather than the full document, so I cannot independently confirm no rows were omitted in retrieval.",
+      "deltas": [
+        [
+          5977,
+          "**Six distinct baseline model families** appear in Table 1 (Zero-sh"
+        ],
+        [
+          6657,
+          "ot Evaluations), alongside Mamba itself.\n\nEnumerating the non-Mamba rows across the two excerpts covering Table 1 (excerpts 35 and 36, which run from the table header through to the start of"
+        ],
+        [
+          7397,
+          " Section 4.3):\n\n1. **Hybrid H3** \u2014 130M, 360M, 1.3B, 2.7B (GPT2 tokenizer)\n2. **Pythia** \u2014 160M, 410M, 1B, 1.4B, 2.8B, 6.9B (NeoX tok"
+        ],
+        [
+          8069,
+          "enizer)\n3. **GPT-Neo** \u2014 1.3B, 2.7B (GPT2)\n4. **OPT** \u2014 1.3B, 2.7B, 6.7B (OPT tokenizer)\n5. **RWKV** \u2014 "
+        ],
+        [
+          8805,
+          "1.5B, 3B, 7.4B (NeoX)\n6. **GPT-J** \u2014 6B (GPT2)\n\nThe accompanying text singles out two of these as the primary comparisons: \"most importantly Pythia [bi"
+        ],
+        [
+          9536,
+          "derman2023pythia] and RWKV [peng2023rwkv] which were trained with the same tokenizer, dataset, and training length (300B tokens) as our models\" (Section 4.2.2).\n\nTwo caveats on scope:"
+        ],
+        [
+          10187,
+          "\n- This count covers the **zero-shot downstream evaluation table only**. The scaling-law comparison in Section 4.2.1/Figure 6 uses a different baseline set ("
+        ],
+        [
+          10981,
+          "Transformer/GPT3 architecture, Transformer++, RWKV, RetNet, and \"other recent subquadratic architectures\"), and Section 2 l"
+        ],
+        [
+          11620,
+          "ists linear attention, H3, Hyena, and RetNet as architectural baselines.\n- The excerpts give the full span of Table 1 from its header to Section 4.3, so the enumeration should be complete"
+        ],
+        [
+          12117,
+          "; however, I am working from excerpts rather than the full document, so I cannot independently confirm no rows were omitted in retrieval."
+        ]
+      ],
+      "usage": {
+        "input_tokens": 4710,
+        "output_tokens": 1052,
+        "cache_read_tokens": 0,
+        "cache_write_5m_tokens": 0,
+        "cache_write_1h_tokens": 0,
+        "embed_tokens": 17,
+        "rerank_tokens": 11538,
+        "calls": 1
+      },
+      "cost": {
+        "input": 0.02355,
+        "output": 0.0263,
+        "cache_read": 0.0,
+        "cache_write": 0.0,
+        "embed": 1.02e-06,
+        "rerank": 0.0005769,
+        "total": 0.05042792
+      },
+      "latency_ms": 12127,
+      "ttft_ms": 5977,
+      "notes": {
+        "retrieved_chunks": [
+          35,
+          34,
+          36,
+          13,
+          33
+        ],
+        "fused_candidates": [
+          35,
+          34,
+          33,
+          30,
+          37,
+          40,
+          41,
+          42,
+          3,
+          48,
+          7,
+          39,
+          36,
+          2,
+          1,
+          8,
+          43,
+          13,
+          32,
+          44
+        ],
+        "fuse_k": 20,
+        "top_k": 5,
+        "retrieval": "contextual prefixes, BM25 + embeddings fused by reciprocal rank, cross-encoder reranked"
+      },
+      "grade": {
+        "grade": "correct",
+        "rationale": "The answer gives six families and correctly lists Hybrid H3, Pythia, GPT-Neo, OPT, RWKV, and GPT-J with matching size variants."
+      }
+    },
+    "hybrid_rag::arxiv-paper-aggregation-2": {
+      "arm": "hybrid_rag",
+      "doc_id": "arxiv-paper",
+      "question_id": "arxiv-paper-aggregation-2",
+      "answer": "**Five** ablation studies are presented in the main text of Section 4.6 (\"Model Ablations\"), all in the setting \"language modeling with size \u2248350 M models at Chinchilla token counts.\" One additional ablation is deferred to an appendix.\n\nThe five, enumerated by the table/figure that reports each:\n\n1. **Table 2 \u2014 \"Ablations: Architecture and SSM layer.\"** Crosses the block architecture (H3 vs. Mamba) with the inner layer (Hyena, S4 complex, S4 real, S6); best perplexity 8.69 for Mamba+S6.\n2. **Figure 13 \u2014 \"Ablations: Selective parameters.\"** Combinations of selective \u0394, \ud835\udc69, \ud835\udc6a; perplexity from 10.93 (none selective) to 8.71 (all three).\n3. **Figure 14 \u2014 \"Ablations: Parameterization of \ud835\udc68.\"** Four initializations (S4D-Lin complex 9.16, \ud835\udc68\u2099=\u22121/2 8.85, \ud835\udc68\u2099=\u2212(n+1) 8.71, random 8.71).\n4. **Figure 15 \u2014 \"Ablations: Expressivity of \u0394.\"** Size of the \u0394 projection swept from none through 64, with state size fixed to N=16.\n5. **Figure 16 \u2014 \"Ablations: SSM state dimension.\"** State dimension N from 1 to 16, run twice (constant \ud835\udc69,\ud835\udc6a and selective \ud835\udc69,\ud835\udc6a), with \u0394 projection fixed to 64.\n\n**Caveats on the count.** The text also says: \"We also investigate interleaving the Mamba block with other blocks such as MLP (a traditional architecture) MHA (a hybrid attention architecture) in LABEL:sec:exp-details:lm:scaling-ablations\" \u2014 a sixth ablation, but it lives in an appendix section not contained in these excerpts, so I cannot confirm its scope. Whether Figure 16's two panels count as one study or two is also a judgment call; I counted it as one. Separately, the cross-references in the running prose are corrupted (the text says \"Figure 14 ablates the selective SSM layer\" and \"Figure 16 and Figure 16 consider varying the dimension of the \u0394 and (\ud835\udc69,\ud835\udc6a) projections\"), so I relied on the figure captions rather than the in-text pointers. Finally, the Section 4.5 speed/memory benchmarks (Figure 12) are efficiency measurements, not component ablations, and are excluded.",
+      "deltas": [
+        [
+          7144,
+          "**Five** ablation studies are presented in the main text of Section 4.6 (\"Model Ablations\"), all"
+        ],
+        [
+          7782,
+          " in the setting \"language modeling with size \u2248350 M models at Chinchilla token counts.\" One additional ablation is deferred to an appendix.\n\nThe five,"
+        ],
+        [
+          8528,
+          " enumerated by the table/figure that reports each:\n\n1. **Table 2 \u2014 \"Ablations: Architecture and SSM layer.\"** Crosses the block"
+        ],
+        [
+          9237,
+          " architecture (H3 vs. Mamba) with the inner layer (Hyena, S4 complex, S4 real, S6); best perplexity 8.69 for Mamba+S6.\n2. **Figure 13 \u2014 \"Ablations: Selective par"
+        ],
+        [
+          10002,
+          "ameters.\"** Combinations of selective \u0394, \ud835\udc69, \ud835\udc6a; perplexity from 10.93 (none selective) to 8.71 (all three).\n3. **Figure 14 \u2014 \"Ablations: Parameterization of \ud835\udc68.\"** Four initializations"
+        ],
+        [
+          10727,
+          " (S4D-Lin complex 9.16, \ud835\udc68\u2099=\u22121/2 8.85, \ud835\udc68\u2099=\u2212(n+1) 8.71, random 8.71).\n4. **Figure 15 \u2014 \"Ablations: Expressivity"
+        ],
+        [
+          11446,
+          " of \u0394.\"** Size of the \u0394 projection swept from none through 64, with state size fixed to N=16.\n5. **Figure 16 \u2014 \"Ablations: SSM state dimension.\"** State dimension N from 1 to 16, run"
+        ],
+        [
+          12075,
+          " twice (constant \ud835\udc69,\ud835\udc6a and selective \ud835\udc69,\ud835\udc6a), with \u0394 projection fixed to 64.\n\n**Caveats on the"
+        ],
+        [
+          12774,
+          " count.** The text also says: \"We also investigate interleaving the Mamba block with other blocks such as MLP (a traditional architecture) MHA (a hybrid attention architecture) in LABEL:sec:exp-details:lm:scaling-ablations\""
+        ],
+        [
+          13493,
+          " \u2014 a sixth ablation, but it lives in an appendix section not contained in these excerpts, so I cannot confirm its scope. Whether Figure 16's two panels count as one study"
+        ],
+        [
+          14209,
+          " or two is also a judgment call; I counted it as one. Separately, the cross-references in the running prose are corrupted (the text says \"Figure 14 ablates the selective SSM layer\" and \"Figure 16"
+        ],
+        [
+          14902,
+          " and Figure 16 consider varying the dimension of the \u0394 and (\ud835\udc69,\ud835\udc6a) projections\"), so I relied on the figure captions rather than the in-text pointers. Finally, the Section 4.5 speed/memory benchmar"
+        ],
+        [
+          15340,
+          "ks (Figure 12) are efficiency measurements, not component ablations, and are excluded."
+        ]
+      ],
+      "usage": {
+        "input_tokens": 4245,
+        "output_tokens": 1277,
+        "cache_read_tokens": 0,
+        "cache_write_5m_tokens": 0,
+        "cache_write_1h_tokens": 0,
+        "embed_tokens": 21,
+        "rerank_tokens": 10967,
+        "calls": 1
+      },
+      "cost": {
+        "input": 0.021225,
+        "output": 0.031925,
+        "cache_read": 0.0,
+        "cache_write": 0.0,
+        "embed": 1.26e-06,
+        "rerank": 0.00054835,
+        "total": 0.05369961
+      },
+      "latency_ms": 15452,
+      "ttft_ms": 7144,
+      "notes": {
+        "retrieved_chunks": [
+          44,
+          45,
+          47,
+          46,
+          30
+        ],
+        "fused_candidates": [
+          45,
+          44,
+          47,
+          30,
+          48,
+          3,
+          43,
+          49,
+          2,
+          1,
+          46,
+          26,
+          34,
+          33,
+          4,
+          35,
+          37,
+          15,
+          32,
+          22
+        ],
+        "fuse_k": 20,
+        "top_k": 5,
+        "retrieval": "contextual prefixes, BM25 + embeddings fused by reciprocal rank, cross-encoder reranked"
+      },
+      "grade": {
+        "grade": "correct",
+        "rationale": "The answer gives five and correctly names the same five ablation axes (architecture/SSM layer, selective parameters, A parameterization, delta projection dimension, SSM state dimension) with matching perplexity values."
       }
     }
   }
