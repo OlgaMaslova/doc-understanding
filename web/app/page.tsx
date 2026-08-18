@@ -15,9 +15,10 @@ import { compareModels } from "@/lib/models";
  * It used to be a funnel with a fork in it: what the approaches are, how they are
  * measured, then a choice — run the evals, or read the ones on disk. A static host
  * has no pipeline and no key, so only one of those branches exists here and the
- * choice was a door with nothing behind it. What replaced it is a link to the
- * repository, at the two places a reader actually wants it: after the setup, and
- * again at the bottom, once the charts have given them something to disbelieve.
+ * choice was a door with nothing behind it. What replaced it is two calls to action
+ * — how it works, and the repository — stated inline once in the setup and then as
+ * one band of buttons at the seam, where the charts have given a reader something to
+ * disbelieve and they want either the method or the code.
  */
 export default async function Home() {
   const [manifest, catalogue] = await Promise.all([
@@ -113,18 +114,27 @@ export default async function Home() {
 
       {comparison ? <ModelComparison comparison={comparison} /> : null}
 
-      <p className="mt-6 text-sm text-text-dim">
-        <Link
-          href="/how-it-works"
-          className="text-text underline decoration-border-strong underline-offset-2 hover:decoration-accent"
-        >
-          How it works
-        </Link>{" "}
-        — what each approach actually does, how answers are graded, and how to run all
-        of it yourself.
-      </p>
+      {/* The two things a reader wants after the summary tables, as two buttons in
+          one band rather than scattered across the seam. This used to be a sentence
+          with a link in it, a rule, and then a third link floating right above the
+          comparison — three weights of the same two invitations. */}
+      <div className="mt-10 border-y border-border py-6">
+        <div className="flex flex-wrap items-center gap-3">
+          <Link
+            href="/how-it-works"
+            className="inline-block rounded border border-accent bg-accent px-3 py-1.5 text-sm font-medium text-bg transition-opacity hover:opacity-90"
+          >
+            How it works
+          </Link>
+          <RepoLink variant="button">Run it yourself</RepoLink>
+        </div>
+        <p className="mt-3 max-w-3xl text-xs text-text-faint">
+          What each approach actually does and how answers are graded · the pipeline,
+          the documents, and the question set, in the repository.
+        </p>
+      </div>
 
-      <div className="mt-10 border-t border-border pt-10">
+      <div className="mt-10">
         {manifest && docs.length ? (
           <ComparisonView
             manifest={manifest}
@@ -144,15 +154,6 @@ export default async function Home() {
       </div>
 
       <footer className="mt-14 space-y-2 border-t border-border pt-6 text-sm text-text-faint">
-        <p>
-          <Link
-            href="/how-it-works"
-            className="text-text-dim underline decoration-border underline-offset-2 hover:decoration-accent"
-          >
-            How it works
-          </Link>{" "}
-          — approaches, grading, and running it yourself.
-        </p>
         {manifest ? (
           <p>
             All results measured with{" "}

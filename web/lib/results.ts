@@ -25,6 +25,17 @@ export type LeanCell =
       calls: number;
       grade: string;
       rationale: string;
+      /**
+       * Whether the run produced anything to grade at all.
+       *
+       * A wrong answer and no answer are both marked incorrect, but they are
+       * different failures — one model reasoned to the wrong place, the other
+       * never arrived. Keeping them apart is what lets the page say which kind of
+       * failure a model actually has.
+       */
+      answered: boolean;
+      /** True when the run stopped because it hit its own tool-call ceiling. */
+      capped: boolean;
     }
   | { error: string };
 
@@ -40,7 +51,10 @@ const RESULTS_DIR = path.join(process.cwd(), "..", "results");
  * the change — a run happens in a terminal, in a clone of the repository, and
  * signals nothing at all. The stat is the source of truth.
  */
-const cache = new Map<string, { mtimeMs: number; size: number; value: unknown }>();
+const cache = new Map<
+  string,
+  { mtimeMs: number; size: number; value: unknown }
+>();
 
 async function readJson<T>(file: string): Promise<T> {
   const full = path.join(RESULTS_DIR, file);
@@ -103,7 +117,10 @@ export async function loadManifestIfPresent(): Promise<Manifest | null> {
  * recently measured set for the document is returned, which is what "show me
  * this document" should mean when nobody named a model.
  */
-export async function loadDoc(docId: string, model?: string): Promise<DocResults> {
+export async function loadDoc(
+  docId: string,
+  model?: string,
+): Promise<DocResults> {
   // Guard against traversal: the pair has to be one the manifest knows about,
   // and the filename read is the one the pipeline wrote into the manifest.
   const manifest = await loadManifest();
@@ -130,7 +147,10 @@ export async function loadDoc(docId: string, model?: string): Promise<DocResults
  * charts run on numbers, and the answers arrive in the replay bundle the comparison
  * fetches for whichever document is on screen.
  */
-export async function loadDocLean(docId: string, model?: string): Promise<LeanDoc> {
+export async function loadDocLean(
+  docId: string,
+  model?: string,
+): Promise<LeanDoc> {
   const doc = await loadDoc(docId, model);
   const cells: LeanDoc["cells"] = {};
   for (const [key, cell] of Object.entries(doc.cells)) {
@@ -144,6 +164,8 @@ export async function loadDocLean(docId: string, model?: string): Promise<LeanDo
           calls: cell.usage.calls,
           grade: cell.grade.grade,
           rationale: cell.grade.rationale,
+          answered: cell.answer.trim().length > 0,
+          capped: cell.notes.hit_iteration_cap === true,
         };
   }
   return { ...doc, cells };

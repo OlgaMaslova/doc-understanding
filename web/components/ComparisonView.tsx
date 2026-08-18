@@ -329,14 +329,6 @@ export function ComparisonView({ manifest, docs, catalogue }: Props) {
 
   return (
     <div className="space-y-10">
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-3">
-        <p className="text-xs text-text-faint">
-          Measured with <span className="font-mono text-text-dim">{doc.model}</span>{" "}
-          · replayed from a recording, nothing here calls an API
-        </p>
-        <RepoLink className="text-xs">Run it yourself</RepoLink>
-      </div>
-
       {/* Document and question were one section behind a single screen-reader-only
           heading, which left the question picker looking like a caption on the
           document metadata above it. They are two separate choices, so they are two
